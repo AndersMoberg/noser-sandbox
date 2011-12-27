@@ -11,6 +11,8 @@
 
 #include <memory>
 
+#include "CanvasWindow.hpp"
+
 class Application;
 typedef std::shared_ptr<Application> ApplicationPtr;
 
@@ -27,6 +29,8 @@ private:
 
 	Application();
 	bool CreateInternal(HINSTANCE hInstance, int nShowCmd);
+
+	CanvasWindowPtr m_canvasWindow;
 
 };
 

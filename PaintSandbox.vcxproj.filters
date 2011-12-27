@@ -9,12 +9,18 @@
     <ClInclude Include="Application.hpp">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="CanvasWindow.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="CanvasWindow.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

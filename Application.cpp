@@ -18,6 +18,11 @@ Application::Application()
 
 bool Application::CreateInternal(HINSTANCE hInstance, int nShowCmd)
 {
+	m_canvasWindow = CanvasWindow::Create(hInstance, nShowCmd);
+	if (!m_canvasWindow) {
+		return false;
+	}
+
 	return true;
 }
 
