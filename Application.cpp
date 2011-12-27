@@ -23,7 +23,7 @@ bool Application::CreateInternal(HINSTANCE hInstance, int nShowCmd)
 		return false;
 	}
 
-	m_canvasWindow = CanvasWindow::Create(hInstance, nShowCmd);
+	m_canvasWindow = CanvasWindow::Create(m_driver, hInstance, nShowCmd);
 	if (!m_canvasWindow) {
 		return false;
 	}

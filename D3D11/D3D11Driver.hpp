@@ -9,19 +9,25 @@
 
 #include <memory>
 
+#include "Driver.hpp"
+#include "D3D11CanvasWindowGraphics.hpp"
+
 namespace D3D11
 {
 
 class D3D11Driver;
 typedef std::shared_ptr<D3D11Driver> D3D11DriverPtr;
 
-class D3D11Driver
+class D3D11Driver : public Driver
 {
 
 public:
 
 	static D3D11DriverPtr Create();
 	~D3D11Driver();
+
+	// Driver implementation
+	CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd);
 
 private:
 
@@ -30,6 +36,7 @@ private:
 
 	ID3D11Device* m_pD3D11Device;
 	ID3D11DeviceContext* m_pD3D11Context;
+	IDXGIFactory1* m_pDXGIFactory;
 
 };
 

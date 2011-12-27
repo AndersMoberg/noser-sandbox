@@ -6,10 +6,10 @@
 
 static const LPCTSTR CANVASWINDOW_CLASS_NAME = TEXT("CanvasWindowClass");
 
-CanvasWindowPtr CanvasWindow::Create(HINSTANCE hInstance, int nShowCmd)
+CanvasWindowPtr CanvasWindow::Create(DriverPtr driver, HINSTANCE hInstance, int nShowCmd)
 {
 	CanvasWindowPtr result(new CanvasWindow);
-	if (!result->CreateInternal(hInstance, nShowCmd)) {
+	if (!result->CreateInternal(driver, hInstance, nShowCmd)) {
 		return NULL;
 	}
 	return result;
@@ -28,8 +28,10 @@ CanvasWindow::~CanvasWindow()
 	}
 }
 
-bool CanvasWindow::CreateInternal(HINSTANCE hInstance, int nShowCmd)
+bool CanvasWindow::CreateInternal(DriverPtr driver, HINSTANCE hInstance, int nShowCmd)
 {
+	m_driver = driver;
+
 	RegisterWindowClass(hInstance);
 
 	HWND hWnd = CreateWindow(
@@ -101,11 +103,19 @@ LRESULT CALLBACK CanvasWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 LRESULT CanvasWindow::OnWMCreate(HWND hwnd)
 {
 	m_hWnd = hwnd;
+
+	m_graphics = m_driver->CreateWindowGraphics(m_hWnd);
+	if (!m_graphics) {
+		return -1;
+	}
+
 	return 0;
 }
 
 LRESULT CanvasWindow::OnWMDestroy()
 {
+	m_graphics.reset();
+
 	PostQuitMessage(EXIT_SUCCESS);
 	return 0;
 }

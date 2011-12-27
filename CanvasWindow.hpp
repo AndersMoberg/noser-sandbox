@@ -11,6 +11,8 @@
 
 #include <memory>
 
+#include "Driver.hpp"
+
 class CanvasWindow;
 typedef std::shared_ptr<CanvasWindow> CanvasWindowPtr;
 
@@ -19,13 +21,13 @@ class CanvasWindow
 
 public:
 
-	static CanvasWindowPtr Create(HINSTANCE hInstance, int nShowCmd);
+	static CanvasWindowPtr Create(DriverPtr driver, HINSTANCE hInstance, int nShowCmd);
 	~CanvasWindow();
 
 private:
 
 	CanvasWindow();
-	bool CreateInternal(HINSTANCE hInstance, int nShowCmd);
+	bool CreateInternal(DriverPtr driver, HINSTANCE hInstance, int nShowCmd);
 
 	void RegisterWindowClass(HINSTANCE hInstance);
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -33,7 +35,10 @@ private:
 	LRESULT OnWMCreate(HWND hwnd);
 	LRESULT OnWMDestroy();
 
+	DriverPtr m_driver;
+
 	HWND m_hWnd;
+	CanvasWindowGraphicsPtr m_graphics;
 
 };
 
