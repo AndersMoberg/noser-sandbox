@@ -35,6 +35,8 @@ bool D3D11CanvasWindowGraphics::CreateInternal(HWND hWnd, ID3D11Device* pDevice,
 {
 	HRESULT hr;
 
+	m_hWnd = hWnd;
+
 	// Create swap chain
 
 	DXGI_SWAP_CHAIN_DESC scd = { 0 };
@@ -66,6 +68,21 @@ bool D3D11CanvasWindowGraphics::CreateInternal(HWND hWnd, ID3D11Device* pDevice,
 	SafeRelease(texture);
 
 	return true;
+}
+
+void D3D11CanvasWindowGraphics::OnWMPaint()
+{
+	PAINTSTRUCT ps;
+	BeginPaint(m_hWnd, &ps);
+
+	Present();
+
+	EndPaint(m_hWnd, &ps);
+}
+
+void D3D11CanvasWindowGraphics::Present()
+{
+	m_pSwapChain->Present(0, 0);
 }
 
 }

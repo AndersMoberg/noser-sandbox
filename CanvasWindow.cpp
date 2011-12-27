@@ -91,6 +91,9 @@ LRESULT CALLBACK CanvasWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 		case WM_DESTROY:
 			result = pThis->OnWMDestroy();
 			break;
+		case WM_PAINT:
+			result = pThis->OnWMPaint();
+			break;
 		default:
 			result = DefWindowProc(hwnd, uMsg, wParam, lParam);
 			break;
@@ -117,5 +120,11 @@ LRESULT CanvasWindow::OnWMDestroy()
 	m_graphics.reset();
 
 	PostQuitMessage(EXIT_SUCCESS);
+	return 0;
+}
+
+LRESULT CanvasWindow::OnWMPaint()
+{
+	m_graphics->OnWMPaint();
 	return 0;
 }

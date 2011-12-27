@@ -28,11 +28,17 @@ public:
 	static D3D11CanvasWindowGraphicsPtr Create(HWND hWnd, ID3D11Device* pDevice, IDXGIFactory1* pDXGIFactory);
 	~D3D11CanvasWindowGraphics();
 
+	// CanvasWindowGraphics implementation
+	virtual void OnWMPaint();
+
 private:
 
 	D3D11CanvasWindowGraphics();
 	bool CreateInternal(HWND hWnd, ID3D11Device* pDevice, IDXGIFactory1* pDXGIFactory);
 
+	void Present();
+
+	HWND m_hWnd;
 	IDXGISwapChain* m_pSwapChain;
 	ID3D11RenderTargetView* m_pBackBufferRTV;
 
