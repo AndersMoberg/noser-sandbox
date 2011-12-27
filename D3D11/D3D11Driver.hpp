@@ -28,6 +28,7 @@ public:
 
 	// Driver implementation
 	CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd);
+	DriverImagePtr CreateImage(int width, int height);
 
 private:
 

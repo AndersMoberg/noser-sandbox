@@ -4,6 +4,7 @@
 
 #include "D3D11Driver.hpp"
 
+#include "D3D11Image.hpp"
 #include "D3D11Utils.hpp"
 
 namespace D3D11
@@ -86,6 +87,11 @@ bool D3D11Driver::CreateInternal()
 CanvasWindowGraphicsPtr D3D11Driver::CreateWindowGraphics(HWND hWnd)
 {
 	return D3D11CanvasWindowGraphics::Create(hWnd, m_pD3D11Device, m_pDXGIFactory);
+}
+
+DriverImagePtr D3D11Driver::CreateImage(int width, int height)
+{
+	return D3D11Image::Create(m_pD3D11Device, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height);
 }
 
 }

@@ -30,6 +30,12 @@
     <ClInclude Include="D3D11\D3D11CanvasWindowGraphics.hpp">
       <Filter>Source\D3D11</Filter>
     </ClInclude>
+    <ClInclude Include="CanvasImage.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11\D3D11Image.hpp">
+      <Filter>Source\D3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -46,6 +52,12 @@
     </ClCompile>
     <ClCompile Include="D3D11\D3D11CanvasWindowGraphics.cpp">
       <Filter>Source\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11\D3D11Image.cpp">
+      <Filter>Source\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="CanvasImage.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

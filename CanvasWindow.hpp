@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "CanvasImage.hpp"
 #include "Driver.hpp"
 
 class CanvasWindow;
@@ -37,6 +38,7 @@ private:
 	LRESULT OnWMPaint();
 
 	DriverPtr m_driver;
+	CanvasImagePtr m_image;
 
 	HWND m_hWnd;
 	CanvasWindowGraphicsPtr m_graphics;

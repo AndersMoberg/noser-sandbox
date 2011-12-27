@@ -5,20 +5,31 @@
 #ifndef _DRIVER_HPP
 #define _DRIVER_HPP
 
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
+
 #include <memory>
 
 #include "CanvasWindowGraphics.hpp"
 
 class Driver;
 typedef std::shared_ptr<Driver> DriverPtr;
+class DriverImage;
+typedef std::shared_ptr<DriverImage> DriverImagePtr;
 
 class Driver
 {
-
 public:
-
+	virtual ~Driver() { }
 	virtual CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd) = 0;
+	virtual DriverImagePtr CreateImage(int width, int height) = 0;
+};
 
+class DriverImage
+{
+public:
+	virtual ~DriverImage() { }
 };
 
 #endif
