@@ -4,6 +4,9 @@
     <Filter Include="Source">
       <UniqueIdentifier>{9204045b-1d94-4d5e-b034-ca808c1ae6c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\D3D11">
+      <UniqueIdentifier>{5b3c026b-a130-427c-93b6-82bc4e24b8ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -11,6 +14,12 @@
     </ClInclude>
     <ClInclude Include="CanvasWindow.hpp">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11\D3D11Driver.hpp">
+      <Filter>Source\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="D3D11\D3D11Utils.hpp">
+      <Filter>Source\D3D11</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -22,6 +31,9 @@
     </ClCompile>
     <ClCompile Include="CanvasWindow.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11\D3D11Driver.cpp">
+      <Filter>Source\D3D11</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

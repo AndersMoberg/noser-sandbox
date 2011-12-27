@@ -18,6 +18,11 @@ Application::Application()
 
 bool Application::CreateInternal(HINSTANCE hInstance, int nShowCmd)
 {
+	m_driver = D3D11::D3D11Driver::Create();
+	if (!m_driver) {
+		return false;
+	}
+
 	m_canvasWindow = CanvasWindow::Create(hInstance, nShowCmd);
 	if (!m_canvasWindow) {
 		return false;

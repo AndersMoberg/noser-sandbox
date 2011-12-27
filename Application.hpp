@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "CanvasWindow.hpp"
+#include "D3D11/D3D11Driver.hpp"
 
 class Application;
 typedef std::shared_ptr<Application> ApplicationPtr;
@@ -30,6 +31,7 @@ private:
 	Application();
 	bool CreateInternal(HINSTANCE hInstance, int nShowCmd);
 
+	D3D11::D3D11DriverPtr m_driver;
 	CanvasWindowPtr m_canvasWindow;
 
 };
