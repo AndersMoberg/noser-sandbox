@@ -21,11 +21,13 @@ D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(HWND hWnd, ID3D11
 }
 
 D3D11CanvasWindowGraphics::D3D11CanvasWindowGraphics()
-	: m_pSwapChain(NULL)
+	: m_pSwapChain(NULL),
+	m_pBackBufferRTV(NULL)
 { }
 
 D3D11CanvasWindowGraphics::~D3D11CanvasWindowGraphics()
 {
+	SafeRelease(m_pBackBufferRTV);
 	SafeRelease(m_pSwapChain);
 }
 
@@ -33,17 +35,35 @@ bool D3D11CanvasWindowGraphics::CreateInternal(HWND hWnd, ID3D11Device* pDevice,
 {
 	HRESULT hr;
 
+	// Create swap chain
+
 	DXGI_SWAP_CHAIN_DESC scd = { 0 };
 	scd.BufferDesc.Format = BACKBUFFER_FORMAT;
 	scd.SampleDesc.Count = 1;
+	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	scd.BufferCount = 1;
 	scd.OutputWindow = hWnd;
 	scd.Windowed = TRUE;
-
 	hr = pDXGIFactory->CreateSwapChain(pDevice, &scd, &m_pSwapChain);
 	if (FAILED(hr)) {
 		return false;
 	}
+
+	// Get back buffer RTV
+
+	ID3D11Texture2D* texture = NULL;
+	hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&texture));
+	if (FAILED(hr)) {
+		return false;
+	}
+
+	hr = pDevice->CreateRenderTargetView(texture, NULL, &m_pBackBufferRTV);
+	if (FAILED(hr)) {
+		SafeRelease(texture);
+		return false;
+	}
+
+	SafeRelease(texture);
 
 	return true;
 }

@@ -34,6 +34,7 @@ private:
 	bool CreateInternal(HWND hWnd, ID3D11Device* pDevice, IDXGIFactory1* pDXGIFactory);
 
 	IDXGISwapChain* m_pSwapChain;
+	ID3D11RenderTargetView* m_pBackBufferRTV;
 
 };
 
