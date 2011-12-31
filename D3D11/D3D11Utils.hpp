@@ -28,9 +28,15 @@ typedef std::shared_ptr<VertexShader> VertexShaderPtr;
 class VertexShader
 {
 
+public:
+
+	static VertexShaderPtr Create(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target);
+	~VertexShader();
+
 private:
 
 	VertexShader();
+	bool CreateInternal(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target);
 
 	ID3D11VertexShader* m_pVShader;
 
