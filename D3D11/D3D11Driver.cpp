@@ -6,9 +6,15 @@
 
 #include "D3D11Image.hpp"
 #include "D3D11Utils.hpp"
+#include "Geometry.hpp"
 
 namespace D3D11
 {
+
+static const Vector2f SIMPLE2D_QUAD[4] = {
+	Vector2f(0.0f, 0.0f), Vector2f(1.0f, 0.0f),
+	Vector2f(0.0f, 1.0f), Vector2f(1.0f, 1.0f)
+};
 
 D3D11DriverPtr D3D11Driver::Create()
 {
@@ -22,11 +28,13 @@ D3D11DriverPtr D3D11Driver::Create()
 D3D11Driver::D3D11Driver()
 	: m_pD3D11Device(NULL),
 	m_pD3D11Context(NULL),
-	m_pDXGIFactory(NULL)
+	m_pDXGIFactory(NULL),
+	m_pSimple2DQuad(NULL)
 { }
 
 D3D11Driver::~D3D11Driver()
 {
+	SafeRelease(m_pSimple2DQuad);
 	SafeRelease(m_pDXGIFactory);
 	SafeRelease(m_pD3D11Context);
 	SafeRelease(m_pD3D11Device);
@@ -80,6 +88,16 @@ bool D3D11Driver::CreateInternal()
 	}
 
 	SafeRelease(dxgiAdapter);
+
+	// Create simple 2D quad vertex buffer
+
+	D3D11_BUFFER_DESC bd = CD3D11_BUFFER_DESC(sizeof(SIMPLE2D_QUAD),
+		D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_IMMUTABLE);
+	D3D11_SUBRESOURCE_DATA srd = { SIMPLE2D_QUAD, 0, 0 };
+	hr = m_pD3D11Device->CreateBuffer(&bd, &srd, &m_pSimple2DQuad);
+	if (FAILED(hr)) {
+		return false;
+	}
 
 	return true;
 }

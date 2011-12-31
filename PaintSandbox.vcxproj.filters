@@ -36,6 +36,9 @@
     <ClInclude Include="D3D11\D3D11Image.hpp">
       <Filter>Source\D3D11</Filter>
     </ClInclude>
+    <ClInclude Include="Geometry.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">

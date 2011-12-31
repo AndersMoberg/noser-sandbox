@@ -39,6 +39,8 @@ private:
 	ID3D11DeviceContext* m_pD3D11Context;
 	IDXGIFactory1* m_pDXGIFactory;
 
+	ID3D11Buffer* m_pSimple2DQuad;
+
 };
 
 }
