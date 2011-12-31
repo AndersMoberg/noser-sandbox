@@ -38,6 +38,12 @@ static const char SIMPLE2D_QUAD_VERTEX_SHADER[] =
 "}\n"
 ;
 
+struct Simple2DQuadVShaderParams
+{
+	Vector2f ul;
+	Vector2f lr;
+};
+
 static const Vector2f SIMPLE2D_QUAD[4] = {
 	Vector2f(0.0f, 0.0f), Vector2f(1.0f, 0.0f),
 	Vector2f(0.0f, 1.0f), Vector2f(1.0f, 1.0f)
@@ -56,11 +62,13 @@ D3D11Driver::D3D11Driver()
 	: m_pD3D11Device(NULL),
 	m_pD3D11Context(NULL),
 	m_pDXGIFactory(NULL),
-	m_pSimple2DQuad(NULL)
+	m_pSimple2DQuad(NULL),
+	m_pSimple2DQuadVShaderParams(NULL)
 { }
 
 D3D11Driver::~D3D11Driver()
 {
+	SafeRelease(m_pSimple2DQuadVShaderParams);
 	SafeRelease(m_pSimple2DQuad);
 	SafeRelease(m_pDXGIFactory);
 	SafeRelease(m_pD3D11Context);
@@ -131,6 +139,15 @@ bool D3D11Driver::CreateInternal()
 	m_simple2DQuadVShader = VertexShader::Create(m_pD3D11Device,
 		SIMPLE2D_QUAD_VERTEX_SHADER, "main", "vs_4_0");
 	if (!m_simple2DQuadVShader) {
+		return false;
+	}
+
+	// Create simple 2d quad vertex shader parameters buffer
+
+	bd = CD3D11_BUFFER_DESC(sizeof(Simple2DQuadVShaderParams),
+		D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+	hr = m_pD3D11Device->CreateBuffer(&bd, NULL, &m_pSimple2DQuadVShaderParams);
+	if (FAILED(hr)) {
 		return false;
 	}
 
