@@ -88,6 +88,7 @@
     <ClCompile Include="D3D11\D3D11CanvasWindowGraphics.cpp" />
     <ClCompile Include="D3D11\D3D11Driver.cpp" />
     <ClCompile Include="D3D11\D3D11Image.cpp" />
+    <ClCompile Include="D3D11\D3D11Utils.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>

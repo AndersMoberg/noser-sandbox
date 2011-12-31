@@ -5,6 +5,10 @@
 #ifndef _D3D11UTILS_HPP
 #define _D3D11UTILS_HPP
 
+#include <D3D11.h>
+
+#include <memory>
+
 namespace D3D11
 {
 
@@ -17,6 +21,20 @@ inline void SafeRelease(Interface*& pi)
 		pi = NULL;
 	}
 }
+
+class VertexShader;
+typedef std::shared_ptr<VertexShader> VertexShaderPtr;
+
+class VertexShader
+{
+
+private:
+
+	VertexShader();
+
+	ID3D11VertexShader* m_pVShader;
+
+};
 
 }
 
