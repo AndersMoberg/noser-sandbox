@@ -11,6 +11,7 @@
 
 #include "Driver.hpp"
 #include "D3D11CanvasWindowGraphics.hpp"
+#include "D3D11Utils.hpp"
 
 namespace D3D11
 {
@@ -40,6 +41,8 @@ private:
 	IDXGIFactory1* m_pDXGIFactory;
 
 	ID3D11Buffer* m_pSimple2DQuad;
+
+	VertexShaderPtr m_simple2DQuadVShader;
 
 };
 

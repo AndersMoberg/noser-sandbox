@@ -11,6 +11,33 @@
 namespace D3D11
 {
 
+static const char SIMPLE2D_QUAD_VERTEX_SHADER[] =
+"// PaintSandbox simple 2D quad vertex shader\n"
+
+"cbuffer cbParams : register(c0)\n"
+"{\n"
+	"struct\n"
+	"{\n"
+		"float2 ul;\n"
+		"float2 lr;\n"
+	"} Params;\n"
+"};\n"
+
+"struct VSOutput\n"
+"{\n"
+	"float4 pos : SV_Position;\n"
+	"float2 tex : TEXCOORD;\n"
+"};\n"
+
+"VSOutput main(float2 pos : POSITION)\n"
+"{\n"
+	"VSOutput result;\n"
+	"result.pos = float4(lerp(Params.ul, Params.lr, pos), 0, 1);\n"
+	"result.tex = pos;\n"
+	"return result;\n"
+"}\n"
+;
+
 static const Vector2f SIMPLE2D_QUAD[4] = {
 	Vector2f(0.0f, 0.0f), Vector2f(1.0f, 0.0f),
 	Vector2f(0.0f, 1.0f), Vector2f(1.0f, 1.0f)
@@ -96,6 +123,14 @@ bool D3D11Driver::CreateInternal()
 	D3D11_SUBRESOURCE_DATA srd = { SIMPLE2D_QUAD, 0, 0 };
 	hr = m_pD3D11Device->CreateBuffer(&bd, &srd, &m_pSimple2DQuad);
 	if (FAILED(hr)) {
+		return false;
+	}
+
+	// Create simple 2D quad vertex shader
+
+	m_simple2DQuadVShader = VertexShader::Create(m_pD3D11Device,
+		SIMPLE2D_QUAD_VERTEX_SHADER, "main", "vs_4_0");
+	if (!m_simple2DQuadVShader) {
 		return false;
 	}
 
