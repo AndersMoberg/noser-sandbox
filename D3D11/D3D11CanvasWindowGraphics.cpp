@@ -126,7 +126,7 @@ void D3D11CanvasWindowGraphics::Render()
 		pContext->PSSetShaderResources(0, 1, &srv);
 		pContext->PSSetSamplers(0, 1, &ss);
 
-		m_driver->RenderQuad(RectF(-1.0f, 1.0f, 1.0f, -1.0f));
+		m_driver->RenderQuad(RectF(-1.0f, 1.0f, 0.0f, 0.0f));
 	}
 }
 

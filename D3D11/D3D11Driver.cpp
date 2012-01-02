@@ -46,7 +46,7 @@ struct Simple2DQuadVShaderParams
 
 static const Vector2f SIMPLE2D_QUAD[4] = {
 	Vector2f(0.0f, 1.0f), Vector2f(0.0f, 0.0f),
-	Vector2f(1.0f, 0.0f), Vector2f(1.0f, 1.0f)
+	Vector2f(1.0f, 1.0f), Vector2f(1.0f, 0.0f)
 };
 
 static const D3D11_INPUT_ELEMENT_DESC SIMPLE2D_INPUT_LAYOUT[] = {
