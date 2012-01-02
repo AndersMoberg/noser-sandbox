@@ -121,7 +121,7 @@ void D3D11CanvasWindowGraphics::Render()
 		ID3D11SamplerState* ss = m_driver->GetBilinearSampler();
 
 		// Set up pixel shader
-		pContext->PSSetShader(m_driver->GetTexturedPixelShader()->Get(), NULL, 0);
+		pContext->PSSetShader(m_driver->GetCircularGradientShader()->Get(), NULL, 0);
 		pContext->PSSetShaderResources(0, 1, &srv);
 		pContext->PSSetSamplers(0, 1, &ss);
 

@@ -85,6 +85,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="CanvasImage.cpp" />
     <ClCompile Include="CanvasWindow.cpp" />
+    <ClCompile Include="D3D11\CircularGradientShader.cpp" />
     <ClCompile Include="D3D11\D3D11CanvasWindowGraphics.cpp" />
     <ClCompile Include="D3D11\D3D11Driver.cpp" />
     <ClCompile Include="D3D11\D3D11Image.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="CanvasImage.hpp" />
     <ClInclude Include="CanvasWindow.hpp" />
     <ClInclude Include="CanvasWindowGraphics.hpp" />
+    <ClInclude Include="D3D11\CircularGradientShader.hpp" />
     <ClInclude Include="D3D11\D3D11CanvasWindowGraphics.hpp" />
     <ClInclude Include="D3D11\D3D11Driver.hpp" />
     <ClInclude Include="D3D11\D3D11Image.hpp" />

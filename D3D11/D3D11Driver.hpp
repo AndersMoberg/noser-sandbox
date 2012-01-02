@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "CircularGradientShader.hpp"
 #include "Driver.hpp"
 #include "D3D11CanvasWindowGraphics.hpp"
 #include "D3D11Utils.hpp"
@@ -40,6 +41,7 @@ public:
 
 	ID3D11SamplerState* GetBilinearSampler() { return m_pBilinearSampler; }
 	PixelShaderPtr GetTexturedPixelShader() { return m_texturedPShader; }
+	CircularGradientShaderPtr GetCircularGradientShader() { return m_circularGradientShader; }
 
 private:
 
@@ -59,6 +61,7 @@ private:
 	ID3D11InputLayout* m_pSimple2DInputLayout;
 
 	PixelShaderPtr m_texturedPShader;
+	CircularGradientShaderPtr m_circularGradientShader;
 
 };
 

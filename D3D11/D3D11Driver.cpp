@@ -196,6 +196,13 @@ bool D3D11Driver::CreateInternal()
 		return false;
 	}
 
+	// Create circular gradient shader
+
+	m_circularGradientShader = CircularGradientShader::Create(m_pD3D11Device);
+	if (!m_circularGradientShader) {
+		return false;
+	}
+
 	return true;
 }
 
