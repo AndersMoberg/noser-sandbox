@@ -45,8 +45,12 @@ struct Simple2DQuadVShaderParams
 };
 
 static const Vector2f SIMPLE2D_QUAD[4] = {
-	Vector2f(0.0f, 0.0f), Vector2f(1.0f, 0.0f),
-	Vector2f(0.0f, 1.0f), Vector2f(1.0f, 1.0f)
+	Vector2f(0.0f, 1.0f), Vector2f(0.0f, 0.0f),
+	Vector2f(1.0f, 0.0f), Vector2f(1.0f, 1.0f)
+};
+
+static const D3D11_INPUT_ELEMENT_DESC SIMPLE2D_INPUT_LAYOUT[] = {
+	{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 };
 
 static const char TEXTURED_PIXEL_SHADER[] =
@@ -81,11 +85,13 @@ D3D11Driver::D3D11Driver()
 	m_pD3D11Context(NULL),
 	m_pDXGIFactory(NULL),
 	m_pSimple2DQuad(NULL),
-	m_pSimple2DQuadVShaderParams(NULL)
+	m_pSimple2DQuadVShaderParams(NULL),
+	m_pSimple2DInputLayout(NULL)
 { }
 
 D3D11Driver::~D3D11Driver()
 {
+	SafeRelease(m_pSimple2DInputLayout);
 	SafeRelease(m_pSimple2DQuadVShaderParams);
 	SafeRelease(m_pSimple2DQuad);
 	SafeRelease(m_pDXGIFactory);
@@ -155,7 +161,10 @@ bool D3D11Driver::CreateInternal()
 	// Create simple 2D quad vertex shader
 
 	m_simple2DQuadVShader = VertexShader::Create(m_pD3D11Device,
-		SIMPLE2D_QUAD_VERTEX_SHADER, "main", "vs_4_0");
+		SIMPLE2D_QUAD_VERTEX_SHADER, "main", "vs_4_0",
+		SIMPLE2D_INPUT_LAYOUT,
+		sizeof(SIMPLE2D_INPUT_LAYOUT)/sizeof(D3D11_INPUT_ELEMENT_DESC),
+		&m_pSimple2DInputLayout);
 	if (!m_simple2DQuadVShader) {
 		return false;
 	}
@@ -182,12 +191,33 @@ bool D3D11Driver::CreateInternal()
 
 CanvasWindowGraphicsPtr D3D11Driver::CreateWindowGraphics(HWND hWnd)
 {
-	return D3D11CanvasWindowGraphics::Create(hWnd, m_pD3D11Device, m_pDXGIFactory);
+	return D3D11CanvasWindowGraphics::Create(hWnd, shared_from_this());
 }
 
 DriverImagePtr D3D11Driver::CreateImage(int width, int height)
 {
 	return D3D11Image::Create(m_pD3D11Device, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height);
 }
+
+void D3D11Driver::RenderQuad(const RectF& rc)
+{
+	// Load shader parameters
+	Simple2DQuadVShaderParams params = { rc.UpperLeft(), rc.LowerRight() };
+	m_pD3D11Context->UpdateSubresource(m_pSimple2DQuadVShaderParams, 0, NULL, &params, 0, 0);
+
+	// Set up input assembler
+	m_pD3D11Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	m_pD3D11Context->IASetInputLayout(m_pSimple2DInputLayout);
+	UINT stride = sizeof(Vector2f);
+	UINT offset = 0;
+	m_pD3D11Context->IASetVertexBuffers(0, 1, &m_pSimple2DQuad, &stride, &offset);
+
+	// Set up vertex shader
+	m_pD3D11Context->VSSetShader(m_simple2DQuadVShader->Get(), NULL, 0);
+	m_pD3D11Context->VSSetConstantBuffers(0, 1, &m_pSimple2DQuadVShaderParams);
+
+	// Draw!
+	m_pD3D11Context->Draw(4, 0);
+};
 
 }

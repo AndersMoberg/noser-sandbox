@@ -4,6 +4,8 @@
 
 #include "CanvasImage.hpp"
 
+#include "Driver.hpp"
+
 CanvasImagePtr CanvasImage::Create(DriverPtr driver, int width, int height)
 {
 	CanvasImagePtr result(new CanvasImage);

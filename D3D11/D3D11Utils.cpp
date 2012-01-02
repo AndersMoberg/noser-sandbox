@@ -35,10 +35,14 @@ static ID3DBlob* CompileShader(const char* src, const char* entryPoint, const ch
 	return pCode;
 }
 
-VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target)
+VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice,
+	const char* src, const char* entryPoint, const char* target,
+	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,
+	ID3D11InputLayout** ppInputLayout)
 {
 	VertexShaderPtr result(new VertexShader);
-	if (!result->CreateInternal(pDevice, src, entryPoint, target)) {
+	if (!result->CreateInternal(pDevice, src, entryPoint, target,
+		pInputElementDescs, numElements, ppInputLayout)) {
 		return NULL;
 	}
 	return result;
@@ -53,7 +57,10 @@ VertexShader::~VertexShader()
 	SafeRelease(m_pVShader);
 }
 
-bool VertexShader::CreateInternal(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target)
+bool VertexShader::CreateInternal(ID3D11Device* pDevice,
+	const char* src, const char* entryPoint, const char* target,
+	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,
+	ID3D11InputLayout** ppInputLayout)
 {
 	HRESULT hr;
 
@@ -67,6 +74,16 @@ bool VertexShader::CreateInternal(ID3D11Device* pDevice, const char* src, const 
 	if (FAILED(hr)) {
 		SafeRelease(pCode);
 		return false;
+	}
+
+	if (ppInputLayout)
+	{
+		hr = pDevice->CreateInputLayout(pInputElementDescs, numElements,
+			pCode->GetBufferPointer(), pCode->GetBufferSize(), ppInputLayout);
+		if (FAILED(hr)) {
+			SafeRelease(pCode);
+			return false;
+		}
 	}
 
 	SafeRelease(pCode);

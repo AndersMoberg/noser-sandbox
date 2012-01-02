@@ -7,10 +7,12 @@
 
 #include <memory>
 
-#include "Driver.hpp"
-
 class CanvasImage;
 typedef std::shared_ptr<CanvasImage> CanvasImagePtr;
+class Driver;
+typedef std::shared_ptr<Driver> DriverPtr;
+class DriverImage;
+typedef std::shared_ptr<DriverImage> DriverImagePtr;
 
 class CanvasImage
 {
@@ -18,6 +20,8 @@ class CanvasImage
 public:
 
 	static CanvasImagePtr Create(DriverPtr driver, int width, int height);
+
+	DriverImagePtr GetDriverImage() { return m_driverImage; }
 
 private:
 

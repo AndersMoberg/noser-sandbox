@@ -12,6 +12,7 @@
 #include "Driver.hpp"
 #include "D3D11CanvasWindowGraphics.hpp"
 #include "D3D11Utils.hpp"
+#include "Geometry.hpp"
 
 namespace D3D11
 {
@@ -19,7 +20,8 @@ namespace D3D11
 class D3D11Driver;
 typedef std::shared_ptr<D3D11Driver> D3D11DriverPtr;
 
-class D3D11Driver : public Driver
+class D3D11Driver : public Driver,
+	public std::enable_shared_from_this<D3D11Driver>
 {
 
 public:
@@ -30,6 +32,13 @@ public:
 	// Driver implementation
 	CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd);
 	DriverImagePtr CreateImage(int width, int height);
+
+	void RenderQuad(const RectF& rc);
+	ID3D11Device* GetD3D11Device() { return m_pD3D11Device; }
+	ID3D11DeviceContext* GetD3D11Context() { return m_pD3D11Context; }
+	IDXGIFactory1* GetDXGIFactory() { return m_pDXGIFactory; }
+
+	PixelShaderPtr GetTexturedPixelShader() { return m_texturedPShader; }
 
 private:
 
@@ -44,6 +53,7 @@ private:
 
 	VertexShaderPtr m_simple2DQuadVShader;
 	ID3D11Buffer* m_pSimple2DQuadVShaderParams;
+	ID3D11InputLayout* m_pSimple2DInputLayout;
 
 	PixelShaderPtr m_texturedPShader;
 

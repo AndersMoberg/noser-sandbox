@@ -117,6 +117,8 @@ LRESULT CanvasWindow::OnWMCreate(HWND hwnd)
 		return -1;
 	}
 
+	m_graphics->SetCanvasImage(m_image);
+
 	return 0;
 }
 
