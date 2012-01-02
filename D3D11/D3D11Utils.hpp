@@ -24,6 +24,8 @@ inline void SafeRelease(Interface*& pi)
 
 class VertexShader;
 typedef std::shared_ptr<VertexShader> VertexShaderPtr;
+class PixelShader;
+typedef std::shared_ptr<PixelShader> PixelShaderPtr;
 
 class VertexShader
 {
@@ -39,6 +41,23 @@ private:
 	bool CreateInternal(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target);
 
 	ID3D11VertexShader* m_pVShader;
+
+};
+
+class PixelShader
+{
+
+public:
+
+	static PixelShaderPtr Create(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target);
+	~PixelShader();
+
+private:
+
+	PixelShader();
+	bool CreateInternal(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target);
+
+	ID3D11PixelShader* m_pPShader;
 
 };
 

@@ -45,6 +45,8 @@ private:
 	VertexShaderPtr m_simple2DQuadVShader;
 	ID3D11Buffer* m_pSimple2DQuadVShaderParams;
 
+	PixelShaderPtr m_texturedPShader;
+
 };
 
 }

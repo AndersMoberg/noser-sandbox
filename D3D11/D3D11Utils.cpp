@@ -74,4 +74,43 @@ bool VertexShader::CreateInternal(ID3D11Device* pDevice, const char* src, const 
 	return true;
 }
 
+PixelShaderPtr PixelShader::Create(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target)
+{
+	PixelShaderPtr result(new PixelShader);
+	if (!result->CreateInternal(pDevice, src, entryPoint, target)) {
+		return NULL;
+	}
+	return result;
+}
+
+PixelShader::PixelShader()
+	: m_pPShader(NULL)
+{ }
+
+PixelShader::~PixelShader()
+{
+	SafeRelease(m_pPShader);
+}
+
+bool PixelShader::CreateInternal(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target)
+{
+	HRESULT hr;
+
+	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
+	if (!pCode) {
+		return false;
+	}
+
+	hr = pDevice->CreatePixelShader(pCode->GetBufferPointer(),
+		pCode->GetBufferSize(), NULL, &m_pPShader);
+	if (FAILED(hr)) {
+		SafeRelease(pCode);
+		return false;
+	}
+
+	SafeRelease(pCode);
+
+	return true;
+}
+
 }

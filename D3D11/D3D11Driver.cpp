@@ -49,6 +49,24 @@ static const Vector2f SIMPLE2D_QUAD[4] = {
 	Vector2f(0.0f, 1.0f), Vector2f(1.0f, 1.0f)
 };
 
+static const char TEXTURED_PIXEL_SHADER[] =
+"// PaintSandbox textured pixel shader\n"
+
+"struct VSOutput\n"
+"{\n"
+	"float4 pos : SV_Position;\n"
+	"float2 tex : TEXCOORD;\n"
+"};\n"
+
+"Texture2D g_Texture : register(t0);\n"
+"SamplerState g_Sampler : register(s0);\n"
+
+"float4 main(VSOutput input) : SV_Target\n"
+"{\n"
+	"return g_Texture.Sample(g_Sampler, input.tex);\n"
+"}\n"
+;
+
 D3D11DriverPtr D3D11Driver::Create()
 {
 	D3D11DriverPtr result(new D3D11Driver);
@@ -148,6 +166,14 @@ bool D3D11Driver::CreateInternal()
 		D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 	hr = m_pD3D11Device->CreateBuffer(&bd, NULL, &m_pSimple2DQuadVShaderParams);
 	if (FAILED(hr)) {
+		return false;
+	}
+
+	// Create textured pixel shader
+
+	m_texturedPShader = PixelShader::Create(m_pD3D11Device,
+		TEXTURED_PIXEL_SHADER, "main", "ps_4_0");
+	if (!m_texturedPShader) {
 		return false;
 	}
 
