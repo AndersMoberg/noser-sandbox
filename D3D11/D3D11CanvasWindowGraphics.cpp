@@ -102,9 +102,6 @@ void D3D11CanvasWindowGraphics::Render()
 
 	if (m_image)
 	{
-		// Set up output merger
-		pContext->OMSetRenderTargets(1, &m_pBackBufferRTV, NULL);
-
 		// Set up rasterizer
 		RECT clientRc;
 		GetClientRect(m_hWnd, &clientRc);
@@ -114,6 +111,10 @@ void D3D11CanvasWindowGraphics::Render()
 			(FLOAT)(clientRc.right - clientRc.left),
 			(FLOAT)(clientRc.bottom - clientRc.top));
 		pContext->RSSetViewports(1, &vp);
+
+		// Set up output merger
+		pContext->OMSetRenderTargets(1, &m_pBackBufferRTV, NULL);
+		pContext->OMSetBlendState(m_driver->GetAlphaBlend(), NULL, 0xFFFFFFFF);
 
 		D3D11ImagePtr d3d11Image = std::static_pointer_cast<D3D11Image, DriverImage>(
 			m_image->GetDriverImage());

@@ -84,6 +84,7 @@ D3D11Driver::D3D11Driver()
 	: m_pD3D11Device(NULL),
 	m_pD3D11Context(NULL),
 	m_pDXGIFactory(NULL),
+	m_pAlphaBlend(NULL),
 	m_pBilinearSampler(NULL),
 	m_pSimple2DQuad(NULL),
 	m_pSimple2DQuadVShaderParams(NULL),
@@ -96,6 +97,7 @@ D3D11Driver::~D3D11Driver()
 	SafeRelease(m_pSimple2DQuadVShaderParams);
 	SafeRelease(m_pSimple2DQuad);
 	SafeRelease(m_pBilinearSampler);
+	SafeRelease(m_pAlphaBlend);
 	SafeRelease(m_pDXGIFactory);
 	SafeRelease(m_pD3D11Context);
 	SafeRelease(m_pD3D11Device);
@@ -149,6 +151,17 @@ bool D3D11Driver::CreateInternal()
 	}
 
 	SafeRelease(dxgiAdapter);
+
+	// Create alpha blend state
+
+	D3D11_BLEND_DESC bld = CD3D11_BLEND_DESC(CD3D11_DEFAULT());
+	bld.RenderTarget[0].BlendEnable = TRUE;
+	bld.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	bld.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	hr = m_pD3D11Device->CreateBlendState(&bld, &m_pAlphaBlend);
+	if (FAILED(hr)) {
+		return false;
+	}
 
 	// Create bilinear sampler
 
