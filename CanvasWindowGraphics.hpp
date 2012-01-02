@@ -16,7 +16,8 @@ class CanvasWindowGraphics
 {
 
 public:
-
+	
+	virtual void OnWMSize() = 0;
 	virtual void OnWMPaint() = 0;
 	virtual void SetCanvasImage(CanvasImagePtr image) = 0;
 

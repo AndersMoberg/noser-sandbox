@@ -96,6 +96,9 @@ LRESULT CALLBACK CanvasWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 		case WM_DESTROY:
 			result = pThis->OnWMDestroy();
 			break;
+		case WM_SIZE:
+			result = pThis->OnWMSize();
+			break;
 		case WM_PAINT:
 			result = pThis->OnWMPaint();
 			break;
@@ -127,6 +130,12 @@ LRESULT CanvasWindow::OnWMDestroy()
 	m_graphics.reset();
 
 	PostQuitMessage(EXIT_SUCCESS);
+	return 0;
+}
+
+LRESULT CanvasWindow::OnWMSize()
+{
+	m_graphics->OnWMSize();
 	return 0;
 }
 

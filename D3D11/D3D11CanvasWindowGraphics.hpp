@@ -31,6 +31,7 @@ public:
 	~D3D11CanvasWindowGraphics();
 
 	// CanvasWindowGraphics implementation
+	virtual void OnWMSize();
 	virtual void OnWMPaint();
 	virtual void SetCanvasImage(CanvasImagePtr image);
 
@@ -38,6 +39,9 @@ private:
 
 	D3D11CanvasWindowGraphics();
 	bool CreateInternal(HWND hWnd, D3D11DriverPtr driver);
+
+	bool CreateSwapChainResources();
+	void DestroySwapChainResources();
 
 	void Render();
 	void Present();

@@ -35,6 +35,7 @@ private:
 
 	LRESULT OnWMCreate(HWND hwnd);
 	LRESULT OnWMDestroy();
+	LRESULT OnWMSize();
 	LRESULT OnWMPaint();
 
 	DriverPtr m_driver;

@@ -57,6 +57,19 @@ bool D3D11CanvasWindowGraphics::CreateInternal(HWND hWnd, D3D11DriverPtr driver)
 		return false;
 	}
 
+	if (!CreateSwapChainResources()) {
+		return false;
+	}
+
+	return true;
+}
+
+bool D3D11CanvasWindowGraphics::CreateSwapChainResources()
+{
+	HRESULT hr;
+
+	ID3D11Device* pDevice = m_driver->GetD3D11Device();
+
 	// Get back buffer RTV
 
 	ID3D11Texture2D* texture = NULL;
@@ -74,6 +87,18 @@ bool D3D11CanvasWindowGraphics::CreateInternal(HWND hWnd, D3D11DriverPtr driver)
 	SafeRelease(texture);
 
 	return true;
+}
+
+void D3D11CanvasWindowGraphics::DestroySwapChainResources()
+{
+	SafeRelease(m_pBackBufferRTV);
+}
+
+void D3D11CanvasWindowGraphics::OnWMSize()
+{
+	DestroySwapChainResources();
+	m_pSwapChain->ResizeBuffers(1, 0, 0, BACKBUFFER_FORMAT, 0);
+	CreateSwapChainResources();
 }
 
 void D3D11CanvasWindowGraphics::OnWMPaint()
