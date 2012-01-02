@@ -38,6 +38,7 @@ public:
 	ID3D11DeviceContext* GetD3D11Context() { return m_pD3D11Context; }
 	IDXGIFactory1* GetDXGIFactory() { return m_pDXGIFactory; }
 
+	ID3D11SamplerState* GetBilinearSampler() { return m_pBilinearSampler; }
 	PixelShaderPtr GetTexturedPixelShader() { return m_texturedPShader; }
 
 private:
@@ -48,6 +49,8 @@ private:
 	ID3D11Device* m_pD3D11Device;
 	ID3D11DeviceContext* m_pD3D11Context;
 	IDXGIFactory1* m_pDXGIFactory;
+
+	ID3D11SamplerState* m_pBilinearSampler;
 
 	ID3D11Buffer* m_pSimple2DQuad;
 

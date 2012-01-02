@@ -84,6 +84,7 @@ D3D11Driver::D3D11Driver()
 	: m_pD3D11Device(NULL),
 	m_pD3D11Context(NULL),
 	m_pDXGIFactory(NULL),
+	m_pBilinearSampler(NULL),
 	m_pSimple2DQuad(NULL),
 	m_pSimple2DQuadVShaderParams(NULL),
 	m_pSimple2DInputLayout(NULL)
@@ -94,6 +95,7 @@ D3D11Driver::~D3D11Driver()
 	SafeRelease(m_pSimple2DInputLayout);
 	SafeRelease(m_pSimple2DQuadVShaderParams);
 	SafeRelease(m_pSimple2DQuad);
+	SafeRelease(m_pBilinearSampler);
 	SafeRelease(m_pDXGIFactory);
 	SafeRelease(m_pD3D11Context);
 	SafeRelease(m_pD3D11Device);
@@ -148,6 +150,14 @@ bool D3D11Driver::CreateInternal()
 
 	SafeRelease(dxgiAdapter);
 
+	// Create bilinear sampler
+
+	D3D11_SAMPLER_DESC sd = CD3D11_SAMPLER_DESC(CD3D11_DEFAULT());
+	hr = m_pD3D11Device->CreateSamplerState(&sd, &m_pBilinearSampler);
+	if (FAILED(hr)) {
+		return false;
+	}
+
 	// Create simple 2D quad vertex buffer
 
 	D3D11_BUFFER_DESC bd = CD3D11_BUFFER_DESC(sizeof(SIMPLE2D_QUAD),
@@ -172,7 +182,7 @@ bool D3D11Driver::CreateInternal()
 	// Create simple 2d quad vertex shader parameters buffer
 
 	bd = CD3D11_BUFFER_DESC(sizeof(Simple2DQuadVShaderParams),
-		D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+		D3D11_BIND_CONSTANT_BUFFER);
 	hr = m_pD3D11Device->CreateBuffer(&bd, NULL, &m_pSimple2DQuadVShaderParams);
 	if (FAILED(hr)) {
 		return false;
