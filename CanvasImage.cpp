@@ -6,10 +6,11 @@
 
 #include "Driver.hpp"
 
-CanvasImagePtr CanvasImage::Create(DriverPtr driver, int width, int height)
+CanvasImagePtr CanvasImage::Create(DriverPtr driver, const RectF& canvasRc,
+	int width, int height)
 {
 	CanvasImagePtr result(new CanvasImage);
-	if (!result->CreateInternal(driver, width, height)) {
+	if (!result->CreateInternal(driver, canvasRc, width, height)) {
 		return NULL;
 	}
 	return result;
@@ -18,12 +19,15 @@ CanvasImagePtr CanvasImage::Create(DriverPtr driver, int width, int height)
 CanvasImage::CanvasImage()
 { }
 
-bool CanvasImage::CreateInternal(DriverPtr driver, int width, int height)
+bool CanvasImage::CreateInternal(DriverPtr driver, const RectF& canvasRc,
+	int width, int height)
 {
 	m_driverImage = driver->CreateImage(width, height);
 	if (!m_driverImage) {
 		return false;
 	}
+
+	m_canvasRc = canvasRc;
 
 	return true;
 }

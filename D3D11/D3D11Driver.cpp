@@ -250,4 +250,8 @@ void D3D11Driver::RenderQuad(const RectF& rc)
 	m_pD3D11Context->Draw(4, 0);
 };
 
+void D3D11Driver::RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc)
+{
+}
+
 }

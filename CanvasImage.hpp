@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#include "Geometry.hpp"
+
 class CanvasImage;
 typedef std::shared_ptr<CanvasImage> CanvasImagePtr;
 class Driver;
@@ -19,16 +21,17 @@ class CanvasImage
 
 public:
 
-	static CanvasImagePtr Create(DriverPtr driver, int width, int height);
+	static CanvasImagePtr Create(DriverPtr driver, const RectF& canvasRc, int width, int height);
 
 	DriverImagePtr GetDriverImage() { return m_driverImage; }
 
 private:
 
 	CanvasImage();
-	bool CreateInternal(DriverPtr driver, int width, int height);
+	bool CreateInternal(DriverPtr driver, const RectF& canvasRc, int width, int height);
 
 	DriverImagePtr m_driverImage;
+	RectF m_canvasRc;
 
 };
 

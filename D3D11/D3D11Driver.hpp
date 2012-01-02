@@ -35,6 +35,8 @@ public:
 	DriverImagePtr CreateImage(int width, int height);
 
 	void RenderQuad(const RectF& rc);
+	void RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc);
+
 	ID3D11Device* GetD3D11Device() { return m_pD3D11Device; }
 	ID3D11DeviceContext* GetD3D11Context() { return m_pD3D11Context; }
 	IDXGIFactory1* GetDXGIFactory() { return m_pDXGIFactory; }

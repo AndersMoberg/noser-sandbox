@@ -32,7 +32,7 @@ bool CanvasWindow::CreateInternal(DriverPtr driver, HINSTANCE hInstance, int nSh
 {
 	m_driver = driver;
 
-	m_image = CanvasImage::Create(driver, 2048, 2048);
+	m_image = CanvasImage::Create(driver, RectF(-10.0f, 10.0f, 10.0f, -10.0f), 2048, 2048);
 	if (!m_image) {
 		return false;
 	}

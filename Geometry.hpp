@@ -30,4 +30,11 @@ struct RectF
 	Vector2f LowerRight() const { return Vector2f(right, bottom); }
 };
 
+struct Matrix3x2f
+{
+	float m11, m12;
+	float m21, m22;
+	float m31, m32;
+};
+
 #endif
