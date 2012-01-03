@@ -22,12 +22,18 @@ CanvasImage::CanvasImage()
 bool CanvasImage::CreateInternal(DriverPtr driver, const RectF& canvasRc,
 	int width, int height)
 {
+	m_width = width;
+	m_height = height;
+
 	m_driverImage = driver->CreateImage(width, height);
 	if (!m_driverImage) {
 		return false;
 	}
 
 	m_canvasRc = canvasRc;
+
+	m_canvasToClip = Matrix3x2f::RectLerp(m_canvasRc,
+		RectF(-1.0f, 1.0f, 1.0f, -1.0f));
 
 	return true;
 }

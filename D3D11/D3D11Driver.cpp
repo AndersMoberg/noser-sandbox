@@ -252,6 +252,15 @@ void D3D11Driver::RenderQuad(const RectF& rc)
 
 void D3D11Driver::RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc)
 {
+	D3D11ImagePtr image = std::static_pointer_cast<D3D11Image, DriverImage>(
+		canvas->GetDriverImage());
+	ID3D11RenderTargetView* rtv = image->GetRTV();
+
+	// Set up output merger
+	m_pD3D11Context->OMSetRenderTargets(1, &rtv, NULL);
+
+	RectF clipRc = canvas->GetCanvasToClip().TransformRect(rc);
+	RenderQuad(clipRc);
 }
 
 }

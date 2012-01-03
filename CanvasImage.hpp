@@ -23,15 +23,22 @@ public:
 
 	static CanvasImagePtr Create(DriverPtr driver, const RectF& canvasRc, int width, int height);
 
+	int GetWidth() const { return m_width; }
+	int GetHeight() const { return m_height; }
 	DriverImagePtr GetDriverImage() { return m_driverImage; }
+	const Matrix3x2f& GetCanvasToClip() const { return m_canvasToClip; }
 
 private:
 
 	CanvasImage();
 	bool CreateInternal(DriverPtr driver, const RectF& canvasRc, int width, int height);
 
+	int m_width;
+	int m_height;
 	DriverImagePtr m_driverImage;
 	RectF m_canvasRc;
+
+	Matrix3x2f m_canvasToClip;
 
 };
 
