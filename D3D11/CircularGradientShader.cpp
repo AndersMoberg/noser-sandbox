@@ -19,7 +19,8 @@ static const char CIRCULAR_GRADIENT_SHADER[] =
 "float4 main(VSOutput input) : SV_Target\n"
 "{\n"
 	"float dist = distance(float2(0.5, 0.5), input.tex);\n"
-	"return float4(1.0, 1.0, 1.0, 1.0 - 2.0*dist);\n"
+	"float a = 1.0 - 2.0*dist;\n"
+	"return float4(1.0, 1.0, 1.0, a);\n"
 "}\n"
 ;
 

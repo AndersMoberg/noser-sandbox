@@ -158,6 +158,8 @@ bool D3D11Driver::CreateInternal()
 	bld.RenderTarget[0].BlendEnable = TRUE;
 	bld.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	bld.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	bld.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	bld.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
 	hr = m_pD3D11Device->CreateBlendState(&bld, &m_pAlphaBlend);
 	if (FAILED(hr)) {
 		return false;
