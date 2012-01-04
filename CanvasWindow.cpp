@@ -37,6 +37,11 @@ bool CanvasWindow::CreateInternal(DriverPtr driver, HINSTANCE hInstance, int nSh
 		return false;
 	}
 
+	m_drawTool = DrawTool::Create(m_image);
+	if (!m_drawTool) {
+		return false;
+	}
+
 	RegisterWindowClass(hInstance);
 
 	HWND hWnd = CreateWindow(

@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "CanvasImage.hpp"
+#include "DrawTool.hpp"
 #include "Driver.hpp"
 
 class CanvasWindow;
@@ -40,6 +41,7 @@ private:
 
 	DriverPtr m_driver;
 	CanvasImagePtr m_image;
+	DrawToolPtr m_drawTool;
 
 	HWND m_hWnd;
 	CanvasWindowGraphicsPtr m_graphics;

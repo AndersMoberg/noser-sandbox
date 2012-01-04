@@ -42,6 +42,9 @@
     <ClInclude Include="D3D11\CircularGradientShader.hpp">
       <Filter>Source\D3D11</Filter>
     </ClInclude>
+    <ClInclude Include="DrawTool.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="Geometry.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawTool.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
