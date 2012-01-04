@@ -4,6 +4,11 @@
 
 #include "CanvasWindow.hpp"
 
+#include <WindowsX.h>
+
+#include "D3D11/D3D11Driver.hpp"
+#include "D3D11/D3D11Image.hpp"
+
 static const LPCTSTR CANVASWINDOW_CLASS_NAME = TEXT("CanvasWindowClass");
 
 CanvasWindowPtr CanvasWindow::Create(DriverPtr driver, HINSTANCE hInstance, int nShowCmd)
@@ -107,6 +112,9 @@ LRESULT CALLBACK CanvasWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 		case WM_PAINT:
 			result = pThis->OnWMPaint();
 			break;
+		case WM_MOUSEMOVE:
+			result = pThis->OnWMMouseMove(wParam, lParam);
+			break;
 		default:
 			result = DefWindowProc(hwnd, uMsg, wParam, lParam);
 			break;
@@ -147,5 +155,50 @@ LRESULT CanvasWindow::OnWMSize()
 LRESULT CanvasWindow::OnWMPaint()
 {
 	m_graphics->OnWMPaint();
+	return 0;
+}
+
+LRESULT CanvasWindow::OnWMMouseMove(WPARAM wParam, LPARAM lParam)
+{
+	if (wParam & MK_LBUTTON)
+	{
+		// Add 0.5 because the cursor is in the center of the pixel.
+		float x = GET_X_LPARAM(lParam) + 0.5f;
+		float y = GET_Y_LPARAM(lParam) + 0.5f;
+		Vector2f pos(x, y);
+
+		RECT clientRc;
+		GetClientRect(m_hWnd, &clientRc);
+		RectF clientRect(clientRc.left, clientRc.top, clientRc.right, clientRc.bottom);
+
+		Matrix3x2f clientToCanvas = Matrix3x2f::RectLerp(
+			clientRect, m_image->GetCanvasRect());
+
+		Vector2f canvasPos = clientToCanvas.TransformPoint(pos);
+	
+		// Really fast, just try rendering something to the image.
+
+		D3D11::D3D11DriverPtr driver = std::static_pointer_cast<D3D11::D3D11Driver, Driver>(
+			m_driver);
+		ID3D11DeviceContext* pContext = driver->GetD3D11Context();
+		D3D11::D3D11ImagePtr drvImage = std::static_pointer_cast<D3D11::D3D11Image, DriverImage>(
+			m_image->GetDriverImage());
+
+		// Set up rasterizer
+		D3D11_VIEWPORT vp = CD3D11_VIEWPORT(0.0f, 0.0f, (FLOAT)m_image->GetWidth(), (FLOAT)m_image->GetHeight());
+		pContext->RSSetViewports(1, &vp);
+
+		// Set up output merger
+		pContext->OMSetBlendState(driver->GetAlphaBlend(), NULL, 0xFFFFFFFF);
+
+		// Set up pixel shader
+		pContext->PSSetShader(driver->GetCircularGradientShader()->Get(), NULL, 0);
+
+		driver->RenderQuadToCanvas(m_image, RectF(canvasPos.x-1.0f, canvasPos.y+1.0f,
+			canvasPos.x+1.0f, canvasPos.y-1.0f));
+
+		InvalidateRect(m_hWnd, NULL, FALSE);
+	}
+
 	return 0;
 }

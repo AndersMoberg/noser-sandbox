@@ -42,6 +42,10 @@ struct Matrix3x2f
 	{ }
 
 	RectF TransformRect(const RectF& from) const;
+	Vector2f TransformPoint(const Vector2f& from) const {
+		return Vector2f(m11*from.x + m12*from.y + m31,
+			m21*from.x + m22*from.y + m32);
+	};
 
 	static Matrix3x2f RectLerp(const RectF& from, const RectF& to);
 };

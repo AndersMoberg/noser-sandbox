@@ -115,27 +115,6 @@ void D3D11CanvasWindowGraphics::OnWMPaint()
 void D3D11CanvasWindowGraphics::SetCanvasImage(CanvasImagePtr image)
 {
 	m_image = image;
-
-	// Really fast, just try rendering something to the image.
-
-	ID3D11DeviceContext* pContext = m_driver->GetD3D11Context();
-	D3D11ImagePtr drvImage = std::static_pointer_cast<D3D11Image, DriverImage>(
-		m_image->GetDriverImage());
-
-	static const float IMG_BG_COLOR[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	pContext->ClearRenderTargetView(drvImage->GetRTV(), IMG_BG_COLOR);
-
-	// Set up rasterizer
-	D3D11_VIEWPORT vp = CD3D11_VIEWPORT(0.0f, 0.0f, (FLOAT)image->GetWidth(), (FLOAT)image->GetHeight());
-	pContext->RSSetViewports(1, &vp);
-
-	// Set up output merger
-	pContext->OMSetBlendState(m_driver->GetAlphaBlend(), NULL, 0xFFFFFFFF);
-
-	// Set up pixel shader
-	pContext->PSSetShader(m_driver->GetCircularGradientShader()->Get(), NULL, 0);
-
-	m_driver->RenderQuadToCanvas(m_image, RectF(-5.0f, 5.0f, 5.0f, -5.0f));
 }
 
 void D3D11CanvasWindowGraphics::Render()
@@ -173,6 +152,9 @@ void D3D11CanvasWindowGraphics::Render()
 		pContext->PSSetSamplers(0, 1, &ss);
 
 		m_driver->RenderQuad(RectF(-1.0f, 1.0f, 1.0f, -1.0f));
+
+		srv = NULL;
+		pContext->PSSetShaderResources(0, 1, &srv);
 	}
 }
 

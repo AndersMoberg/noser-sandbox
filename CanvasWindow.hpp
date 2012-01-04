@@ -38,6 +38,7 @@ private:
 	LRESULT OnWMDestroy();
 	LRESULT OnWMSize();
 	LRESULT OnWMPaint();
+	LRESULT OnWMMouseMove(WPARAM wParam, LPARAM lParam);
 
 	DriverPtr m_driver;
 	CanvasImagePtr m_image;

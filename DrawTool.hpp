@@ -19,6 +19,8 @@ public:
 
 	static DrawToolPtr Create(CanvasImagePtr image);
 
+	void ReceiveCursor(const Vector2f& pos);
+
 private:
 
 	CanvasImagePtr m_image;

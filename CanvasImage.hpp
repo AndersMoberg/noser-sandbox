@@ -26,6 +26,7 @@ public:
 	int GetWidth() const { return m_width; }
 	int GetHeight() const { return m_height; }
 	DriverImagePtr GetDriverImage() { return m_driverImage; }
+	const RectF& GetCanvasRect() const { return m_canvasRc; }
 	const Matrix3x2f& GetCanvasToClip() const { return m_canvasToClip; }
 
 private:
