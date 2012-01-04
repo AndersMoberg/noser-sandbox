@@ -189,7 +189,7 @@ LRESULT CanvasWindow::OnWMMouseMove(WPARAM wParam, LPARAM lParam)
 		pContext->RSSetViewports(1, &vp);
 
 		// Set up output merger
-		pContext->OMSetBlendState(driver->GetAlphaBlend(), NULL, 0xFFFFFFFF);
+		pContext->OMSetBlendState(driver->GetAlphaAccumBlend(), NULL, 0xFFFFFFFF);
 
 		// Set up pixel shader
 		pContext->PSSetShader(driver->GetCircularGradientShader()->Get(), NULL, 0);
