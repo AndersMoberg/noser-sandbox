@@ -50,7 +50,6 @@ public:
 private:
 
 	D3D11Driver();
-	bool CreateInternal();
 
 	ID3D11Device* m_pD3D11Device;
 	ID3D11DeviceContext* m_pD3D11Context;

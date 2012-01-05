@@ -29,7 +29,6 @@ public:
 private:
 
 	Application();
-	bool CreateInternal(HINSTANCE hInstance, int nShowCmd);
 
 	D3D11::D3D11DriverPtr m_driver;
 	CanvasWindowPtr m_canvasWindow;

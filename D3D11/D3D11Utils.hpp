@@ -43,10 +43,6 @@ public:
 private:
 
 	VertexShader();
-	bool CreateInternal(ID3D11Device* pDevice,
-		const char* src, const char* entryPoint, const char* target,
-		const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,
-		ID3D11InputLayout** ppInputLayout);
 
 	ID3D11VertexShader* m_pVShader;
 
@@ -66,8 +62,6 @@ public:
 private:
 
 	PixelShader();
-	bool CreateInternal(ID3D11Device* pDevice,
-		const char* src, const char* entryPoint, const char* target);
 
 	ID3D11PixelShader* m_pPShader;
 

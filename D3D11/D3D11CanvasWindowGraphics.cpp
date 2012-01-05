@@ -13,15 +13,6 @@ namespace D3D11
 
 static const DXGI_FORMAT BACKBUFFER_FORMAT = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
-D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(HWND hWnd, D3D11DriverPtr driver)
-{
-	D3D11CanvasWindowGraphicsPtr result(new D3D11CanvasWindowGraphics);
-	if (!result->CreateInternal(hWnd, driver)) {
-		return NULL;
-	}
-	return result;
-}
-
 D3D11CanvasWindowGraphics::D3D11CanvasWindowGraphics()
 	: m_pSwapChain(NULL),
 	m_pBackBufferRTV(NULL)
@@ -33,15 +24,18 @@ D3D11CanvasWindowGraphics::~D3D11CanvasWindowGraphics()
 	SafeRelease(m_pSwapChain);
 }
 
-bool D3D11CanvasWindowGraphics::CreateInternal(HWND hWnd, D3D11DriverPtr driver)
+D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(
+	HWND hWnd, D3D11DriverPtr driver)
 {
+	D3D11CanvasWindowGraphicsPtr p(new D3D11CanvasWindowGraphics);
+
 	HRESULT hr;
 
-	m_hWnd = hWnd;
-	m_driver = driver;
+	p->m_hWnd = hWnd;
+	p->m_driver = driver;
 
-	ID3D11Device* pDevice = m_driver->GetD3D11Device();
-	IDXGIFactory1* pDXGIFactory = m_driver->GetDXGIFactory();
+	ID3D11Device* pDevice = p->m_driver->GetD3D11Device();
+	IDXGIFactory1* pDXGIFactory = p->m_driver->GetDXGIFactory();
 
 	// Create swap chain
 
@@ -52,16 +46,16 @@ bool D3D11CanvasWindowGraphics::CreateInternal(HWND hWnd, D3D11DriverPtr driver)
 	scd.BufferCount = 1;
 	scd.OutputWindow = hWnd;
 	scd.Windowed = TRUE;
-	hr = pDXGIFactory->CreateSwapChain(pDevice, &scd, &m_pSwapChain);
+	hr = pDXGIFactory->CreateSwapChain(pDevice, &scd, &p->m_pSwapChain);
 	if (FAILED(hr)) {
-		return false;
+		return NULL;
 	}
 
-	if (!CreateSwapChainResources()) {
-		return false;
+	if (!p->CreateSwapChainResources()) {
+		return NULL;
 	}
 
-	return true;
+	return p;
 }
 
 bool D3D11CanvasWindowGraphics::CreateSwapChainResources()

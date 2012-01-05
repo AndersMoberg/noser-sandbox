@@ -6,34 +6,26 @@
 
 #include "Driver.hpp"
 
-CanvasImagePtr CanvasImage::Create(DriverPtr driver, const RectF& canvasRc,
-	int width, int height)
-{
-	CanvasImagePtr result(new CanvasImage);
-	if (!result->CreateInternal(driver, canvasRc, width, height)) {
-		return NULL;
-	}
-	return result;
-}
-
 CanvasImage::CanvasImage()
 { }
 
-bool CanvasImage::CreateInternal(DriverPtr driver, const RectF& canvasRc,
+CanvasImagePtr CanvasImage::Create(DriverPtr driver, const RectF& canvasRc,
 	int width, int height)
 {
-	m_width = width;
-	m_height = height;
+	CanvasImagePtr p(new CanvasImage);
 
-	m_driverImage = driver->CreateImage(width, height);
-	if (!m_driverImage) {
-		return false;
+	p->m_width = width;
+	p->m_height = height;
+
+	p->m_driverImage = driver->CreateImage(width, height);
+	if (!p->m_driverImage) {
+		return NULL;
 	}
 
-	m_canvasRc = canvasRc;
+	p->m_canvasRc = canvasRc;
 
-	m_canvasToClip = Matrix3x2f::RectLerp(m_canvasRc,
+	p->m_canvasToClip = Matrix3x2f::RectLerp(p->m_canvasRc,
 		RectF(-1.0f, 1.0f, 1.0f, -1.0f));
 
-	return true;
+	return p;
 }

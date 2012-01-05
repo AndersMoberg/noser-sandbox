@@ -14,13 +14,11 @@ typedef std::shared_ptr<CanvasWindowGraphics> CanvasWindowGraphicsPtr;
 
 class CanvasWindowGraphics
 {
-
 public:
-	
+	virtual ~CanvasWindowGraphics() { }
 	virtual void OnWMSize() = 0;
 	virtual void OnWMPaint() = 0;
 	virtual void SetCanvasImage(CanvasImagePtr image) = 0;
-
 };
 
 #endif

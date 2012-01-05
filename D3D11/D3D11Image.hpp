@@ -32,7 +32,6 @@ public:
 private:
 
 	D3D11Image();
-	bool CreateInternal(ID3D11Device* pDevice, DXGI_FORMAT format, UINT width, UINT height);
 
 	ID3D11Texture2D* m_pTexture;
 	ID3D11ShaderResourceView* m_pTextureSRV;

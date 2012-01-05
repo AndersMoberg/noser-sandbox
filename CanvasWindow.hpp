@@ -29,7 +29,6 @@ public:
 private:
 
 	CanvasWindow();
-	bool CreateInternal(DriverPtr driver, HINSTANCE hInstance, int nShowCmd);
 
 	void RegisterWindowClass(HINSTANCE hInstance);
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

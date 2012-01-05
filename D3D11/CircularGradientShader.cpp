@@ -24,26 +24,19 @@ static const char CIRCULAR_GRADIENT_SHADER[] =
 "}\n"
 ;
 
-CircularGradientShaderPtr CircularGradientShader::Create(ID3D11Device* pDevice)
-{
-	CircularGradientShaderPtr result(new CircularGradientShader);
-	if (!result->CreateInternal(pDevice)) {
-		return NULL;
-	}
-	return result;
-}
-
 CircularGradientShader::CircularGradientShader()
 { }
 
-bool CircularGradientShader::CreateInternal(ID3D11Device* pDevice)
+CircularGradientShaderPtr CircularGradientShader::Create(ID3D11Device* pDevice)
 {
-	m_shader = PixelShader::Create(pDevice, CIRCULAR_GRADIENT_SHADER, "main", "ps_4_0");
-	if (!m_shader) {
-		return false;
+	CircularGradientShaderPtr p(new CircularGradientShader);
+
+	p->m_shader = PixelShader::Create(pDevice, CIRCULAR_GRADIENT_SHADER, "main", "ps_4_0");
+	if (!p->m_shader) {
+		return NULL;
 	}
 
-	return true;
+	return p;
 }
 
 }

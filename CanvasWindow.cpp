@@ -11,15 +11,6 @@
 
 static const LPCTSTR CANVASWINDOW_CLASS_NAME = TEXT("CanvasWindowClass");
 
-CanvasWindowPtr CanvasWindow::Create(DriverPtr driver, HINSTANCE hInstance, int nShowCmd)
-{
-	CanvasWindowPtr result(new CanvasWindow);
-	if (!result->CreateInternal(driver, hInstance, nShowCmd)) {
-		return NULL;
-	}
-	return result;
-}
-
 CanvasWindow::CanvasWindow()
 	: m_hWnd(NULL)
 { }
@@ -33,21 +24,23 @@ CanvasWindow::~CanvasWindow()
 	}
 }
 
-bool CanvasWindow::CreateInternal(DriverPtr driver, HINSTANCE hInstance, int nShowCmd)
+CanvasWindowPtr CanvasWindow::Create(DriverPtr driver, HINSTANCE hInstance, int nShowCmd)
 {
-	m_driver = driver;
+	CanvasWindowPtr p(new CanvasWindow);
 
-	m_image = CanvasImage::Create(driver, RectF(-10.0f, 10.0f, 10.0f, -10.0f), 2048, 2048);
-	if (!m_image) {
-		return false;
+	p->m_driver = driver;
+
+	p->m_image = CanvasImage::Create(driver, RectF(-10.0f, 10.0f, 10.0f, -10.0f), 2048, 2048);
+	if (!p->m_image) {
+		return NULL;
 	}
 
-	m_drawTool = DrawTool::Create(m_image);
-	if (!m_drawTool) {
-		return false;
+	p->m_drawTool = DrawTool::Create(p->m_image);
+	if (!p->m_drawTool) {
+		return NULL;
 	}
 
-	RegisterWindowClass(hInstance);
+	p->RegisterWindowClass(hInstance);
 
 	HWND hWnd = CreateWindow(
 		CANVASWINDOW_CLASS_NAME,
@@ -58,13 +51,13 @@ bool CanvasWindow::CreateInternal(DriverPtr driver, HINSTANCE hInstance, int nSh
 		NULL,
 		NULL,
 		hInstance,
-		this);
+		p.get());
 	if (!hWnd) {
-		m_hWnd = NULL;
-		return false;
+		p->m_hWnd = NULL;
+		return NULL;
 	}
 
-	return true;
+	return p;
 }
 
 void CanvasWindow::RegisterWindowClass(HINSTANCE hInstance)

@@ -4,31 +4,24 @@
 
 #include "Application.hpp"
 
-ApplicationPtr Application::Create(HINSTANCE hInstance, int nShowCmd)
-{
-	ApplicationPtr result(new Application);
-	if (!result->CreateInternal(hInstance, nShowCmd)) {
-		return NULL;
-	}
-	return result;
-}
-
 Application::Application()
 { }
 
-bool Application::CreateInternal(HINSTANCE hInstance, int nShowCmd)
+ApplicationPtr Application::Create(HINSTANCE hInstance, int nShowCmd)
 {
-	m_driver = D3D11::D3D11Driver::Create();
-	if (!m_driver) {
-		return false;
+	ApplicationPtr p(new Application);
+
+	p->m_driver = D3D11::D3D11Driver::Create();
+	if (!p->m_driver) {
+		return NULL;
 	}
 
-	m_canvasWindow = CanvasWindow::Create(m_driver, hInstance, nShowCmd);
-	if (!m_canvasWindow) {
-		return false;
+	p->m_canvasWindow = CanvasWindow::Create(p->m_driver, hInstance, nShowCmd);
+	if (!p->m_canvasWindow) {
+		return NULL;
 	}
 
-	return true;
+	return p;
 }
 
 int Application::MessageLoop()

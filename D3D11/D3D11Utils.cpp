@@ -35,19 +35,6 @@ static ID3DBlob* CompileShader(const char* src, const char* entryPoint, const ch
 	return pCode;
 }
 
-VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice,
-	const char* src, const char* entryPoint, const char* target,
-	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,
-	ID3D11InputLayout** ppInputLayout)
-{
-	VertexShaderPtr result(new VertexShader);
-	if (!result->CreateInternal(pDevice, src, entryPoint, target,
-		pInputElementDescs, numElements, ppInputLayout)) {
-		return NULL;
-	}
-	return result;
-}
-
 VertexShader::VertexShader()
 	: m_pVShader(NULL)
 { }
@@ -57,23 +44,25 @@ VertexShader::~VertexShader()
 	SafeRelease(m_pVShader);
 }
 
-bool VertexShader::CreateInternal(ID3D11Device* pDevice,
+VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target,
 	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,
 	ID3D11InputLayout** ppInputLayout)
 {
+	VertexShaderPtr p(new VertexShader);
+
 	HRESULT hr;
 
 	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
 	if (!pCode) {
-		return false;
+		return NULL;
 	}
 
 	hr = pDevice->CreateVertexShader(pCode->GetBufferPointer(),
-		pCode->GetBufferSize(), NULL, &m_pVShader);
+		pCode->GetBufferSize(), NULL, &p->m_pVShader);
 	if (FAILED(hr)) {
 		SafeRelease(pCode);
-		return false;
+		return NULL;
 	}
 
 	if (ppInputLayout)
@@ -82,22 +71,13 @@ bool VertexShader::CreateInternal(ID3D11Device* pDevice,
 			pCode->GetBufferPointer(), pCode->GetBufferSize(), ppInputLayout);
 		if (FAILED(hr)) {
 			SafeRelease(pCode);
-			return false;
+			return NULL;
 		}
 	}
 
 	SafeRelease(pCode);
 
-	return true;
-}
-
-PixelShaderPtr PixelShader::Create(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target)
-{
-	PixelShaderPtr result(new PixelShader);
-	if (!result->CreateInternal(pDevice, src, entryPoint, target)) {
-		return NULL;
-	}
-	return result;
+	return p;
 }
 
 PixelShader::PixelShader()
@@ -109,25 +89,27 @@ PixelShader::~PixelShader()
 	SafeRelease(m_pPShader);
 }
 
-bool PixelShader::CreateInternal(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target)
+PixelShaderPtr PixelShader::Create(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target)
 {
+	PixelShaderPtr p(new PixelShader);
+
 	HRESULT hr;
 
 	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
 	if (!pCode) {
-		return false;
+		return NULL;
 	}
 
 	hr = pDevice->CreatePixelShader(pCode->GetBufferPointer(),
-		pCode->GetBufferSize(), NULL, &m_pPShader);
+		pCode->GetBufferSize(), NULL, &p->m_pPShader);
 	if (FAILED(hr)) {
 		SafeRelease(pCode);
-		return false;
+		return NULL;
 	}
 
 	SafeRelease(pCode);
 
-	return true;
+	return p;
 }
 
 }

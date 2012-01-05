@@ -27,7 +27,6 @@ public:
 private:
 
 	CircularGradientShader();
-	bool CreateInternal(ID3D11Device* pDevice);
 
 	PixelShaderPtr m_shader;
 

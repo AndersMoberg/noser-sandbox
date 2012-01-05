@@ -32,7 +32,6 @@ public:
 private:
 
 	CanvasImage();
-	bool CreateInternal(DriverPtr driver, const RectF& canvasRc, int width, int height);
 
 	int m_width;
 	int m_height;

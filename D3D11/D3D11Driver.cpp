@@ -71,15 +71,6 @@ static const char TEXTURED_PIXEL_SHADER[] =
 "}\n"
 ;
 
-D3D11DriverPtr D3D11Driver::Create()
-{
-	D3D11DriverPtr result(new D3D11Driver);
-	if (!result->CreateInternal()) {
-		return NULL;
-	}
-	return result;
-}
-
 D3D11Driver::D3D11Driver()
 	: m_pD3D11Device(NULL),
 	m_pD3D11Context(NULL),
@@ -105,8 +96,10 @@ D3D11Driver::~D3D11Driver()
 	SafeRelease(m_pD3D11Device);
 }
 
-bool D3D11Driver::CreateInternal()
+D3D11DriverPtr D3D11Driver::Create()
 {
+	D3D11DriverPtr p(new D3D11Driver);
+
 	HRESULT hr;
 
 	// Create device
@@ -122,34 +115,34 @@ bool D3D11Driver::CreateInternal()
 		createFlags,
 		NULL, 0,
 		D3D11_SDK_VERSION,
-		&m_pD3D11Device,
+		&p->m_pD3D11Device,
 		NULL,
-		&m_pD3D11Context);
+		&p->m_pD3D11Context);
 	if (FAILED(hr)) {
-		return false;
+		return NULL;
 	}
 
 	// Extract DXGI factory from device
 
 	IDXGIDevice* dxgiDevice = NULL;
-	hr = m_pD3D11Device->QueryInterface(IID_PPV_ARGS(&dxgiDevice));
+	hr = p->m_pD3D11Device->QueryInterface(IID_PPV_ARGS(&dxgiDevice));
 	if (FAILED(hr)) {
-		return false;
+		return NULL;
 	}
 
 	IDXGIAdapter* dxgiAdapter = NULL;
 	hr = dxgiDevice->GetAdapter(&dxgiAdapter);
 	if (FAILED(hr)) {
 		SafeRelease(dxgiDevice);
-		return false;
+		return NULL;
 	}
 
 	SafeRelease(dxgiDevice);
 
-	hr = dxgiAdapter->GetParent(IID_PPV_ARGS(&m_pDXGIFactory));
+	hr = dxgiAdapter->GetParent(IID_PPV_ARGS(&p->m_pDXGIFactory));
 	if (FAILED(hr)) {
 		SafeRelease(dxgiAdapter);
-		return false;
+		return NULL;
 	}
 
 	SafeRelease(dxgiAdapter);
@@ -160,26 +153,26 @@ bool D3D11Driver::CreateInternal()
 	bld.RenderTarget[0].BlendEnable = TRUE;
 	bld.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	bld.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	hr = m_pD3D11Device->CreateBlendState(&bld, &m_pAlphaBlend);
+	hr = p->m_pD3D11Device->CreateBlendState(&bld, &p->m_pAlphaBlend);
 	if (FAILED(hr)) {
-		return false;
+		return NULL;
 	}
 
 	// Create accumulative alpha blend state
 
 	bld.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	bld.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
-	hr = m_pD3D11Device->CreateBlendState(&bld, &m_pAlphaAccumBlend);
+	hr = p->m_pD3D11Device->CreateBlendState(&bld, &p->m_pAlphaAccumBlend);
 	if (FAILED(hr)) {
-		return false;
+		return NULL;
 	}
 
 	// Create bilinear sampler
 
 	D3D11_SAMPLER_DESC sd = CD3D11_SAMPLER_DESC(CD3D11_DEFAULT());
-	hr = m_pD3D11Device->CreateSamplerState(&sd, &m_pBilinearSampler);
+	hr = p->m_pD3D11Device->CreateSamplerState(&sd, &p->m_pBilinearSampler);
 	if (FAILED(hr)) {
-		return false;
+		return NULL;
 	}
 
 	// Create simple 2D quad vertex buffer
@@ -187,47 +180,47 @@ bool D3D11Driver::CreateInternal()
 	D3D11_BUFFER_DESC bd = CD3D11_BUFFER_DESC(sizeof(SIMPLE2D_QUAD),
 		D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_IMMUTABLE);
 	D3D11_SUBRESOURCE_DATA srd = { SIMPLE2D_QUAD, 0, 0 };
-	hr = m_pD3D11Device->CreateBuffer(&bd, &srd, &m_pSimple2DQuad);
+	hr = p->m_pD3D11Device->CreateBuffer(&bd, &srd, &p->m_pSimple2DQuad);
 	if (FAILED(hr)) {
-		return false;
+		return NULL;
 	}
 
 	// Create simple 2D quad vertex shader
 
-	m_simple2DQuadVShader = VertexShader::Create(m_pD3D11Device,
+	p->m_simple2DQuadVShader = VertexShader::Create(p->m_pD3D11Device,
 		SIMPLE2D_QUAD_VERTEX_SHADER, "main", "vs_4_0",
 		SIMPLE2D_INPUT_LAYOUT,
 		sizeof(SIMPLE2D_INPUT_LAYOUT)/sizeof(D3D11_INPUT_ELEMENT_DESC),
-		&m_pSimple2DInputLayout);
-	if (!m_simple2DQuadVShader) {
-		return false;
+		&p->m_pSimple2DInputLayout);
+	if (!p->m_simple2DQuadVShader) {
+		return NULL;
 	}
 
 	// Create simple 2d quad vertex shader parameters buffer
 
 	bd = CD3D11_BUFFER_DESC(sizeof(Simple2DQuadVShaderParams),
 		D3D11_BIND_CONSTANT_BUFFER);
-	hr = m_pD3D11Device->CreateBuffer(&bd, NULL, &m_pSimple2DQuadVShaderParams);
+	hr = p->m_pD3D11Device->CreateBuffer(&bd, NULL, &p->m_pSimple2DQuadVShaderParams);
 	if (FAILED(hr)) {
-		return false;
+		return NULL;
 	}
 
 	// Create textured pixel shader
 
-	m_texturedPShader = PixelShader::Create(m_pD3D11Device,
+	p->m_texturedPShader = PixelShader::Create(p->m_pD3D11Device,
 		TEXTURED_PIXEL_SHADER, "main", "ps_4_0");
-	if (!m_texturedPShader) {
-		return false;
+	if (!p->m_texturedPShader) {
+		return NULL;
 	}
 
 	// Create circular gradient shader
 
-	m_circularGradientShader = CircularGradientShader::Create(m_pD3D11Device);
-	if (!m_circularGradientShader) {
-		return false;
+	p->m_circularGradientShader = CircularGradientShader::Create(p->m_pD3D11Device);
+	if (!p->m_circularGradientShader) {
+		return NULL;
 	}
 
-	return true;
+	return p;
 }
 
 CanvasWindowGraphicsPtr D3D11Driver::CreateWindowGraphics(HWND hWnd)

@@ -38,7 +38,6 @@ public:
 private:
 
 	D3D11CanvasWindowGraphics();
-	bool CreateInternal(HWND hWnd, D3D11DriverPtr driver);
 
 	bool CreateSwapChainResources();
 	void DestroySwapChainResources();
