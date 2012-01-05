@@ -79,14 +79,12 @@ D3D11Driver::D3D11Driver()
 	m_pAlphaAccumBlend(NULL),
 	m_pBilinearSampler(NULL),
 	m_pSimple2DQuad(NULL),
-	m_pSimple2DQuadVShaderParams(NULL),
 	m_pSimple2DInputLayout(NULL)
 { }
 
 D3D11Driver::~D3D11Driver()
 {
 	SafeRelease(m_pSimple2DInputLayout);
-	SafeRelease(m_pSimple2DQuadVShaderParams);
 	SafeRelease(m_pSimple2DQuad);
 	SafeRelease(m_pBilinearSampler);
 	SafeRelease(m_pAlphaAccumBlend);
@@ -198,10 +196,9 @@ D3D11DriverPtr D3D11Driver::Create()
 
 	// Create simple 2d quad vertex shader parameters buffer
 
-	bd = CD3D11_BUFFER_DESC(sizeof(Simple2DQuadVShaderParams),
-		D3D11_BIND_CONSTANT_BUFFER);
-	hr = p->m_pD3D11Device->CreateBuffer(&bd, NULL, &p->m_pSimple2DQuadVShaderParams);
-	if (FAILED(hr)) {
+	p->m_simple2DQuadParams = ConstantBuffer::Create(p->m_pD3D11Device,
+		sizeof(Simple2DQuadVShaderParams));
+	if (!p->m_simple2DQuadParams) {
 		return NULL;
 	}
 
@@ -237,7 +234,7 @@ void D3D11Driver::RenderQuad(const RectF& rc)
 {
 	// Load shader parameters
 	Simple2DQuadVShaderParams params = { rc.UpperLeft(), rc.LowerRight() };
-	m_pD3D11Context->UpdateSubresource(m_pSimple2DQuadVShaderParams, 0, NULL, &params, 0, 0);
+	m_pD3D11Context->UpdateSubresource(m_simple2DQuadParams->Get(), 0, NULL, &params, 0, 0);
 
 	// Set up input assembler
 	m_pD3D11Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
@@ -246,9 +243,11 @@ void D3D11Driver::RenderQuad(const RectF& rc)
 	UINT offset = 0;
 	m_pD3D11Context->IASetVertexBuffers(0, 1, &m_pSimple2DQuad, &stride, &offset);
 
+	ID3D11Buffer* buf = m_simple2DQuadParams->Get();
+
 	// Set up vertex shader
 	m_pD3D11Context->VSSetShader(m_simple2DQuadVShader->Get(), NULL, 0);
-	m_pD3D11Context->VSSetConstantBuffers(0, 1, &m_pSimple2DQuadVShaderParams);
+	m_pD3D11Context->VSSetConstantBuffers(0, 1, &buf);
 
 	// Draw!
 	m_pD3D11Context->Draw(4, 0);

@@ -63,8 +63,8 @@ private:
 	ID3D11Buffer* m_pSimple2DQuad;
 
 	VertexShaderPtr m_simple2DQuadVShader;
-	ID3D11Buffer* m_pSimple2DQuadVShaderParams;
 	ID3D11InputLayout* m_pSimple2DInputLayout;
+	ConstantBufferPtr m_simple2DQuadParams;
 
 	PixelShaderPtr m_texturedPShader;
 	CircularGradientShaderPtr m_circularGradientShader;

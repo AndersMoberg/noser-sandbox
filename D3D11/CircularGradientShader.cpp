@@ -49,10 +49,8 @@ CircularGradientShaderPtr CircularGradientShader::Create(ID3D11Device* pDevice)
 		return NULL;
 	}
 
-	D3D11_BUFFER_DESC bd = CD3D11_BUFFER_DESC((sizeof(Params)+15)&~15,
-		D3D11_BIND_CONSTANT_BUFFER);
-	HRESULT hr = pDevice->CreateBuffer(&bd, NULL, &p->m_pParams);
-	if (FAILED(hr)) {
+	p->m_params = ConstantBuffer::Create(pDevice, sizeof(Params));
+	if (!p->m_params) {
 		return NULL;
 	}
 
@@ -63,10 +61,12 @@ void CircularGradientShader::Setup(ID3D11DeviceContext* pCtx, float weight)
 {
 	Params params;
 	params.weight = weight;
-	pCtx->UpdateSubresource(m_pParams, 0, NULL, &weight, sizeof(Params), 0);
+	pCtx->UpdateSubresource(m_params->Get(), 0, NULL, &weight, sizeof(Params), 0);
+
+	ID3D11Buffer* buf = m_params->Get();
 
 	pCtx->PSSetShader(m_shader->Get(), NULL, 0);
-	pCtx->PSSetConstantBuffers(0, 1, &m_pParams);
+	pCtx->PSSetConstantBuffers(0, 1, &buf);
 }
 
 }

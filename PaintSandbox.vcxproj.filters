@@ -45,6 +45,9 @@
     <ClInclude Include="DrawTool.hpp">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="D3D11\ConstantBuffer.hpp">
+      <Filter>Source\D3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -79,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="DrawTool.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11\ConstantBuffer.cpp">
+      <Filter>Source\D3D11</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

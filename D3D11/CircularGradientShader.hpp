@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "D3D11Utils.hpp"
+#include "ConstantBuffer.hpp"
 
 namespace D3D11
 {
@@ -29,7 +30,7 @@ private:
 	CircularGradientShader();
 
 	PixelShaderPtr m_shader;
-	ID3D11Buffer* m_pParams;
+	ConstantBufferPtr m_params;
 
 };
 
