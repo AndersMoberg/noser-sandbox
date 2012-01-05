@@ -162,7 +162,8 @@ LRESULT CanvasWindow::OnWMMouseMove(WPARAM wParam, LPARAM lParam)
 
 		RECT clientRc;
 		GetClientRect(m_hWnd, &clientRc);
-		RectF clientRect(clientRc.left, clientRc.top, clientRc.right, clientRc.bottom);
+		RectF clientRect((float)clientRc.left, (float)clientRc.top,
+			(float)clientRc.right, (float)clientRc.bottom);
 
 		Matrix3x2f clientToCanvas = Matrix3x2f::RectLerp(
 			clientRect, m_image->GetCanvasRect());
@@ -185,7 +186,7 @@ LRESULT CanvasWindow::OnWMMouseMove(WPARAM wParam, LPARAM lParam)
 		pContext->OMSetBlendState(driver->GetAlphaAccumBlend(), NULL, 0xFFFFFFFF);
 
 		// Set up pixel shader
-		pContext->PSSetShader(driver->GetCircularGradientShader()->Get(), NULL, 0);
+		driver->GetCircularGradientShader()->Setup(pContext, 0.5f);
 
 		driver->RenderQuadToCanvas(m_image, RectF(canvasPos.x-1.0f, canvasPos.y+1.0f,
 			canvasPos.x+1.0f, canvasPos.y-1.0f));

@@ -22,13 +22,14 @@ public:
 
 	static CircularGradientShaderPtr Create(ID3D11Device* pDevice);
 
-	ID3D11PixelShader* Get() { return m_shader->Get(); }
+	void Setup(ID3D11DeviceContext* pCtx, float weight);
 
 private:
 
 	CircularGradientShader();
 
 	PixelShaderPtr m_shader;
+	ID3D11Buffer* m_pParams;
 
 };
 
