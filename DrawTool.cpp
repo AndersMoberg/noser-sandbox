@@ -50,12 +50,12 @@ void DrawTool::Flow(const RectF& rc0, const RectF& rc1)
 	float numPixels = toPixel.Length();
 
 	int numSteps = (int)ceil(numPixels);
-	if (numSteps < 2) {
-		numSteps = 2;
+	if (numSteps < 1) {
+		numSteps = 1;
 	}
 	for (int i = 0; i < numSteps; ++i)
 	{
-		RectF rc = LerpRect(0.0f, (float)(numSteps-1), rc0, rc1, (float)i);
+		RectF rc = LerpRect(0.0f, (float)numSteps, rc0, rc1, i + 0.5f);
 		m_renderer->RenderCircularGradient(rc, totalWeight / numSteps);
 	}
 }
