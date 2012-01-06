@@ -20,3 +20,8 @@ DrawToolPtr DrawTool::Create(DriverPtr driver, CanvasImagePtr image)
 
 	return p;
 }
+
+void DrawTool::ReceiveCursor(const Vector2f& pos)
+{
+	m_renderer->RenderCircularGradient(RectF(pos.x-1.0f, pos.y+1.0f, pos.x+1.0f, pos.y-1.0f));
+}

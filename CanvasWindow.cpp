@@ -169,27 +169,7 @@ LRESULT CanvasWindow::OnWMMouseMove(WPARAM wParam, LPARAM lParam)
 			clientRect, m_image->GetCanvasRect());
 
 		Vector2f canvasPos = clientToCanvas.TransformPoint(pos);
-	
-		// Really fast, just try rendering something to the image.
-
-		D3D11::D3D11DriverPtr driver = std::static_pointer_cast<D3D11::D3D11Driver, Driver>(
-			m_driver);
-		ID3D11DeviceContext* pContext = driver->GetD3D11Context();
-		D3D11::D3D11ImagePtr drvImage = std::static_pointer_cast<D3D11::D3D11Image, DriverImage>(
-			m_image->GetDriverImage());
-
-		// Set up rasterizer
-		D3D11_VIEWPORT vp = CD3D11_VIEWPORT(0.0f, 0.0f, (FLOAT)m_image->GetWidth(), (FLOAT)m_image->GetHeight());
-		pContext->RSSetViewports(1, &vp);
-
-		// Set up output merger
-		pContext->OMSetBlendState(driver->GetAlphaAccumBlend(), NULL, 0xFFFFFFFF);
-
-		// Set up pixel shader
-		driver->GetCircularGradientShader()->Setup(pContext, 0.5f);
-
-		driver->RenderQuadToCanvas(m_image, RectF(canvasPos.x-1.0f, canvasPos.y+1.0f,
-			canvasPos.x+1.0f, canvasPos.y-1.0f));
+		m_drawTool->ReceiveCursor(canvasPos);
 
 		InvalidateRect(m_hWnd, NULL, FALSE);
 	}

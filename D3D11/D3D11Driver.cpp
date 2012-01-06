@@ -233,7 +233,7 @@ DriverImagePtr D3D11Driver::CreateImage(int width, int height)
 
 DrawToolRendererPtr D3D11Driver::CreateDrawToolRenderer(CanvasImagePtr image)
 {
-	return D3D11DrawToolRenderer::Create(image);
+	return D3D11DrawToolRenderer::Create(shared_from_this(), image);
 }
 
 void D3D11Driver::RenderQuad(const RectF& rc)
