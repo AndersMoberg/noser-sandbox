@@ -22,7 +22,7 @@ class DrawToolRenderer
 {
 public:
 	virtual ~DrawToolRenderer() { }
-	virtual void RenderCircularGradient(const RectF& rc) = 0;
+	virtual void RenderCircularGradient(const RectF& rc, float weight) = 0;
 };
 
 class DrawTool

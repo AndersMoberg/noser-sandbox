@@ -25,7 +25,7 @@ public:
 	static D3D11DrawToolRendererPtr Create(D3D11DriverPtr driver, CanvasImagePtr image);
 
 	// DrawToolRenderer implementation
-	virtual void RenderCircularGradient(const RectF& rc);
+	virtual void RenderCircularGradient(const RectF& rc, float weight);
 
 private:
 

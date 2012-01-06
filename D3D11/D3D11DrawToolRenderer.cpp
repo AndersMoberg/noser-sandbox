@@ -25,7 +25,7 @@ D3D11DrawToolRendererPtr D3D11DrawToolRenderer::Create(D3D11DriverPtr driver, Ca
 	return p;
 }
 
-void D3D11DrawToolRenderer::RenderCircularGradient(const RectF& rc)
+void D3D11DrawToolRenderer::RenderCircularGradient(const RectF& rc, float weight)
 {
 	ID3D11DeviceContext* pContext = m_driver->GetD3D11Context();
 	D3D11::D3D11ImagePtr drvImage = std::static_pointer_cast<D3D11::D3D11Image, DriverImage>(
@@ -39,7 +39,7 @@ void D3D11DrawToolRenderer::RenderCircularGradient(const RectF& rc)
 	pContext->OMSetBlendState(m_driver->GetAlphaAccumBlend(), NULL, 0xFFFFFFFF);
 
 	// Set up pixel shader
-	m_driver->GetCircularGradientShader()->Setup(pContext, 0.5f);
+	m_driver->GetCircularGradientShader()->Setup(pContext, weight);
 
 	m_driver->RenderQuadToCanvas(m_image, rc);
 }

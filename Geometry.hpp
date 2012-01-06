@@ -12,6 +12,13 @@ struct Vector2f
 
 	Vector2f() { }
 	Vector2f(float _x, float _y) : x(_x), y(_y) { }
+
+	Vector2f operator-(const Vector2f& rhs) {
+		return Vector2f(x - rhs.x, y - rhs.y);
+	}
+
+	float LengthSquared() const { return x*x + y*y; }
+	float Length() const { return sqrt(LengthSquared()); }
 };
 
 struct RectF
@@ -28,6 +35,7 @@ struct RectF
 
 	Vector2f UpperLeft() const { return Vector2f(left, top); }
 	Vector2f LowerRight() const { return Vector2f(right, bottom); }
+	Vector2f Center() const { return Vector2f((left+right)/2.0f, (bottom+top)/2.0f); }
 };
 
 struct Matrix3x2f

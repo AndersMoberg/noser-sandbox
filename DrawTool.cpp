@@ -18,7 +18,7 @@ DrawToolPtr DrawTool::Create(DriverPtr driver, CanvasImagePtr image)
 	p->m_image = image;
 	p->m_renderer = p->m_driver->CreateDrawToolRenderer(image);
 	p->m_prevRect = RectF(0.0f, 0.0f, 0.0f, 0.0f);
-	p->m_flowRate = 1.0f; // 1 unit of ink per canvas length
+	p->m_flowRate = 16.0f; // 1 unit of ink per canvas length
 
 	return p;
 }
@@ -37,10 +37,16 @@ void DrawTool::ReceiveCursor(bool down, const Vector2f& pos)
 
 void DrawTool::Flow(const RectF& rc0, const RectF& rc1)
 {
-	static const int NUM_STEPS = 1024;
-	for (int i = 0; i < NUM_STEPS; ++i)
+	Vector2f center0 = rc0.Center();
+	Vector2f center1 = rc1.Center();
+	Vector2f to = center1 - center0;
+
+	float totalWeight = to.Length() * m_flowRate;
+
+	int numSteps = 1024;
+	for (int i = 0; i < numSteps; ++i)
 	{
 		RectF rc = LerpRect(0.0f, (float)(i-1), rc0, rc1, (float)i);
-		m_renderer->RenderCircularGradient(rc);
+		m_renderer->RenderCircularGradient(rc, totalWeight / numSteps);
 	}
 }
