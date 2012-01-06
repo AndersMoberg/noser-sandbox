@@ -15,7 +15,7 @@ struct Vector2f
 	Vector2f() { }
 	Vector2f(float _x, float _y) : x(_x), y(_y) { }
 
-	Vector2f operator-(const Vector2f& rhs) {
+	Vector2f operator-(const Vector2f& rhs) const {
 		return Vector2f(x - rhs.x, y - rhs.y);
 	}
 
