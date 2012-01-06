@@ -15,6 +15,8 @@ class Driver;
 typedef std::shared_ptr<Driver> DriverPtr;
 class DriverImage;
 typedef std::shared_ptr<DriverImage> DriverImagePtr;
+class DrawToolRenderer;
+typedef std::shared_ptr<DrawToolRenderer> DrawToolRendererPtr;
 
 class CanvasImage
 {

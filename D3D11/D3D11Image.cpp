@@ -4,6 +4,7 @@
 
 #include "D3D11Image.hpp"
 
+#include "D3D11DrawToolRenderer.hpp"
 #include "D3D11Utils.hpp"
 
 namespace D3D11

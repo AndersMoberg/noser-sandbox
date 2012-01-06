@@ -31,8 +31,10 @@ public:
 	~D3D11Driver();
 
 	// Driver implementation
-	CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd);
-	DriverImagePtr CreateImage(int width, int height);
+	virtual CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd);
+	virtual DriverImagePtr CreateImage(int width, int height);
+	virtual DrawToolRendererPtr CreateDrawToolRenderer(CanvasImagePtr image);
+
 
 	void RenderQuad(const RectF& rc);
 	void RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc);

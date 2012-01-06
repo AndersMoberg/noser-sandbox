@@ -7,23 +7,40 @@
 
 #include <memory>
 
-#include "CanvasImage.hpp"
+#include "Geometry.hpp"
 
 class DrawTool;
 typedef std::shared_ptr<DrawTool> DrawToolPtr;
+class DrawToolRenderer;
+typedef std::shared_ptr<DrawToolRenderer> DrawToolRendererPtr;
+class Driver;
+typedef std::shared_ptr<Driver> DriverPtr;
+class CanvasImage;
+typedef std::shared_ptr<CanvasImage> CanvasImagePtr;
+
+class DrawToolRenderer
+{
+public:
+	virtual ~DrawToolRenderer() { }
+	virtual void RenderCircularGradient(const RectF& rc) = 0;
+};
 
 class DrawTool
 {
 
 public:
 
-	static DrawToolPtr Create(CanvasImagePtr image);
+	static DrawToolPtr Create(DriverPtr driver, CanvasImagePtr image);
 
 	void ReceiveCursor(const Vector2f& pos);
 
 private:
 
+	DrawTool();
+
+	DriverPtr m_driver;
 	CanvasImagePtr m_image;
+	DrawToolRendererPtr m_renderer;
 
 };
 

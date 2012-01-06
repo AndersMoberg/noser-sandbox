@@ -35,7 +35,7 @@ CanvasWindowPtr CanvasWindow::Create(DriverPtr driver, HINSTANCE hInstance, int 
 		return NULL;
 	}
 
-	p->m_drawTool = DrawTool::Create(p->m_image);
+	p->m_drawTool = DrawTool::Create(p->m_driver, p->m_image);
 	if (!p->m_drawTool) {
 		return NULL;
 	}

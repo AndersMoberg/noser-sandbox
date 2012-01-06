@@ -4,11 +4,19 @@
 
 #include "DrawTool.hpp"
 
-DrawToolPtr DrawTool::Create(CanvasImagePtr image)
+#include "CanvasImage.hpp"
+#include "Driver.hpp"
+
+DrawTool::DrawTool()
+{ }
+
+DrawToolPtr DrawTool::Create(DriverPtr driver, CanvasImagePtr image)
 {
 	DrawToolPtr p(new DrawTool);
 
+	p->m_driver = driver;
 	p->m_image = image;
+	p->m_renderer = p->m_driver->CreateDrawToolRenderer(image);
 
 	return p;
 }

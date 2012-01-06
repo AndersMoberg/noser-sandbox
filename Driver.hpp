@@ -24,6 +24,8 @@ public:
 	virtual ~Driver() { }
 	virtual CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd) = 0;
 	virtual DriverImagePtr CreateImage(int width, int height) = 0;
+	virtual DrawToolRendererPtr CreateDrawToolRenderer(CanvasImagePtr image) = 0;
+
 };
 
 class DriverImage

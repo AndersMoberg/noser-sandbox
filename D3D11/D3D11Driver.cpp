@@ -4,6 +4,7 @@
 
 #include "D3D11Driver.hpp"
 
+#include "D3D11DrawToolRenderer.hpp"
 #include "D3D11Image.hpp"
 #include "D3D11Utils.hpp"
 #include "Geometry.hpp"
@@ -228,6 +229,11 @@ CanvasWindowGraphicsPtr D3D11Driver::CreateWindowGraphics(HWND hWnd)
 DriverImagePtr D3D11Driver::CreateImage(int width, int height)
 {
 	return D3D11Image::Create(m_pD3D11Device, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height);
+}
+
+DrawToolRendererPtr D3D11Driver::CreateDrawToolRenderer(CanvasImagePtr image)
+{
+	return D3D11DrawToolRenderer::Create(image);
 }
 
 void D3D11Driver::RenderQuad(const RectF& rc)
