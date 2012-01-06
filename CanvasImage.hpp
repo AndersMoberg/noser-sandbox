@@ -30,6 +30,7 @@ public:
 	DriverImagePtr GetDriverImage() { return m_driverImage; }
 	const RectF& GetCanvasRect() const { return m_canvasRc; }
 	const Matrix3x2f& GetCanvasToClip() const { return m_canvasToClip; }
+	const Matrix3x2f& GetCanvasToPixel() const { return m_canvasToPixel; }
 
 private:
 
@@ -41,6 +42,7 @@ private:
 	RectF m_canvasRc;
 
 	Matrix3x2f m_canvasToClip;
+	Matrix3x2f m_canvasToPixel;
 
 };
 

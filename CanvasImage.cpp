@@ -26,6 +26,8 @@ CanvasImagePtr CanvasImage::Create(DriverPtr driver, const RectF& canvasRc,
 
 	p->m_canvasToClip = Matrix3x2f::RectLerp(p->m_canvasRc,
 		RectF(-1.0f, 1.0f, 1.0f, -1.0f));
+	p->m_canvasToPixel = Matrix3x2f::RectLerp(p->m_canvasRc,
+		RectF(0.0f, 0.0f, (float)width, (float)height));
 
 	return p;
 }
