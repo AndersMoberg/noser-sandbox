@@ -32,15 +32,20 @@ public:
 
 	static DrawToolPtr Create(DriverPtr driver, CanvasImagePtr image);
 
-	void ReceiveCursor(const Vector2f& pos);
+	void ReceiveCursor(bool down, const Vector2f& pos);
 
 private:
 
 	DrawTool();
 
+	void Flow(const RectF& rc0, const RectF& rc1);
+
 	DriverPtr m_driver;
 	CanvasImagePtr m_image;
 	DrawToolRendererPtr m_renderer;
+
+	RectF m_prevRect;
+	float m_flowRate;
 
 };
 

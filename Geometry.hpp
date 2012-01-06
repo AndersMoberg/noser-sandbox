@@ -50,4 +50,16 @@ struct Matrix3x2f
 	static Matrix3x2f RectLerp(const RectF& from, const RectF& to);
 };
 
+inline float Lerp(float x0, float x1, float y0, float y1, float x) {
+	return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+}
+
+inline RectF LerpRect(float x0, float x1, const RectF& y0, const RectF& y1, float x)
+{
+	return RectF(Lerp(x0, x1, y0.left, y1.left, x),
+		Lerp(x0, x1, y0.top, y1.top, x),
+		Lerp(x0, x1, y0.right, y1.right, x),
+		Lerp(x0, x1, y0.bottom, y1.bottom, x));
+}
+
 #endif

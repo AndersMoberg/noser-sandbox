@@ -153,25 +153,29 @@ LRESULT CanvasWindow::OnWMPaint()
 
 LRESULT CanvasWindow::OnWMMouseMove(WPARAM wParam, LPARAM lParam)
 {
+	// Add 0.5 because the cursor is in the center of the pixel.
+	float x = GET_X_LPARAM(lParam) + 0.5f;
+	float y = GET_Y_LPARAM(lParam) + 0.5f;
+	Vector2f pos(x, y);
+
+	RECT clientRc;
+	GetClientRect(m_hWnd, &clientRc);
+	RectF clientRect((float)clientRc.left, (float)clientRc.top,
+		(float)clientRc.right, (float)clientRc.bottom);
+
+	Matrix3x2f clientToCanvas = Matrix3x2f::RectLerp(
+		clientRect, m_image->GetCanvasRect());
+
+	Vector2f canvasPos = clientToCanvas.TransformPoint(pos);
+
 	if (wParam & MK_LBUTTON)
 	{
-		// Add 0.5 because the cursor is in the center of the pixel.
-		float x = GET_X_LPARAM(lParam) + 0.5f;
-		float y = GET_Y_LPARAM(lParam) + 0.5f;
-		Vector2f pos(x, y);
-
-		RECT clientRc;
-		GetClientRect(m_hWnd, &clientRc);
-		RectF clientRect((float)clientRc.left, (float)clientRc.top,
-			(float)clientRc.right, (float)clientRc.bottom);
-
-		Matrix3x2f clientToCanvas = Matrix3x2f::RectLerp(
-			clientRect, m_image->GetCanvasRect());
-
-		Vector2f canvasPos = clientToCanvas.TransformPoint(pos);
-		m_drawTool->ReceiveCursor(canvasPos);
-
+		m_drawTool->ReceiveCursor(true, canvasPos);
 		InvalidateRect(m_hWnd, NULL, FALSE);
+	}
+	else
+	{
+		m_drawTool->ReceiveCursor(false, canvasPos);
 	}
 
 	return 0;
