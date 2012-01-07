@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "InputLayout.hpp"
+#include "PixelShader.hpp"
 
 namespace D3D11
 {
@@ -24,10 +25,11 @@ inline void SafeRelease(Interface*& pi)
 	}
 }
 
+PixelShaderPtr CreatePixelShaderFromCode(ID3D11Device* pDevice,
+	const char* src, const char* entryPoint, const char* target);
+
 class VertexShader;
 typedef std::shared_ptr<VertexShader> VertexShaderPtr;
-class PixelShader;
-typedef std::shared_ptr<PixelShader> PixelShaderPtr;
 
 class VertexShader
 {
@@ -47,25 +49,6 @@ private:
 	VertexShader();
 
 	ID3D11VertexShader* m_pVShader;
-
-};
-
-class PixelShader
-{
-
-public:
-
-	static PixelShaderPtr Create(ID3D11Device* pDevice,
-		const char* src, const char* entryPoint, const char* target);
-	~PixelShader();
-
-	ID3D11PixelShader* Get() { return m_pPShader; }
-
-private:
-
-	PixelShader();
-
-	ID3D11PixelShader* m_pPShader;
 
 };
 

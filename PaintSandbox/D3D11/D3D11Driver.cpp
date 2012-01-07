@@ -195,7 +195,7 @@ D3D11DriverPtr D3D11Driver::Create()
 
 	// Create textured pixel shader
 
-	p->m_texturedPShader = PixelShader::Create(p->m_pD3D11Device,
+	p->m_texturedPShader = CreatePixelShaderFromCode(p->m_pD3D11Device,
 		TEXTURED_PIXEL_SHADER, "main", "ps_4_0");
 	if (!p->m_texturedPShader) {
 		return NULL;

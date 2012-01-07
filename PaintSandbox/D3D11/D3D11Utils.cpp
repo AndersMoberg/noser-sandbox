@@ -35,6 +35,25 @@ static ID3DBlob* CompileShader(const char* src, const char* entryPoint, const ch
 	return pCode;
 }
 
+PixelShaderPtr CreatePixelShaderFromCode(ID3D11Device* pDevice,
+	const char* src, const char* entryPoint, const char* target)
+{
+	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
+	if (!pCode) {
+		return NULL;
+	}
+
+	PixelShaderPtr shader = PixelShader::Create(pDevice,
+		pCode->GetBufferPointer(), pCode->GetBufferSize());
+	if (!shader) {
+		SafeRelease(pCode);
+		return NULL;
+	}
+
+	SafeRelease(pCode);
+	return shader;
+}
+
 VertexShader::VertexShader()
 	: m_pVShader(NULL)
 { }
@@ -73,38 +92,6 @@ VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice,
 			SafeRelease(pCode);
 			return NULL;
 		}
-	}
-
-	SafeRelease(pCode);
-
-	return p;
-}
-
-PixelShader::PixelShader()
-	: m_pPShader(NULL)
-{ }
-
-PixelShader::~PixelShader()
-{
-	SafeRelease(m_pPShader);
-}
-
-PixelShaderPtr PixelShader::Create(ID3D11Device* pDevice, const char* src, const char* entryPoint, const char* target)
-{
-	PixelShaderPtr p(new PixelShader);
-
-	HRESULT hr;
-
-	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
-	if (!pCode) {
-		return NULL;
-	}
-
-	hr = pDevice->CreatePixelShader(pCode->GetBufferPointer(),
-		pCode->GetBufferSize(), NULL, &p->m_pPShader);
-	if (FAILED(hr)) {
-		SafeRelease(pCode);
-		return NULL;
 	}
 
 	SafeRelease(pCode);
