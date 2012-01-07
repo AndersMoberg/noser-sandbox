@@ -176,7 +176,7 @@ D3D11DriverPtr D3D11Driver::Create()
 
 	// Create simple 2D quad vertex shader
 
-	p->m_simple2DQuadVShader = VertexShader::Create(p->m_pD3D11Device,
+	p->m_simple2DQuadVShader = CreateVertexShaderFromCode(p->m_pD3D11Device,
 		SIMPLE2D_QUAD_VERTEX_SHADER, "main", "vs_4_0",
 		SIMPLE2D_INPUT_LAYOUT,
 		sizeof(SIMPLE2D_INPUT_LAYOUT)/sizeof(D3D11_INPUT_ELEMENT_DESC),

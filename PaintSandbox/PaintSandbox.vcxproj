@@ -103,6 +103,7 @@
     <ClCompile Include="D3D11\InputLayout.cpp" />
     <ClCompile Include="D3D11\PixelShader.cpp" />
     <ClCompile Include="D3D11\SamplerState.cpp" />
+    <ClCompile Include="D3D11\VertexShader.cpp" />
     <ClCompile Include="DrawTool.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -124,6 +125,7 @@
     <ClInclude Include="D3D11\InputLayout.hpp" />
     <ClInclude Include="D3D11\PixelShader.hpp" />
     <ClInclude Include="D3D11\SamplerState.hpp" />
+    <ClInclude Include="D3D11\VertexShader.hpp" />
     <ClInclude Include="DrawTool.hpp" />
     <ClInclude Include="Driver.hpp" />
     <ClInclude Include="Geometry.hpp" />

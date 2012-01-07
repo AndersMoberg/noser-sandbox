@@ -35,6 +35,37 @@ static ID3DBlob* CompileShader(const char* src, const char* entryPoint, const ch
 	return pCode;
 }
 
+VertexShaderPtr CreateVertexShaderFromCode(ID3D11Device* pDevice,
+	const char* src, const char* entryPoint, const char* target,
+	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,
+	InputLayoutPtr* ppInputLayout)
+{
+	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
+	if (!pCode) {
+		return NULL;
+	}
+
+	VertexShaderPtr shader = VertexShader::Create(pDevice,
+		pCode->GetBufferPointer(), pCode->GetBufferSize());
+	if (!shader) {
+		SafeRelease(pCode);
+		return NULL;
+	}
+
+	if (ppInputLayout)
+	{
+		*ppInputLayout = InputLayout::Create(pDevice, pInputElementDescs,
+			numElements, pCode->GetBufferPointer(), pCode->GetBufferSize());
+		if (!*ppInputLayout) {
+			SafeRelease(pCode);
+			return NULL;
+		}
+	}
+
+	SafeRelease(pCode);
+	return shader;
+}
+
 PixelShaderPtr CreatePixelShaderFromCode(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target)
 {
@@ -52,51 +83,6 @@ PixelShaderPtr CreatePixelShaderFromCode(ID3D11Device* pDevice,
 
 	SafeRelease(pCode);
 	return shader;
-}
-
-VertexShader::VertexShader()
-	: m_pVShader(NULL)
-{ }
-
-VertexShader::~VertexShader()
-{
-	SafeRelease(m_pVShader);
-}
-
-VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice,
-	const char* src, const char* entryPoint, const char* target,
-	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,
-	InputLayoutPtr* ppInputLayout)
-{
-	VertexShaderPtr p(new VertexShader);
-
-	HRESULT hr;
-
-	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
-	if (!pCode) {
-		return NULL;
-	}
-
-	hr = pDevice->CreateVertexShader(pCode->GetBufferPointer(),
-		pCode->GetBufferSize(), NULL, &p->m_pVShader);
-	if (FAILED(hr)) {
-		SafeRelease(pCode);
-		return NULL;
-	}
-
-	if (ppInputLayout)
-	{
-		*ppInputLayout = InputLayout::Create(pDevice, pInputElementDescs,
-			numElements, pCode->GetBufferPointer(), pCode->GetBufferSize());
-		if (!*ppInputLayout) {
-			SafeRelease(pCode);
-			return NULL;
-		}
-	}
-
-	SafeRelease(pCode);
-
-	return p;
 }
 
 }
