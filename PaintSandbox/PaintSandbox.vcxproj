@@ -92,6 +92,7 @@
     <ClCompile Include="CanvasImage.cpp" />
     <ClCompile Include="CanvasWindow.cpp" />
     <ClCompile Include="D3D11\BlendState.cpp" />
+    <ClCompile Include="D3D11\Buffer.cpp" />
     <ClCompile Include="D3D11\CircularGradientShader.cpp" />
     <ClCompile Include="D3D11\ConstantBuffer.cpp" />
     <ClCompile Include="D3D11\D3D11CanvasWindowGraphics.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="CanvasWindow.hpp" />
     <ClInclude Include="CanvasWindowGraphics.hpp" />
     <ClInclude Include="D3D11\BlendState.hpp" />
+    <ClInclude Include="D3D11\Buffer.hpp" />
     <ClInclude Include="D3D11\CircularGradientShader.hpp" />
     <ClInclude Include="D3D11\ConstantBuffer.hpp" />
     <ClInclude Include="D3D11\D3D11CanvasWindowGraphics.hpp" />

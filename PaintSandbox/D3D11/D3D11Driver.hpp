@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "BlendState.hpp"
+#include "Buffer.hpp"
 #include "CircularGradientShader.hpp"
 #include "Driver.hpp"
 #include "D3D11CanvasWindowGraphics.hpp"
@@ -63,7 +64,7 @@ private:
 
 	SamplerStatePtr m_bilinearSampler;
 
-	ID3D11Buffer* m_pSimple2DQuad;
+	BufferPtr m_simple2DQuad;
 
 	VertexShaderPtr m_simple2DQuadVShader;
 	ID3D11InputLayout* m_pSimple2DInputLayout;

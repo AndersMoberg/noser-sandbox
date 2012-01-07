@@ -76,14 +76,12 @@ D3D11Driver::D3D11Driver()
 	: m_pD3D11Device(NULL),
 	m_pD3D11Context(NULL),
 	m_pDXGIFactory(NULL),
-	m_pSimple2DQuad(NULL),
 	m_pSimple2DInputLayout(NULL)
 { }
 
 D3D11Driver::~D3D11Driver()
 {
 	SafeRelease(m_pSimple2DInputLayout);
-	SafeRelease(m_pSimple2DQuad);
 	SafeRelease(m_pDXGIFactory);
 	SafeRelease(m_pD3D11Context);
 	SafeRelease(m_pD3D11Device);
@@ -173,8 +171,8 @@ D3D11DriverPtr D3D11Driver::Create()
 	D3D11_BUFFER_DESC bd = CD3D11_BUFFER_DESC(sizeof(SIMPLE2D_QUAD),
 		D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_IMMUTABLE);
 	D3D11_SUBRESOURCE_DATA srd = { SIMPLE2D_QUAD, 0, 0 };
-	hr = p->m_pD3D11Device->CreateBuffer(&bd, &srd, &p->m_pSimple2DQuad);
-	if (FAILED(hr)) {
+	p->m_simple2DQuad = Buffer::Create(p->m_pD3D11Device, bd, srd);
+	if (!p->m_simple2DQuad) {
 		return NULL;
 	}
 
@@ -241,12 +239,12 @@ void D3D11Driver::RenderQuad(const RectF& rc)
 	m_pD3D11Context->IASetInputLayout(m_pSimple2DInputLayout);
 	UINT stride = sizeof(Vector2f);
 	UINT offset = 0;
-	m_pD3D11Context->IASetVertexBuffers(0, 1, &m_pSimple2DQuad, &stride, &offset);
-
-	ID3D11Buffer* buf = m_simple2DQuadParams->Get();
+	ID3D11Buffer* buf = m_simple2DQuad->Get();
+	m_pD3D11Context->IASetVertexBuffers(0, 1, &buf, &stride, &offset);
 
 	// Set up vertex shader
 	m_pD3D11Context->VSSetShader(m_simple2DQuadVShader->Get(), NULL, 0);
+	buf = m_simple2DQuadParams->Get();
 	m_pD3D11Context->VSSetConstantBuffers(0, 1, &buf);
 
 	// Draw!
