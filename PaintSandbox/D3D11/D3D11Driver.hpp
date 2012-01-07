@@ -15,6 +15,7 @@
 #include "D3D11CanvasWindowGraphics.hpp"
 #include "D3D11Utils.hpp"
 #include "Geometry.hpp"
+#include "SamplerState.hpp"
 
 namespace D3D11
 {
@@ -45,7 +46,7 @@ public:
 
 	BlendStatePtr GetAlphaBlend() { return m_alphaBlend; }
 	BlendStatePtr GetAlphaAccumBlend() { return m_alphaAccumBlend; }
-	ID3D11SamplerState* GetBilinearSampler() { return m_pBilinearSampler; }
+	SamplerStatePtr GetBilinearSampler() { return m_bilinearSampler; }
 	PixelShaderPtr GetTexturedPixelShader() { return m_texturedPShader; }
 	CircularGradientShaderPtr GetCircularGradientShader() { return m_circularGradientShader; }
 
@@ -60,7 +61,7 @@ private:
 	BlendStatePtr m_alphaBlend;
 	BlendStatePtr m_alphaAccumBlend;
 
-	ID3D11SamplerState* m_pBilinearSampler;
+	SamplerStatePtr m_bilinearSampler;
 
 	ID3D11Buffer* m_pSimple2DQuad;
 

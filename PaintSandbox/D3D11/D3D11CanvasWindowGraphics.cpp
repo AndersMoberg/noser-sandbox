@@ -138,7 +138,7 @@ void D3D11CanvasWindowGraphics::Render()
 		D3D11ImagePtr d3d11Image = std::static_pointer_cast<D3D11Image, DriverImage>(
 			m_image->GetDriverImage());
 		ID3D11ShaderResourceView* srv = d3d11Image->GetSRV();
-		ID3D11SamplerState* ss = m_driver->GetBilinearSampler();
+		ID3D11SamplerState* ss = m_driver->GetBilinearSampler()->Get();
 
 		// Set up pixel shader
 		pContext->PSSetShader(m_driver->GetTexturedPixelShader()->Get(), NULL, 0);

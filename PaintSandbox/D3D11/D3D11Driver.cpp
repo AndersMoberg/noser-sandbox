@@ -76,7 +76,6 @@ D3D11Driver::D3D11Driver()
 	: m_pD3D11Device(NULL),
 	m_pD3D11Context(NULL),
 	m_pDXGIFactory(NULL),
-	m_pBilinearSampler(NULL),
 	m_pSimple2DQuad(NULL),
 	m_pSimple2DInputLayout(NULL)
 { }
@@ -85,7 +84,6 @@ D3D11Driver::~D3D11Driver()
 {
 	SafeRelease(m_pSimple2DInputLayout);
 	SafeRelease(m_pSimple2DQuad);
-	SafeRelease(m_pBilinearSampler);
 	SafeRelease(m_pDXGIFactory);
 	SafeRelease(m_pD3D11Context);
 	SafeRelease(m_pD3D11Device);
@@ -165,8 +163,8 @@ D3D11DriverPtr D3D11Driver::Create()
 	// Create bilinear sampler
 
 	D3D11_SAMPLER_DESC sd = CD3D11_SAMPLER_DESC(CD3D11_DEFAULT());
-	hr = p->m_pD3D11Device->CreateSamplerState(&sd, &p->m_pBilinearSampler);
-	if (FAILED(hr)) {
+	p->m_bilinearSampler = SamplerState::Create(p->m_pD3D11Device, sd);
+	if (!p->m_bilinearSampler) {
 		return NULL;
 	}
 
