@@ -51,6 +51,9 @@
     <ClInclude Include="D3D11\D3D11DrawToolRenderer.hpp">
       <Filter>Source\D3D11</Filter>
     </ClInclude>
+    <ClInclude Include="D3D11\BlendState.hpp">
+      <Filter>Source\D3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -90,6 +93,9 @@
       <Filter>Source\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="D3D11\D3D11DrawToolRenderer.cpp">
+      <Filter>Source\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11\BlendState.cpp">
       <Filter>Source\D3D11</Filter>
     </ClCompile>
   </ItemGroup>

@@ -9,6 +9,7 @@
 
 #include <memory>
 
+#include "BlendState.hpp"
 #include "CircularGradientShader.hpp"
 #include "Driver.hpp"
 #include "D3D11CanvasWindowGraphics.hpp"
@@ -35,7 +36,6 @@ public:
 	virtual DriverImagePtr CreateImage(int width, int height);
 	virtual DrawToolRendererPtr CreateDrawToolRenderer(CanvasImagePtr image);
 
-
 	void RenderQuad(const RectF& rc);
 	void RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc);
 
@@ -43,8 +43,8 @@ public:
 	ID3D11DeviceContext* GetD3D11Context() { return m_pD3D11Context; }
 	IDXGIFactory1* GetDXGIFactory() { return m_pDXGIFactory; }
 
-	ID3D11BlendState* GetAlphaBlend() { return m_pAlphaBlend; }
-	ID3D11BlendState* GetAlphaAccumBlend() { return m_pAlphaAccumBlend; }
+	BlendStatePtr GetAlphaBlend() { return m_alphaBlend; }
+	BlendStatePtr GetAlphaAccumBlend() { return m_alphaAccumBlend; }
 	ID3D11SamplerState* GetBilinearSampler() { return m_pBilinearSampler; }
 	PixelShaderPtr GetTexturedPixelShader() { return m_texturedPShader; }
 	CircularGradientShaderPtr GetCircularGradientShader() { return m_circularGradientShader; }
@@ -57,8 +57,8 @@ private:
 	ID3D11DeviceContext* m_pD3D11Context;
 	IDXGIFactory1* m_pDXGIFactory;
 
-	ID3D11BlendState* m_pAlphaBlend;
-	ID3D11BlendState* m_pAlphaAccumBlend;
+	BlendStatePtr m_alphaBlend;
+	BlendStatePtr m_alphaAccumBlend;
 
 	ID3D11SamplerState* m_pBilinearSampler;
 
