@@ -47,7 +47,7 @@ VertexShader::~VertexShader()
 VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target,
 	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,
-	ID3D11InputLayout** ppInputLayout)
+	InputLayoutPtr* ppInputLayout)
 {
 	VertexShaderPtr p(new VertexShader);
 
@@ -67,9 +67,9 @@ VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice,
 
 	if (ppInputLayout)
 	{
-		hr = pDevice->CreateInputLayout(pInputElementDescs, numElements,
-			pCode->GetBufferPointer(), pCode->GetBufferSize(), ppInputLayout);
-		if (FAILED(hr)) {
+		*ppInputLayout = InputLayout::Create(pDevice, pInputElementDescs,
+			numElements, pCode->GetBufferPointer(), pCode->GetBufferSize());
+		if (!*ppInputLayout) {
 			SafeRelease(pCode);
 			return NULL;
 		}

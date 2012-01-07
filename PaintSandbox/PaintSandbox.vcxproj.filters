@@ -60,6 +60,9 @@
     <ClInclude Include="D3D11\Buffer.hpp">
       <Filter>Source\D3D11</Filter>
     </ClInclude>
+    <ClInclude Include="D3D11\InputLayout.hpp">
+      <Filter>Source\D3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -108,6 +111,9 @@
       <Filter>Source\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="D3D11\Buffer.cpp">
+      <Filter>Source\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11\InputLayout.cpp">
       <Filter>Source\D3D11</Filter>
     </ClCompile>
   </ItemGroup>

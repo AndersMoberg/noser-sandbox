@@ -9,6 +9,8 @@
 
 #include <memory>
 
+#include "InputLayout.hpp"
+
 namespace D3D11
 {
 
@@ -35,7 +37,7 @@ public:
 	static VertexShaderPtr Create(ID3D11Device* pDevice,
 		const char* src, const char* entryPoint, const char* target,
 		const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs = NULL, UINT numElements = 0,
-		ID3D11InputLayout** ppInputLayout = NULL);
+		InputLayoutPtr* ppInputLayout = NULL);
 	~VertexShader();
 
 	ID3D11VertexShader* Get() { return m_pVShader; }

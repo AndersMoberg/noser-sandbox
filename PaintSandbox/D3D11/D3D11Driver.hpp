@@ -67,7 +67,7 @@ private:
 	BufferPtr m_simple2DQuad;
 
 	VertexShaderPtr m_simple2DQuadVShader;
-	ID3D11InputLayout* m_pSimple2DInputLayout;
+	InputLayoutPtr m_simple2DInputLayout;
 	ConstantBufferPtr m_simple2DQuadParams;
 
 	PixelShaderPtr m_texturedPShader;

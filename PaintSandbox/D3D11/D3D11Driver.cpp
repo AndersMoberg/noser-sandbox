@@ -75,13 +75,11 @@ static const char TEXTURED_PIXEL_SHADER[] =
 D3D11Driver::D3D11Driver()
 	: m_pD3D11Device(NULL),
 	m_pD3D11Context(NULL),
-	m_pDXGIFactory(NULL),
-	m_pSimple2DInputLayout(NULL)
+	m_pDXGIFactory(NULL)
 { }
 
 D3D11Driver::~D3D11Driver()
 {
-	SafeRelease(m_pSimple2DInputLayout);
 	SafeRelease(m_pDXGIFactory);
 	SafeRelease(m_pD3D11Context);
 	SafeRelease(m_pD3D11Device);
@@ -182,7 +180,7 @@ D3D11DriverPtr D3D11Driver::Create()
 		SIMPLE2D_QUAD_VERTEX_SHADER, "main", "vs_4_0",
 		SIMPLE2D_INPUT_LAYOUT,
 		sizeof(SIMPLE2D_INPUT_LAYOUT)/sizeof(D3D11_INPUT_ELEMENT_DESC),
-		&p->m_pSimple2DInputLayout);
+		&p->m_simple2DInputLayout);
 	if (!p->m_simple2DQuadVShader) {
 		return NULL;
 	}
@@ -236,7 +234,7 @@ void D3D11Driver::RenderQuad(const RectF& rc)
 
 	// Set up input assembler
 	m_pD3D11Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	m_pD3D11Context->IASetInputLayout(m_pSimple2DInputLayout);
+	m_pD3D11Context->IASetInputLayout(m_simple2DInputLayout->Get());
 	UINT stride = sizeof(Vector2f);
 	UINT offset = 0;
 	ID3D11Buffer* buf = m_simple2DQuad->Get();
