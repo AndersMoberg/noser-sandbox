@@ -133,7 +133,7 @@ void D3D11CanvasWindowGraphics::Render()
 
 		// Set up output merger
 		pContext->OMSetRenderTargets(1, &m_pBackBufferRTV, NULL);
-		pContext->OMSetBlendState(m_driver->GetAlphaBlend()->Get(), NULL, 0xFFFFFFFF);
+		pContext->OMSetBlendState(m_driver->GetPremulAlphaBlend()->Get(), NULL, 0xFFFFFFFF);
 
 		D3D11ImagePtr d3d11Image = std::static_pointer_cast<D3D11Image, DriverImage>(
 			m_image->GetDriverImage());

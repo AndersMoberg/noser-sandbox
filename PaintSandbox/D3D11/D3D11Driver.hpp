@@ -47,6 +47,7 @@ public:
 
 	BlendStatePtr GetAlphaBlend() { return m_alphaBlend; }
 	BlendStatePtr GetAlphaAccumBlend() { return m_alphaAccumBlend; }
+	BlendStatePtr GetPremulAlphaBlend() { return m_premulAlphaBlend; }
 	SamplerStatePtr GetBilinearSampler() { return m_bilinearSampler; }
 	PixelShaderPtr GetTexturedPixelShader() { return m_texturedPShader; }
 	CircularGradientShaderPtr GetCircularGradientShader() { return m_circularGradientShader; }
@@ -61,6 +62,7 @@ private:
 
 	BlendStatePtr m_alphaBlend;
 	BlendStatePtr m_alphaAccumBlend;
+	BlendStatePtr m_premulAlphaBlend;
 
 	SamplerStatePtr m_bilinearSampler;
 

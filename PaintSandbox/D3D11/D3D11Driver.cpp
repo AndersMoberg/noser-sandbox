@@ -156,6 +156,17 @@ D3D11DriverPtr D3D11Driver::Create()
 		return NULL;
 	}
 
+	// Create premultiplied alpha blend state
+
+	bld = CD3D11_BLEND_DESC(CD3D11_DEFAULT());
+	bld.RenderTarget[0].BlendEnable = TRUE;
+	bld.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	bld.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	p->m_premulAlphaBlend = BlendState::Create(p->m_pD3D11Device, bld);
+	if (!p->m_premulAlphaBlend) {
+		return NULL;
+	}
+
 	// Create bilinear sampler
 
 	D3D11_SAMPLER_DESC sd = CD3D11_SAMPLER_DESC(CD3D11_DEFAULT());

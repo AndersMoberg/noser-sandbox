@@ -36,7 +36,7 @@ void D3D11DrawToolRenderer::RenderCircularGradient(const RectF& rc, float weight
 	pContext->RSSetViewports(1, &vp);
 
 	// Set up output merger
-	pContext->OMSetBlendState(m_driver->GetAlphaAccumBlend()->Get(), NULL, 0xFFFFFFFF);
+	pContext->OMSetBlendState(m_driver->GetAlphaBlend()->Get(), NULL, 0xFFFFFFFF);
 
 	// Set up pixel shader
 	m_driver->GetCircularGradientShader()->Setup(pContext, weight);
