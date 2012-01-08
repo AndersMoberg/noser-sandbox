@@ -108,6 +108,12 @@ LRESULT CALLBACK CanvasWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 		case WM_MOUSEMOVE:
 			result = pThis->OnWMMouseMove(wParam, lParam);
 			break;
+		case WM_LBUTTONDOWN:
+			result = pThis->OnWMLButtonDown(wParam, lParam);
+			break;
+		case WM_LBUTTONUP:
+			result = pThis->OnWMLButtonUp(wParam, lParam);
+			break;
 		default:
 			result = DefWindowProc(hwnd, uMsg, wParam, lParam);
 			break;
@@ -177,6 +183,60 @@ LRESULT CanvasWindow::OnWMMouseMove(WPARAM wParam, LPARAM lParam)
 	{
 		m_drawTool->ReceiveCursor(false, canvasPos);
 	}
+
+	return 0;
+}
+
+LRESULT CanvasWindow::OnWMLButtonDown(WPARAM wParam, LPARAM lParam)
+{
+	// Capture until mouse release
+	SetCapture(m_hWnd);
+
+	// Add 0.5 because the cursor is in the center of the pixel.
+	float x = GET_X_LPARAM(lParam) + 0.5f;
+	float y = GET_Y_LPARAM(lParam) + 0.5f;
+	Vector2f pos(x, y);
+
+	// TODO: Clean up duplicate code
+	RECT clientRc;
+	GetClientRect(m_hWnd, &clientRc);
+	RectF clientRect((float)clientRc.left, (float)clientRc.top,
+		(float)clientRc.right, (float)clientRc.bottom);
+
+	Matrix3x2f clientToCanvas = Matrix3x2f::RectLerp(
+		clientRect, m_image->GetCanvasRect());
+
+	Vector2f canvasPos = clientToCanvas.TransformPoint(pos);
+
+	m_drawTool->ReceiveCursor(true, canvasPos);
+	InvalidateRect(m_hWnd, NULL, FALSE);
+
+	return 0;
+}
+
+LRESULT CanvasWindow::OnWMLButtonUp(WPARAM wParam, LPARAM lParam)
+{
+	// Release capture
+	ReleaseCapture();
+
+	// Add 0.5 because the cursor is in the center of the pixel.
+	float x = GET_X_LPARAM(lParam) + 0.5f;
+	float y = GET_Y_LPARAM(lParam) + 0.5f;
+	Vector2f pos(x, y);
+
+	// TODO: Clean up duplicate code!!!
+	RECT clientRc;
+	GetClientRect(m_hWnd, &clientRc);
+	RectF clientRect((float)clientRc.left, (float)clientRc.top,
+		(float)clientRc.right, (float)clientRc.bottom);
+
+	Matrix3x2f clientToCanvas = Matrix3x2f::RectLerp(
+		clientRect, m_image->GetCanvasRect());
+
+	Vector2f canvasPos = clientToCanvas.TransformPoint(pos);
+
+	m_drawTool->ReceiveCursor(true, canvasPos);
+	InvalidateRect(m_hWnd, NULL, FALSE);
 
 	return 0;
 }

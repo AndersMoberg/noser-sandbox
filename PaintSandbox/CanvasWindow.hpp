@@ -38,6 +38,8 @@ private:
 	LRESULT OnWMSize();
 	LRESULT OnWMPaint();
 	LRESULT OnWMMouseMove(WPARAM wParam, LPARAM lParam);
+	LRESULT OnWMLButtonDown(WPARAM wParam, LPARAM lParam);
+	LRESULT OnWMLButtonUp(WPARAM wParam, LPARAM lParam);
 
 	DriverPtr m_driver;
 	CanvasImagePtr m_image;
