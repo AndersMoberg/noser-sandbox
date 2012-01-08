@@ -46,9 +46,10 @@ public:
 	IDXGIFactory1* GetDXGIFactory() { return m_pDXGIFactory; }
 
 	BlendStatePtr GetAlphaBlend() { return m_alphaBlend; }
-	BlendStatePtr GetAlphaAccumBlend() { return m_alphaAccumBlend; }
 	BlendStatePtr GetPremulAlphaBlend() { return m_premulAlphaBlend; }
+
 	SamplerStatePtr GetBilinearSampler() { return m_bilinearSampler; }
+
 	PixelShaderPtr GetTexturedPixelShader() { return m_texturedPShader; }
 	CircularGradientShaderPtr GetCircularGradientShader() { return m_circularGradientShader; }
 
@@ -61,7 +62,6 @@ private:
 	IDXGIFactory1* m_pDXGIFactory;
 
 	BlendStatePtr m_alphaBlend;
-	BlendStatePtr m_alphaAccumBlend;
 	BlendStatePtr m_premulAlphaBlend;
 
 	SamplerStatePtr m_bilinearSampler;

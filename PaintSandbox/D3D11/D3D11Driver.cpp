@@ -147,15 +147,6 @@ D3D11DriverPtr D3D11Driver::Create()
 		return NULL;
 	}
 
-	// Create accumulative alpha blend state
-
-	bld.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	bld.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
-	p->m_alphaAccumBlend = BlendState::Create(p->m_pD3D11Device, bld);
-	if (!p->m_alphaAccumBlend) {
-		return NULL;
-	}
-
 	// Create premultiplied alpha blend state
 
 	bld = CD3D11_BLEND_DESC(CD3D11_DEFAULT());
