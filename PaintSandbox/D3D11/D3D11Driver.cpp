@@ -19,6 +19,9 @@ static const char SIMPLE2D_QUAD_VERTEX_SHADER[] =
 "{\n"
 	"struct\n"
 	"{\n"
+		"float2 mat0;\n"
+		"float2 mat1;\n"
+		"float2 mat2;\n"
 		"float2 ul;\n"
 		"float2 lr;\n"
 	"} Params;\n"
@@ -33,7 +36,9 @@ static const char SIMPLE2D_QUAD_VERTEX_SHADER[] =
 "VSOutput main(float2 pos : POSITION)\n"
 "{\n"
 	"VSOutput result;\n"
-	"result.pos = float4(lerp(Params.ul, Params.lr, pos), 0, 1);\n"
+	"float2 canvasPos = lerp(Params.ul, Params.lr, pos);\n"
+	"float2 clipPos = float2(dot(Params.mat0, canvasPos), dot(Params.mat1, canvasPos)) + Params.mat2;\n"
+	"result.pos = float4(clipPos, 0, 1);\n"
 	"result.tex = pos;\n"
 	"return result;\n"
 "}\n"
@@ -41,6 +46,7 @@ static const char SIMPLE2D_QUAD_VERTEX_SHADER[] =
 
 struct Simple2DQuadVShaderParams
 {
+	Matrix3x2f mat;
 	Vector2f ul;
 	Vector2f lr;
 };
@@ -231,7 +237,10 @@ DrawToolRendererPtr D3D11Driver::CreateDrawToolRenderer(CanvasImagePtr image)
 void D3D11Driver::RenderQuad(const RectF& rc)
 {
 	// Load shader parameters
-	Simple2DQuadVShaderParams params = { rc.UpperLeft(), rc.LowerRight() };
+	Simple2DQuadVShaderParams params;
+	params.mat = Matrix3x2f::IDENTITY;
+	params.ul = rc.UpperLeft();
+	params.lr = rc.LowerRight();
 	m_pD3D11Context->UpdateSubresource(m_simple2DQuadParams->Get(), 0, NULL, &params, 0, 0);
 
 	// Set up input assembler

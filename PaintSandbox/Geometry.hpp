@@ -58,6 +58,8 @@ struct Matrix3x2f
 	};
 
 	static Matrix3x2f RectLerp(const RectF& from, const RectF& to);
+
+	static const Matrix3x2f IDENTITY;
 };
 
 inline float Lerp(float x0, float x1, float y0, float y1, float x) {

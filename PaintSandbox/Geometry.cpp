@@ -24,3 +24,8 @@ Matrix3x2f Matrix3x2f::RectLerp(const RectF& from, const RectF& to)
 		0.0f, m22,
 		m31, m32);
 }
+
+const Matrix3x2f Matrix3x2f::IDENTITY = Matrix3x2f(
+	1.0f, 0.0f,
+	0.0f, 1.0f,
+	0.0f, 0.0f);
