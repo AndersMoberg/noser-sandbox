@@ -219,9 +219,9 @@ D3D11DriverPtr D3D11Driver::Create()
 	return p;
 }
 
-CanvasWindowGraphicsPtr D3D11Driver::CreateWindowGraphics(HWND hWnd)
+CanvasWindowGraphicsPtr D3D11Driver::CreateWindowGraphics(HWND hWnd, CameraPtr camera)
 {
-	return D3D11CanvasWindowGraphics::Create(hWnd, shared_from_this());
+	return D3D11CanvasWindowGraphics::Create(hWnd, shared_from_this(), camera);
 }
 
 DriverImagePtr D3D11Driver::CreateImage(int width, int height)
@@ -234,11 +234,11 @@ DrawToolRendererPtr D3D11Driver::CreateDrawToolRenderer(CanvasImagePtr image)
 	return D3D11DrawToolRenderer::Create(shared_from_this(), image);
 }
 
-void D3D11Driver::RenderQuad(const RectF& rc)
+void D3D11Driver::RenderQuad(const Matrix3x2f& mat, const RectF& rc)
 {
 	// Load shader parameters
 	Simple2DQuadVShaderParams params;
-	params.mat = Matrix3x2f::IDENTITY;
+	params.mat = mat;
 	params.ul = rc.UpperLeft();
 	params.lr = rc.LowerRight();
 	m_pD3D11Context->UpdateSubresource(m_simple2DQuadParams->Get(), 0, NULL, &params, 0, 0);
@@ -269,8 +269,9 @@ void D3D11Driver::RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc)
 	// Set up output merger
 	m_pD3D11Context->OMSetRenderTargets(1, &rtv, NULL);
 
-	RectF clipRc = canvas->GetCanvasToClip().TransformRect(rc);
-	RenderQuad(clipRc);
+	Matrix3x2f mat = Matrix3x2f::RectLerp(canvas->GetCanvasRect(),
+		RectF(-1.0f, 1.0f, 1.0f, -1.0f));
+	RenderQuad(mat, rc);
 }
 
 }

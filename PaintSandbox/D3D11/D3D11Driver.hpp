@@ -34,11 +34,11 @@ public:
 	~D3D11Driver();
 
 	// Driver implementation
-	virtual CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd);
+	virtual CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd, CameraPtr camera);
 	virtual DriverImagePtr CreateImage(int width, int height);
 	virtual DrawToolRendererPtr CreateDrawToolRenderer(CanvasImagePtr image);
 
-	void RenderQuad(const RectF& rc);
+	void RenderQuad(const Matrix3x2f& mat, const RectF& rc);
 	void RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc);
 
 	ID3D11Device* GetD3D11Device() { return m_pD3D11Device; }

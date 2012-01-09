@@ -18,11 +18,14 @@ typedef std::shared_ptr<Driver> DriverPtr;
 class DriverImage;
 typedef std::shared_ptr<DriverImage> DriverImagePtr;
 
+class Camera;
+typedef std::shared_ptr<Camera> CameraPtr;
+
 class Driver
 {
 public:
 	virtual ~Driver() { }
-	virtual CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd) = 0;
+	virtual CanvasWindowGraphicsPtr CreateWindowGraphics(HWND hWnd, CameraPtr camera) = 0;
 	virtual DriverImagePtr CreateImage(int width, int height) = 0;
 	virtual DrawToolRendererPtr CreateDrawToolRenderer(CanvasImagePtr image) = 0;
 

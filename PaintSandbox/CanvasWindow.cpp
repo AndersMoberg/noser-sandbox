@@ -30,6 +30,11 @@ CanvasWindowPtr CanvasWindow::Create(DriverPtr driver, HINSTANCE hInstance, int 
 
 	p->m_driver = driver;
 
+	p->m_camera = Camera::Create();
+	if (!p->m_camera) {
+		return NULL;
+	}
+
 	p->m_image = CanvasImage::Create(driver, RectF(-10.0f, 10.0f, 10.0f, -10.0f), 2048, 2048);
 	if (!p->m_image) {
 		return NULL;
@@ -127,7 +132,7 @@ LRESULT CanvasWindow::OnWMCreate(HWND hwnd)
 {
 	m_hWnd = hwnd;
 
-	m_graphics = m_driver->CreateWindowGraphics(m_hWnd);
+	m_graphics = m_driver->CreateWindowGraphics(m_hWnd, m_camera);
 	if (!m_graphics) {
 		return -1;
 	}

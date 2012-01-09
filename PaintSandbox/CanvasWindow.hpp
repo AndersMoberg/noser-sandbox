@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "Camera.hpp"
 #include "CanvasImage.hpp"
 #include "DrawTool.hpp"
 #include "Driver.hpp"
@@ -42,6 +43,7 @@ private:
 	LRESULT OnWMLButtonUp(WPARAM wParam, LPARAM lParam);
 
 	DriverPtr m_driver;
+	CameraPtr m_camera;
 	CanvasImagePtr m_image;
 	DrawToolPtr m_drawTool;
 

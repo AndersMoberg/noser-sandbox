@@ -25,7 +25,7 @@ D3D11CanvasWindowGraphics::~D3D11CanvasWindowGraphics()
 }
 
 D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(
-	HWND hWnd, D3D11DriverPtr driver)
+	HWND hWnd, D3D11DriverPtr driver, CameraPtr camera)
 {
 	D3D11CanvasWindowGraphicsPtr p(new D3D11CanvasWindowGraphics);
 
@@ -33,6 +33,7 @@ D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(
 
 	p->m_hWnd = hWnd;
 	p->m_driver = driver;
+	p->m_camera = camera;
 
 	ID3D11Device* pDevice = p->m_driver->GetD3D11Device();
 	IDXGIFactory1* pDXGIFactory = p->m_driver->GetDXGIFactory();
@@ -145,7 +146,7 @@ void D3D11CanvasWindowGraphics::Render()
 		pContext->PSSetShaderResources(0, 1, &srv);
 		pContext->PSSetSamplers(0, 1, &ss);
 
-		m_driver->RenderQuad(RectF(-1.0f, 1.0f, 1.0f, -1.0f));
+		m_driver->RenderQuad(Matrix3x2f::IDENTITY, RectF(-1.0f, 1.0f, 1.0f, -1.0f));
 
 		srv = NULL;
 		pContext->PSSetShaderResources(0, 1, &srv);

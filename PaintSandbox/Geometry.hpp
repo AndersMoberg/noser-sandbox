@@ -51,7 +51,6 @@ struct Matrix3x2f
 		: m11(_m11), m12(_m12), m21(_m21), m22(_m22), m31(_m31), m32(_m32)
 	{ }
 
-	RectF TransformRect(const RectF& from) const;
 	Vector2f TransformPoint(const Vector2f& from) const {
 		return Vector2f(m11*from.x + m12*from.y + m31,
 			m21*from.x + m22*from.y + m32);

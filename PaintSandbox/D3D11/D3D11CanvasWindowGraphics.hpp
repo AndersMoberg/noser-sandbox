@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "Camera.hpp"
 #include "CanvasWindowGraphics.hpp"
 
 namespace D3D11
@@ -27,7 +28,7 @@ class D3D11CanvasWindowGraphics : public CanvasWindowGraphics
 
 public:
 
-	static D3D11CanvasWindowGraphicsPtr Create(HWND hWnd, D3D11DriverPtr driver);
+	static D3D11CanvasWindowGraphicsPtr Create(HWND hWnd, D3D11DriverPtr driver, CameraPtr camera);
 	~D3D11CanvasWindowGraphics();
 
 	// CanvasWindowGraphics implementation
@@ -47,6 +48,7 @@ private:
 
 	HWND m_hWnd;
 	D3D11DriverPtr m_driver;
+	CameraPtr m_camera;
 
 	IDXGISwapChain* m_pSwapChain;
 	ID3D11RenderTargetView* m_pBackBufferRTV;
