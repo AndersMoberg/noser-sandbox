@@ -142,25 +142,18 @@ D3D11DriverPtr D3D11Driver::Create()
 
 	SafeRelease(dxgiAdapter);
 
-	// Create alpha blend state
+	// Create blend state for Porter-Duff "over" operation
 
 	D3D11_BLEND_DESC bld = CD3D11_BLEND_DESC(CD3D11_DEFAULT());
 	bld.RenderTarget[0].BlendEnable = TRUE;
 	bld.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
 	bld.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	p->m_alphaBlend = BlendState::Create(p->m_pD3D11Device, bld);
-	if (!p->m_alphaBlend) {
-		return NULL;
-	}
-
-	// Create premultiplied alpha blend state
-
-	bld = CD3D11_BLEND_DESC(CD3D11_DEFAULT());
-	bld.RenderTarget[0].BlendEnable = TRUE;
-	bld.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	bld.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	p->m_premulAlphaBlend = BlendState::Create(p->m_pD3D11Device, bld);
-	if (!p->m_premulAlphaBlend) {
+	bld.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	bld.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	bld.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	bld.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	p->m_overBlend = BlendState::Create(p->m_pD3D11Device, bld);
+	if (!p->m_overBlend) {
 		return NULL;
 	}
 

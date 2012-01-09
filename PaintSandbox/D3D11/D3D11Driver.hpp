@@ -45,8 +45,7 @@ public:
 	ID3D11DeviceContext* GetD3D11Context() { return m_pD3D11Context; }
 	IDXGIFactory1* GetDXGIFactory() { return m_pDXGIFactory; }
 
-	BlendStatePtr GetAlphaBlend() { return m_alphaBlend; }
-	BlendStatePtr GetPremulAlphaBlend() { return m_premulAlphaBlend; }
+	BlendStatePtr GetOverBlend() { return m_overBlend; }
 
 	SamplerStatePtr GetBilinearSampler() { return m_bilinearSampler; }
 
@@ -61,8 +60,7 @@ private:
 	ID3D11DeviceContext* m_pD3D11Context;
 	IDXGIFactory1* m_pDXGIFactory;
 
-	BlendStatePtr m_alphaBlend;
-	BlendStatePtr m_premulAlphaBlend;
+	BlendStatePtr m_overBlend; // Porter-Duff "over" operation
 
 	SamplerStatePtr m_bilinearSampler;
 
