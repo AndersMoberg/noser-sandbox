@@ -169,15 +169,7 @@ LRESULT CanvasWindow::OnWMMouseMove(WPARAM wParam, LPARAM lParam)
 	float y = GET_Y_LPARAM(lParam) + 0.5f;
 	Vector2f pos(x, y);
 
-	RECT clientRc;
-	GetClientRect(m_hWnd, &clientRc);
-	RectF clientRect((float)clientRc.left, (float)clientRc.top,
-		(float)clientRc.right, (float)clientRc.bottom);
-
-	Matrix3x2f clientToCanvas = Matrix3x2f::RectLerp(
-		clientRect, m_image->GetCanvasRect());
-
-	Vector2f canvasPos = clientToCanvas.TransformPoint(pos);
+	Vector2f canvasPos = TransformClientToCanvas(pos);
 
 	if (wParam & MK_LBUTTON)
 	{
@@ -202,16 +194,7 @@ LRESULT CanvasWindow::OnWMLButtonDown(WPARAM wParam, LPARAM lParam)
 	float y = GET_Y_LPARAM(lParam) + 0.5f;
 	Vector2f pos(x, y);
 
-	// TODO: Clean up duplicate code
-	RECT clientRc;
-	GetClientRect(m_hWnd, &clientRc);
-	RectF clientRect((float)clientRc.left, (float)clientRc.top,
-		(float)clientRc.right, (float)clientRc.bottom);
-
-	Matrix3x2f clientToCanvas = Matrix3x2f::RectLerp(
-		clientRect, m_image->GetCanvasRect());
-
-	Vector2f canvasPos = clientToCanvas.TransformPoint(pos);
+	Vector2f canvasPos = TransformClientToCanvas(pos);
 
 	m_drawTool->ReceiveCursor(true, canvasPos);
 	InvalidateRect(m_hWnd, NULL, FALSE);
@@ -229,19 +212,21 @@ LRESULT CanvasWindow::OnWMLButtonUp(WPARAM wParam, LPARAM lParam)
 	float y = GET_Y_LPARAM(lParam) + 0.5f;
 	Vector2f pos(x, y);
 
-	// TODO: Clean up duplicate code!!!
-	RECT clientRc;
-	GetClientRect(m_hWnd, &clientRc);
-	RectF clientRect((float)clientRc.left, (float)clientRc.top,
-		(float)clientRc.right, (float)clientRc.bottom);
-
-	Matrix3x2f clientToCanvas = Matrix3x2f::RectLerp(
-		clientRect, m_image->GetCanvasRect());
-
-	Vector2f canvasPos = clientToCanvas.TransformPoint(pos);
+	Vector2f canvasPos = TransformClientToCanvas(pos);
 
 	m_drawTool->ReceiveCursor(true, canvasPos);
 	InvalidateRect(m_hWnd, NULL, FALSE);
 
 	return 0;
+}
+
+Vector2f CanvasWindow::TransformClientToCanvas(const Vector2f& v)
+{
+	RECT clientRc;
+	GetClientRect(m_hWnd, &clientRc);
+	RectF clientRcf((float)clientRc.left, (float)clientRc.top,
+		(float)clientRc.right, (float)clientRc.bottom);
+
+	Matrix3x2f clientToCanvas = m_camera->GetViewportToCanvas(clientRcf);
+	return clientToCanvas.TransformPoint(v);
 }

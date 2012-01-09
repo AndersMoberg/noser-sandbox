@@ -125,11 +125,13 @@ void D3D11CanvasWindowGraphics::Render()
 		// Set up rasterizer
 		RECT clientRc;
 		GetClientRect(m_hWnd, &clientRc);
+		RectF clientRcf((float)clientRc.left, (float)clientRc.top,
+			(float)clientRc.right, (float)clientRc.bottom);
 		D3D11_VIEWPORT vp = CD3D11_VIEWPORT(
-			(FLOAT)clientRc.left,
-			(FLOAT)clientRc.top,
-			(FLOAT)(clientRc.right - clientRc.left),
-			(FLOAT)(clientRc.bottom - clientRc.top));
+			clientRcf.left,
+			clientRcf.top,
+			clientRcf.right - clientRcf.left,
+			clientRcf.bottom - clientRcf.top);
 		pContext->RSSetViewports(1, &vp);
 
 		// Set up output merger
@@ -146,7 +148,8 @@ void D3D11CanvasWindowGraphics::Render()
 		pContext->PSSetShaderResources(0, 1, &srv);
 		pContext->PSSetSamplers(0, 1, &ss);
 
-		m_driver->RenderQuad(Matrix3x2f::IDENTITY, RectF(-1.0f, 1.0f, 1.0f, -1.0f));
+		m_driver->RenderQuad(m_camera->GetCanvasToClip(clientRcf),
+			m_image->GetCanvasRect());
 
 		srv = NULL;
 		pContext->PSSetShaderResources(0, 1, &srv);

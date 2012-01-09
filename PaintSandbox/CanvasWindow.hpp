@@ -42,6 +42,8 @@ private:
 	LRESULT OnWMLButtonDown(WPARAM wParam, LPARAM lParam);
 	LRESULT OnWMLButtonUp(WPARAM wParam, LPARAM lParam);
 
+	Vector2f TransformClientToCanvas(const Vector2f& v);
+
 	DriverPtr m_driver;
 	CameraPtr m_camera;
 	CanvasImagePtr m_image;
