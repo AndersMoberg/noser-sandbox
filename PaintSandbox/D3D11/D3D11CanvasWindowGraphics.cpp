@@ -117,7 +117,7 @@ void D3D11CanvasWindowGraphics::Render()
 	ID3D11DeviceContext* pContext = m_driver->GetD3D11Context();
 
 	// Clear to black
-	static const float BG_COLOR[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	static const float BG_COLOR[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	pContext->ClearRenderTargetView(m_pBackBufferRTV, BG_COLOR);
 
 	if (m_image)
