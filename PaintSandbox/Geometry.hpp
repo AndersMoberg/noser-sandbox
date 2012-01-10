@@ -7,38 +7,45 @@
 
 #include <cmath>
 
-struct Vector2f
+template<class T>
+struct Vector2
 {
-	float x;
-	float y;
+	T x;
+	T y;
 
-	Vector2f() { }
-	Vector2f(float _x, float _y) : x(_x), y(_y) { }
+	Vector2() { }
+	Vector2(T _x, T _y) : x(_x), y(_y) { }
 
-	Vector2f operator-(const Vector2f& rhs) const {
-		return Vector2f(x - rhs.x, y - rhs.y);
+	Vector2 operator-(const Vector2& rhs) const {
+		return Vector2(x - rhs.x, y - rhs.y);
 	}
 
-	float LengthSquared() const { return x*x + y*y; }
+	T LengthSquared() const { return x*x + y*y; }
 	float Length() const { return sqrt(LengthSquared()); }
 };
 
-struct RectF
-{
-	float left;
-	float top;
-	float right;
-	float bottom;
+typedef Vector2<float> Vector2f;
+typedef Vector2<int> Vector2i;
 
-	RectF() { }
-	RectF(float l, float t, float r, float b)
+template<class T>
+struct Rect
+{
+	T left;
+	T top;
+	T right;
+	T bottom;
+
+	Rect() { }
+	Rect(T l, T t, T r, T b)
 		: left(l), top(t), right(r), bottom(b)
 	{ }
 
-	Vector2f UpperLeft() const { return Vector2f(left, top); }
-	Vector2f LowerRight() const { return Vector2f(right, bottom); }
-	Vector2f Center() const { return Vector2f((left+right)/2.0f, (bottom+top)/2.0f); }
+	Vector2<T> UpperLeft() const { return Vector2<T>(left, top); }
+	Vector2<T> LowerRight() const { return Vector2<T>(right, bottom); }
+	Vector2<T> Center() const { return Vector2<T>((left+right)/2.0f, (bottom+top)/2.0f); }
 };
+
+typedef Rect<float> RectF;
 
 struct Matrix3x2f
 {

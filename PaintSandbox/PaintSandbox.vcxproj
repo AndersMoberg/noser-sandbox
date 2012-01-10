@@ -130,6 +130,7 @@
     <ClInclude Include="D3D11\VertexShader.hpp" />
     <ClInclude Include="DrawTool.hpp" />
     <ClInclude Include="Driver.hpp" />
+    <ClInclude Include="ExtensibleImage.hpp" />
     <ClInclude Include="Geometry.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
