@@ -28,7 +28,7 @@ static const char CIRCULAR_GRADIENT_SHADER[] =
 "{\n"
 	"float dist = distance(float2(0.5, 0.5), input.tex);\n"
 	"float a = Params.weight * clamp(1.0 - 2.0*dist, 0, 1);\n"
-	"return float4(1, 1, 1, a);\n"
+	"return float4(a, a, a, a);\n"
 "}\n"
 ;
 
