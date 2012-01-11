@@ -75,6 +75,9 @@
     <ClInclude Include="ExtensibleImage.hpp">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="WindowsUtils.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -138,6 +141,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="ExtensibleImage.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsUtils.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

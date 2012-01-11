@@ -46,6 +46,7 @@ struct Rect
 };
 
 typedef Rect<float> RectF;
+typedef Rect<int> RectI;
 
 struct Matrix3x2f
 {

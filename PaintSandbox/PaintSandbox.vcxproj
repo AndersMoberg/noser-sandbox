@@ -109,6 +109,7 @@
     <ClCompile Include="ExtensibleImage.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="WindowsUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp" />
@@ -133,6 +134,7 @@
     <ClInclude Include="Driver.hpp" />
     <ClInclude Include="ExtensibleImage.hpp" />
     <ClInclude Include="Geometry.hpp" />
+    <ClInclude Include="WindowsUtils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

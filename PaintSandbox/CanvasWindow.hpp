@@ -15,6 +15,7 @@
 #include "CanvasImage.hpp"
 #include "DrawTool.hpp"
 #include "Driver.hpp"
+#include "ExtensibleImage.hpp"
 
 class CanvasWindow;
 typedef std::shared_ptr<CanvasWindow> CanvasWindowPtr;
@@ -47,6 +48,7 @@ private:
 	DriverPtr m_driver;
 	CameraPtr m_camera;
 	CanvasImagePtr m_image;
+	ExtensibleImagePtr m_extensibleImage; // TODO: Replace m_image with this
 	DrawToolPtr m_drawTool;
 
 	HWND m_hWnd;
