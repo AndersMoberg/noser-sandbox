@@ -117,22 +117,14 @@ D3D11DriverPtr D3D11Driver::Create()
 		return NULL;
 	}
 
-	// Extract DXGI factory from device
+	// Get DXGI adapter from D3D11 device
 
-	IDXGIDevice* dxgiDevice = NULL;
-	hr = p->m_pD3D11Device->QueryInterface(IID_PPV_ARGS(&dxgiDevice));
-	if (FAILED(hr)) {
+	IDXGIAdapter* dxgiAdapter = GetDXGIAdapterFromD3D11Device(p->m_pD3D11Device);
+	if (!dxgiAdapter) {
 		return NULL;
 	}
 
-	IDXGIAdapter* dxgiAdapter = NULL;
-	hr = dxgiDevice->GetAdapter(&dxgiAdapter);
-	if (FAILED(hr)) {
-		SafeRelease(dxgiDevice);
-		return NULL;
-	}
-
-	SafeRelease(dxgiDevice);
+	// Get DXGI factory from adapter
 
 	hr = dxgiAdapter->GetParent(IID_PPV_ARGS(&p->m_pDXGIFactory));
 	if (FAILED(hr)) {

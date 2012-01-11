@@ -26,6 +26,8 @@ inline void SafeRelease(Interface*& pi)
 	}
 }
 
+IDXGIAdapter* GetDXGIAdapterFromD3D11Device(ID3D11Device* pDevice);
+
 VertexShaderPtr CreateVertexShaderFromCode(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target,
 	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs = NULL, UINT numElements = 0,

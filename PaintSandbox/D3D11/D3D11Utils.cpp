@@ -35,6 +35,28 @@ static ID3DBlob* CompileShader(const char* src, const char* entryPoint, const ch
 	return pCode;
 }
 
+IDXGIAdapter* GetDXGIAdapterFromD3D11Device(ID3D11Device* device)
+{
+	HRESULT hr;
+
+	IDXGIDevice* dxgiDevice = NULL;
+	hr = device->QueryInterface(&dxgiDevice);
+	if (FAILED(hr)) {
+		return NULL;
+	}
+
+	IDXGIAdapter* dxgiAdapter = NULL;
+	hr = dxgiDevice->GetAdapter(&dxgiAdapter);
+	if (FAILED(hr)) {
+		SafeRelease(dxgiDevice);
+		return NULL;
+	}
+
+	SafeRelease(dxgiDevice);
+
+	return dxgiAdapter;
+}
+
 VertexShaderPtr CreateVertexShaderFromCode(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target,
 	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,
