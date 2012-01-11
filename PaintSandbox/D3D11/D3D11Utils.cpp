@@ -57,6 +57,38 @@ IDXGIAdapter* GetDXGIAdapterFromD3D11Device(ID3D11Device* device)
 	return dxgiAdapter;
 }
 
+IDXGISurface* OpenD3D11TextureOnD3D10Device(ID3D11Texture2D* texture, ID3D10Device1* device)
+{
+	HRESULT hr;
+
+	// Obtain share handle for texture
+
+	IDXGIResource* dxgiResource = NULL;
+	hr = texture->QueryInterface(IID_PPV_ARGS(&dxgiResource));
+	if (FAILED(hr)) {
+		return NULL;
+	}
+
+	HANDLE shareHandle = NULL;
+	hr = dxgiResource->GetSharedHandle(&shareHandle);
+	if (FAILED(hr)) {
+		SafeRelease(dxgiResource);
+		return NULL;
+	}
+
+	SafeRelease(dxgiResource);
+
+	// Open D3D11 texture on D3D10 device
+
+	IDXGISurface* dxgiSurface = NULL;
+	hr = device->OpenSharedResource(shareHandle, IID_PPV_ARGS(&dxgiSurface));
+	if (FAILED(hr)) {
+		return NULL;
+	}
+
+	return dxgiSurface;
+}
+
 VertexShaderPtr CreateVertexShaderFromCode(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target,
 	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,

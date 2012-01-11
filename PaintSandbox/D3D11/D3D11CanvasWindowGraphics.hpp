@@ -14,6 +14,7 @@
 
 #include "Camera.hpp"
 #include "CanvasWindowGraphics.hpp"
+#include "D2DTarget.hpp"
 
 namespace D3D11
 {
@@ -46,12 +47,19 @@ private:
 	void Render();
 	void Present();
 
+	void RenderPrintf(ID2D1RenderTarget* pD2DTarget, IDWriteTextFormat* textFormat,
+		const D2D1_RECT_F& layoutRect, ID2D1Brush* defaultForegroundBrush,
+		LPCWSTR msg, ...);
+
 	HWND m_hWnd;
 	D3D11DriverPtr m_driver;
 	CameraPtr m_camera;
+	
+	IDWriteTextFormat* m_pTextFormat;
 
 	IDXGISwapChain* m_pSwapChain;
 	ID3D11RenderTargetView* m_pBackBufferRTV;
+	D2DTargetPtr m_d2dTarget;
 
 	CanvasImagePtr m_image;
 

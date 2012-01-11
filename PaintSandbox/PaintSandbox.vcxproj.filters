@@ -78,6 +78,9 @@
     <ClInclude Include="WindowsUtils.hpp">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="D3D11\D2DTarget.hpp">
+      <Filter>Source\D3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -145,6 +148,9 @@
     </ClCompile>
     <ClCompile Include="WindowsUtils.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11\D2DTarget.cpp">
+      <Filter>Source\D3D11</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

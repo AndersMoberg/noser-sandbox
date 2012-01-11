@@ -81,11 +81,17 @@ static const char TEXTURED_PIXEL_SHADER[] =
 D3D11Driver::D3D11Driver()
 	: m_pD3D11Device(NULL),
 	m_pD3D11Context(NULL),
-	m_pDXGIFactory(NULL)
+	m_pDXGIFactory(NULL),
+	m_pD3D10Device(NULL),
+	m_pD2DFactory(NULL),
+	m_pDWriteFactory(NULL)
 { }
 
 D3D11Driver::~D3D11Driver()
 {
+	SafeRelease(m_pDWriteFactory);
+	SafeRelease(m_pD2DFactory);
+	SafeRelease(m_pD3D10Device);
 	SafeRelease(m_pDXGIFactory);
 	SafeRelease(m_pD3D11Context);
 	SafeRelease(m_pD3D11Device);
@@ -99,7 +105,7 @@ D3D11DriverPtr D3D11Driver::Create()
 
 	// Create device
 
-	UINT createFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
+	UINT createFlags = D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #if _DEBUG
 	createFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
@@ -132,7 +138,38 @@ D3D11DriverPtr D3D11Driver::Create()
 		return NULL;
 	}
 
+	// Create D3D10.1 device using the same adapter chosen by D3D11CreateDevice
+
+	createFlags = D3D10_CREATE_DEVICE_SINGLETHREADED | D3D10_CREATE_DEVICE_BGRA_SUPPORT;
+#if _DEBUG
+	// XXX: This is commented out because Direct2D causes D3D10 to spam debug output
+	//createFlags |= D3D10_CREATE_DEVICE_DEBUG;
+#endif
+	// TODO: Will feature level 10.1 work for most people? I think Direct2D can
+	// work with any feature level.
+	hr = D3D10CreateDevice1(dxgiAdapter, D3D10_DRIVER_TYPE_HARDWARE, NULL,
+		createFlags, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &p->m_pD3D10Device);
+	if (FAILED(hr)) {
+		SafeRelease(dxgiAdapter);
+		return NULL;
+	}
+
 	SafeRelease(dxgiAdapter);
+
+	// Create Direct2D factory
+
+	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &p->m_pD2DFactory);
+	if (FAILED(hr)) {
+		return NULL;
+	}
+
+	// Create DirectWrite factory
+
+	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
+		__uuidof(IDWriteFactory), (IUnknown**)&p->m_pDWriteFactory);
+	if (FAILED(hr)) {
+		return NULL;
+	}
 
 	// Create blend state for Porter-Duff "over" operation
 
@@ -257,6 +294,11 @@ void D3D11Driver::RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc)
 	Matrix3x2f mat = Matrix3x2f::RectLerp(canvas->GetCanvasRect(),
 		RectF(-1.0f, 1.0f, 1.0f, -1.0f));
 	RenderQuad(mat, rc);
+}
+
+void D3D11Driver::RenderD2DTarget(D2DTargetPtr d2dTarget)
+{
+	// TODO: Implement
 }
 
 }

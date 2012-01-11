@@ -15,11 +15,13 @@ static const DXGI_FORMAT BACKBUFFER_FORMAT = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
 D3D11CanvasWindowGraphics::D3D11CanvasWindowGraphics()
 	: m_pSwapChain(NULL),
-	m_pBackBufferRTV(NULL)
+	m_pBackBufferRTV(NULL),
+	m_pTextFormat(NULL)
 { }
 
 D3D11CanvasWindowGraphics::~D3D11CanvasWindowGraphics()
 {
+	SafeRelease(m_pTextFormat);
 	SafeRelease(m_pBackBufferRTV);
 	SafeRelease(m_pSwapChain);
 }
@@ -37,6 +39,16 @@ D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(
 
 	ID3D11Device* pDevice = p->m_driver->GetD3D11Device();
 	IDXGIFactory1* pDXGIFactory = p->m_driver->GetDXGIFactory();
+	IDWriteFactory* pDWriteFactory = p->m_driver->GetDWriteFactory();
+
+	// Create text format
+
+	hr = pDWriteFactory->CreateTextFormat(
+		L"Calibri", NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL, 24.0f, L"en-US", &p->m_pTextFormat);
+	if (FAILED(hr)) {
+		return false;
+	}
 
 	// Create swap chain
 
@@ -73,6 +85,9 @@ bool D3D11CanvasWindowGraphics::CreateSwapChainResources()
 		return false;
 	}
 
+	D3D11_TEXTURE2D_DESC t2dd;
+	texture->GetDesc(&t2dd);
+
 	hr = pDevice->CreateRenderTargetView(texture, NULL, &m_pBackBufferRTV);
 	if (FAILED(hr)) {
 		SafeRelease(texture);
@@ -81,11 +96,20 @@ bool D3D11CanvasWindowGraphics::CreateSwapChainResources()
 
 	SafeRelease(texture);
 
+	// Create Direct2D render target
+
+	m_d2dTarget = D2DTarget::Create(m_driver->GetD2DFactory(),
+		pDevice, m_driver->GetD3D10Device(), t2dd.Width, t2dd.Height);
+	if (!m_d2dTarget) {
+		return false;
+	}
+
 	return true;
 }
 
 void D3D11CanvasWindowGraphics::DestroySwapChainResources()
 {
+	m_d2dTarget.reset();
 	SafeRelease(m_pBackBufferRTV);
 }
 
@@ -119,6 +143,8 @@ void D3D11CanvasWindowGraphics::Render()
 	// Clear to black
 	static const float BG_COLOR[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	pContext->ClearRenderTargetView(m_pBackBufferRTV, BG_COLOR);
+
+	// TODO: CLEAN UP THIS MESS!!!
 
 	if (m_image)
 	{
@@ -154,11 +180,90 @@ void D3D11CanvasWindowGraphics::Render()
 		srv = NULL;
 		pContext->PSSetShaderResources(0, 1, &srv);
 	}
+
+	// Render something into Direct2D target
+
+	ID2D1RenderTarget* pD2DTarget = m_d2dTarget->AcquireTarget();
+
+	pD2DTarget->BeginDraw();
+
+	// Clear to transparent black
+	pD2DTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black, 0.0f));
+
+	// Create brush for drawing text
+	ID2D1SolidColorBrush* brush;
+	pD2DTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Coral), &brush);
+
+	// Draw some text
+	RECT clientRc;
+	GetClientRect(m_hWnd, &clientRc);
+	D2D1_RECT_F clientRectf = D2D1::RectF((FLOAT)clientRc.left, (FLOAT)clientRc.top,
+		(FLOAT)clientRc.right, (FLOAT)clientRc.bottom);
+	RenderPrintf(pD2DTarget, m_pTextFormat, clientRectf, brush,
+		L"Welcome to Paint Sandbox!");
+
+	brush->Release();
+
+	pD2DTarget->EndDraw();
+
+	m_d2dTarget->ReleaseTarget();
+
+	// Transfer Direct2D target to display
+	//m_driver->RenderD2DTarget(m_d2dTarget);
+
+	// Set up rasterizer
+	RectF clientRcf((float)clientRc.left, (float)clientRc.top,
+		(float)clientRc.right, (float)clientRc.bottom);
+	D3D11_VIEWPORT vp = CD3D11_VIEWPORT(
+		clientRcf.left,
+		clientRcf.top,
+		clientRcf.right - clientRcf.left,
+		clientRcf.bottom - clientRcf.top);
+	pContext->RSSetViewports(1, &vp);
+
+	// Set up output merger
+	pContext->OMSetRenderTargets(1, &m_pBackBufferRTV, NULL);
+	pContext->OMSetBlendState(m_driver->GetOverBlend()->Get(), NULL, 0xFFFFFFFF);
+
+	ID3D11ShaderResourceView* srv = m_d2dTarget->AcquireSRV();
+	ID3D11SamplerState* ss = m_driver->GetBilinearSampler()->Get();
+
+	// Set up pixel shader
+	pContext->PSSetShader(m_driver->GetTexturedPixelShader()->Get(), NULL, 0);
+	pContext->PSSetShaderResources(0, 1, &srv);
+	pContext->PSSetSamplers(0, 1, &ss);
+
+	m_driver->RenderQuad(Matrix3x2f::IDENTITY, RectF(-1.0f, 1.0f, 1.0f, -1.0f));
+
+	srv = NULL;
+	pContext->PSSetShaderResources(0, 1, &srv);
+
+	m_d2dTarget->ReleaseSRV();
 }
 
 void D3D11CanvasWindowGraphics::Present()
 {
 	m_pSwapChain->Present(0, 0);
+}
+
+void D3D11CanvasWindowGraphics::RenderPrintf(ID2D1RenderTarget* pD2DTarget,
+	IDWriteTextFormat* textFormat, const D2D1_RECT_F& layoutRect,
+	ID2D1Brush* defaultForegroundBrush,
+	LPCWSTR msg, ...)
+{
+	va_list args = NULL;
+	va_start(args, msg);
+
+	int len = _vscwprintf(msg, args);
+
+	WCHAR* buf = new WCHAR[len + 1];
+	vswprintf_s(buf, len + 1, msg, args);
+
+	va_end(args);
+
+	pD2DTarget->DrawTextW(buf, len, textFormat, layoutRect, defaultForegroundBrush);
+
+	delete[] buf;
 }
 
 }

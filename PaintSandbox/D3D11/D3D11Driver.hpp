@@ -6,6 +6,7 @@
 #define _D3D11DRIVER_HPP
 
 #include <d3d11.h>
+#include <DWrite.h>
 
 #include <memory>
 
@@ -40,10 +41,14 @@ public:
 
 	void RenderQuad(const Matrix3x2f& mat, const RectF& rc);
 	void RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc);
+	void RenderD2DTarget(D2DTargetPtr d2dTarget);
 
 	ID3D11Device* GetD3D11Device() { return m_pD3D11Device; }
 	ID3D11DeviceContext* GetD3D11Context() { return m_pD3D11Context; }
 	IDXGIFactory1* GetDXGIFactory() { return m_pDXGIFactory; }
+	ID3D10Device1* GetD3D10Device() { return m_pD3D10Device; }
+	ID2D1Factory* GetD2DFactory() { return m_pD2DFactory; }
+	IDWriteFactory* GetDWriteFactory() { return m_pDWriteFactory; }
 
 	BlendStatePtr GetOverBlend() { return m_overBlend; }
 
@@ -59,6 +64,10 @@ private:
 	ID3D11Device* m_pD3D11Device;
 	ID3D11DeviceContext* m_pD3D11Context;
 	IDXGIFactory1* m_pDXGIFactory;
+	ID3D10Device1* m_pD3D10Device;
+
+	ID2D1Factory* m_pD2DFactory;
+	IDWriteFactory* m_pDWriteFactory;
 
 	BlendStatePtr m_overBlend; // Porter-Duff "over" operation
 

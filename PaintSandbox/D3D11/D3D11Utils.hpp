@@ -27,6 +27,7 @@ inline void SafeRelease(Interface*& pi)
 }
 
 IDXGIAdapter* GetDXGIAdapterFromD3D11Device(ID3D11Device* pDevice);
+IDXGISurface* OpenD3D11TextureOnD3D10Device(ID3D11Texture2D* texture, ID3D10Device1* device);
 
 VertexShaderPtr CreateVertexShaderFromCode(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target,
