@@ -70,6 +70,8 @@ private:
 
 	ExtensibleImage();
 
+	void AddTile(const Vector2i& address);
+
 	Vector2f m_pixelsPerCanvas; // Number of pixels per canvas unit in x and y directions
 	Matrix3x2f m_canvasToPixel; // Matrix to transform canvas coordinates to image pixel coordinates
 
