@@ -286,9 +286,9 @@ void D3D11Driver::RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc)
 {
 	D3D11ImagePtr image = std::static_pointer_cast<D3D11Image, DriverImage>(
 		canvas->GetDriverImage());
-	ID3D11RenderTargetView* rtv = image->GetRTV();
 
 	// Set up output merger
+	ID3D11RenderTargetView* rtv = image->GetRTV()->Get();
 	m_pD3D11Context->OMSetRenderTargets(1, &rtv, NULL);
 
 	Matrix3x2f mat = Matrix3x2f::RectLerp(canvas->GetCanvasRect(),

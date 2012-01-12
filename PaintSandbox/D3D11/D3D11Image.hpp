@@ -12,6 +12,7 @@
 #include "Driver.hpp"
 #include "Texture2D.hpp"
 #include "ShaderResourceView.hpp"
+#include "RenderTargetView.hpp"
 
 namespace D3D11
 {
@@ -25,11 +26,10 @@ class D3D11Image : public DriverImage
 public:
 
 	static D3D11ImagePtr Create(ID3D11Device* pDevice, DXGI_FORMAT format, UINT width, UINT height);
-	~D3D11Image();
 
 	Texture2DPtr GetTex() { return m_texture; }
 	ShaderResourceViewPtr GetSRV() { return m_srv; }
-	ID3D11RenderTargetView* GetRTV() { return m_pTextureRTV; }
+	RenderTargetViewPtr GetRTV() { return m_rtv; }
 
 private:
 
@@ -37,7 +37,7 @@ private:
 
 	Texture2DPtr m_texture;
 	ShaderResourceViewPtr m_srv;
-	ID3D11RenderTargetView* m_pTextureRTV;
+	RenderTargetViewPtr m_rtv;
 
 };
 
