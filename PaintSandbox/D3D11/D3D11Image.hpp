@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "Driver.hpp"
+#include "Texture2D.hpp"
 
 namespace D3D11
 {
@@ -25,7 +26,7 @@ public:
 	static D3D11ImagePtr Create(ID3D11Device* pDevice, DXGI_FORMAT format, UINT width, UINT height);
 	~D3D11Image();
 
-	ID3D11Texture2D* GetTex() { return m_pTexture; }
+	Texture2DPtr GetTex() { return m_texture; }
 	ID3D11ShaderResourceView* GetSRV() { return m_pTextureSRV; }
 	ID3D11RenderTargetView* GetRTV() { return m_pTextureRTV; }
 
@@ -33,7 +34,7 @@ private:
 
 	D3D11Image();
 
-	ID3D11Texture2D* m_pTexture;
+	Texture2DPtr m_texture;
 	ID3D11ShaderResourceView* m_pTextureSRV;
 	ID3D11RenderTargetView* m_pTextureRTV;
 
