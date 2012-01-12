@@ -81,6 +81,9 @@
     <ClInclude Include="D3D11\D2DTarget.hpp">
       <Filter>Source\D3D11</Filter>
     </ClInclude>
+    <ClInclude Include="D3D11\Texture2D.hpp">
+      <Filter>Source\D3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -150,6 +153,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="D3D11\D2DTarget.cpp">
+      <Filter>Source\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="D3D11\Texture2D.cpp">
       <Filter>Source\D3D11</Filter>
     </ClCompile>
   </ItemGroup>
