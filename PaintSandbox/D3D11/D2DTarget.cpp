@@ -12,8 +12,7 @@ namespace D3D11
 static const DXGI_FORMAT D2DTEXTURE_FORMAT = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 D2DTarget::D2DTarget()
-	: m_pD2DTextureSRV(NULL),
-	m_pD3D11Mutex(NULL),
+	: m_pD3D11Mutex(NULL),
 	m_pD2DMutex(NULL),
 	m_pD2DTarget(NULL)
 { }
@@ -23,7 +22,6 @@ D2DTarget::~D2DTarget()
 	SafeRelease(m_pD2DTarget);
 	SafeRelease(m_pD2DMutex);
 	SafeRelease(m_pD3D11Mutex);
-	SafeRelease(m_pD2DTextureSRV);
 }
 
 D2DTargetPtr D2DTarget::Create(ID2D1Factory* pD2DFactory,
@@ -46,8 +44,8 @@ D2DTargetPtr D2DTarget::Create(ID2D1Factory* pD2DFactory,
 
 	// Create SRV for texture
 
-	hr = pD3D11Device->CreateShaderResourceView(p->m_d2dTexture->Get(), NULL, &p->m_pD2DTextureSRV);
-	if (FAILED(hr)) {
+	p->m_d2dTextureSRV = ShaderResourceView::Create(pD3D11Device, p->m_d2dTexture);
+	if (!p->m_d2dTextureSRV) {
 		return NULL;
 	}
 
@@ -92,7 +90,7 @@ D2DTargetPtr D2DTarget::Create(ID2D1Factory* pD2DFactory,
 ID3D11ShaderResourceView* D2DTarget::AcquireSRV()
 {
 	m_pD3D11Mutex->AcquireSync(0, INFINITE);
-	return m_pD2DTextureSRV;
+	return m_d2dTextureSRV->Get();
 }
 
 void D2DTarget::ReleaseSRV()

@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "Texture2D.hpp"
+#include "ShaderResourceView.hpp"
 
 namespace D3D11
 {
@@ -38,7 +39,7 @@ private:
 	D2DTarget();
 
 	Texture2DPtr m_d2dTexture;
-	ID3D11ShaderResourceView* m_pD2DTextureSRV;
+	ShaderResourceViewPtr m_d2dTextureSRV;
 
 	IDXGIKeyedMutex* m_pD3D11Mutex;
 	IDXGIKeyedMutex* m_pD2DMutex;
