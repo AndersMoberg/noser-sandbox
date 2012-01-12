@@ -27,7 +27,8 @@ DrawToolPtr DrawTool::Create(DriverPtr driver, CanvasImagePtr image,
 
 void DrawTool::ReceiveCursor(bool down, const Vector2f& pos)
 {
-	float radius = 0.5f;
+	// TODO: Algorithms to adjust the radius depending on e.g. pen pressure
+	float radius = 0.25f;
 	RectF curRect(pos.x-radius, pos.y+radius, pos.x+radius, pos.y-radius);
 
 	if (down)
