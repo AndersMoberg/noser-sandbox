@@ -44,8 +44,11 @@ void ExtensibleImage::Extend(const RectF& canvasRect)
 	RectI pixelRect(
 		(int)floor(pixelRectf.left), (int)floor(pixelRectf.top),
 		(int)ceil(pixelRectf.right), (int)ceil(pixelRectf.bottom));
-
+/*
 	Debug("canvas rect %f, %f, %f, %f translates to pixel rect %d, %d, %d, %d\n",
 		canvasRect.left, canvasRect.top, canvasRect.right, canvasRect.bottom,
-		pixelRect.left, pixelRect.top, pixelRect.right, pixelRect.bottom);
+		pixelRect.left, pixelRect.top, pixelRect.right, pixelRect.bottom);*/
+
+	// XXX: Test tile map
+	m_tiles[Vector2i(0, 0)] = ExtensibleImageTile::Create(canvasRect);
 }

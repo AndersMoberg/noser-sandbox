@@ -21,6 +21,7 @@ public:
 
 	Matrix3x2f GetCanvasToClip(const RectF& viewport) const;
 	Matrix3x2f GetViewportToCanvas(const RectF& viewport) const;
+	Matrix3x2f GetCanvasToViewport(const RectF& viewport) const;
 
 private:
 

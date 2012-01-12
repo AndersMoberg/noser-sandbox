@@ -45,7 +45,7 @@ CanvasWindowPtr CanvasWindow::Create(DriverPtr driver, HINSTANCE hInstance, int 
 		return NULL;
 	}
 
-	p->m_drawTool = DrawTool::Create(p->m_driver, p->m_image);
+	p->m_drawTool = DrawTool::Create(p->m_driver, p->m_image, p->m_extensibleImage);
 	if (!p->m_drawTool) {
 		return NULL;
 	}
@@ -142,7 +142,7 @@ LRESULT CanvasWindow::OnWMCreate(HWND hwnd)
 		return -1;
 	}
 
-	m_graphics->SetCanvasImage(m_image);
+	m_graphics->SetCanvasImage(m_image, m_extensibleImage);
 
 	return 0;
 }
@@ -178,9 +178,6 @@ LRESULT CanvasWindow::OnWMMouseMove(WPARAM wParam, LPARAM lParam)
 
 	if (wParam & MK_LBUTTON)
 	{
-		// XXX: Test ExtensibleImage by extending it here
-		m_extensibleImage->Extend(RectF(canvasPos.x-0.5f, canvasPos.y+0.5f, canvasPos.x+0.5f, canvasPos.x-0.5f));
-
 		m_drawTool->ReceiveCursor(true, canvasPos);
 		InvalidateRect(m_hWnd, NULL, FALSE);
 	}

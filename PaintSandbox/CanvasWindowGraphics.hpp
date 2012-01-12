@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "CanvasImage.hpp"
+#include "ExtensibleImage.hpp"
 
 class CanvasWindowGraphics;
 typedef std::shared_ptr<CanvasWindowGraphics> CanvasWindowGraphicsPtr;
@@ -18,7 +19,7 @@ public:
 	virtual ~CanvasWindowGraphics() { }
 	virtual void OnWMSize() = 0;
 	virtual void OnWMPaint() = 0;
-	virtual void SetCanvasImage(CanvasImagePtr image) = 0;
+	virtual void SetCanvasImage(CanvasImagePtr image, ExtensibleImagePtr extensibleImage) = 0;
 };
 
 #endif

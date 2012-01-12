@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "Geometry.hpp"
+#include "ExtensibleImage.hpp"
 
 class DrawTool;
 typedef std::shared_ptr<DrawTool> DrawToolPtr;
@@ -30,7 +31,8 @@ class DrawTool
 
 public:
 
-	static DrawToolPtr Create(DriverPtr driver, CanvasImagePtr image);
+	static DrawToolPtr Create(DriverPtr driver, CanvasImagePtr image,
+		ExtensibleImagePtr extensibleImage);
 
 	void ReceiveCursor(bool down, const Vector2f& pos);
 
@@ -42,6 +44,8 @@ private:
 
 	DriverPtr m_driver;
 	CanvasImagePtr m_image;
+	// TODO: Discard CanvasImage in favor of ExtensibleImage
+	ExtensibleImagePtr m_extensibleImage;
 	DrawToolRendererPtr m_renderer;
 
 	RectF m_prevRect;

@@ -35,7 +35,7 @@ public:
 	// CanvasWindowGraphics implementation
 	virtual void OnWMSize();
 	virtual void OnWMPaint();
-	virtual void SetCanvasImage(CanvasImagePtr image);
+	virtual void SetCanvasImage(CanvasImagePtr image, ExtensibleImagePtr extensibleImage);
 
 private:
 
@@ -62,6 +62,7 @@ private:
 	D2DTargetPtr m_d2dTarget;
 
 	CanvasImagePtr m_image;
+	ExtensibleImagePtr m_extensibleImage;
 
 };
 

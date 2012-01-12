@@ -37,3 +37,15 @@ Matrix3x2f Camera::GetViewportToCanvas(const RectF& viewport) const
 		m_center.y - yVisible / 2.0f);
 	return Matrix3x2f::RectLerp(viewport, visibleRc);
 }
+
+Matrix3x2f Camera::GetCanvasToViewport(const RectF& viewport) const
+{
+	float xVisible = (viewport.right - viewport.left) / m_zoom;
+	float yVisible = (viewport.bottom - viewport.top) / m_zoom;
+	RectF visibleRc(
+		m_center.x - xVisible / 2.0f,
+		m_center.y + yVisible / 2.0f,
+		m_center.x + xVisible / 2.0f,
+		m_center.y - yVisible / 2.0f);
+	return Matrix3x2f::RectLerp(visibleRc, viewport);
+}

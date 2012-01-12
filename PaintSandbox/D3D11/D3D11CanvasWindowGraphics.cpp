@@ -131,13 +131,22 @@ void D3D11CanvasWindowGraphics::OnWMPaint()
 	EndPaint(m_hWnd, &ps);
 }
 
-void D3D11CanvasWindowGraphics::SetCanvasImage(CanvasImagePtr image)
+void D3D11CanvasWindowGraphics::SetCanvasImage(CanvasImagePtr image,
+	ExtensibleImagePtr extensibleImage)
 {
 	m_image = image;
+	m_extensibleImage = extensibleImage;
 }
 
 void D3D11CanvasWindowGraphics::Render()
 {
+	RECT clientRc;
+	GetClientRect(m_hWnd, &clientRc);
+	RectF clientRcf((float)clientRc.left, (float)clientRc.top,
+		(float)clientRc.right, (float)clientRc.bottom);
+	D2D1_RECT_F clientRectf = D2D1::RectF((FLOAT)clientRc.left, (FLOAT)clientRc.top,
+		(FLOAT)clientRc.right, (FLOAT)clientRc.bottom);
+
 	ID3D11DeviceContext* pContext = m_driver->GetD3D11Context();
 
 	// Clear to black
@@ -190,15 +199,44 @@ void D3D11CanvasWindowGraphics::Render()
 	// Clear to transparent black
 	pD2DTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black, 0.0f));
 
-	// Create brush for drawing text
+	// Create brush for drawing stuff
 	ID2D1SolidColorBrush* brush;
-	pD2DTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Coral), &brush);
+	pD2DTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Blue), &brush);
+	
+	Matrix3x2f canvasToViewport = m_camera->GetCanvasToViewport(clientRcf);
+
+	// Draw the extensible image's tile structure
+	const ExtensibleImage::TileMap& tiles = m_extensibleImage->GetTileMap();
+	for (ExtensibleImage::TileMap::const_iterator it = tiles.begin();
+		it != tiles.end(); ++it)
+	{
+		const RectF& canvasRect = it->second->GetCanvasRect();
+
+		ID2D1Factory* d2dFactory;
+		pD2DTarget->GetFactory(&d2dFactory);
+
+		ID2D1RectangleGeometry* rectGeom;
+		d2dFactory->CreateRectangleGeometry(
+			D2D1::RectF(canvasRect.left, canvasRect.top, canvasRect.right, canvasRect.bottom),
+			&rectGeom);
+
+		ID2D1TransformedGeometry* transGeom;
+		d2dFactory->CreateTransformedGeometry(rectGeom,
+			D2D1::Matrix3x2F(canvasToViewport.m11, canvasToViewport.m12,
+			canvasToViewport.m21, canvasToViewport.m22,
+			canvasToViewport.m31, canvasToViewport.m32),
+			&transGeom);
+
+		rectGeom->Release();
+
+		pD2DTarget->DrawGeometry(transGeom, brush);
+
+		transGeom->Release();
+
+		d2dFactory->Release();
+	}
 
 	// Draw some text
-	RECT clientRc;
-	GetClientRect(m_hWnd, &clientRc);
-	D2D1_RECT_F clientRectf = D2D1::RectF((FLOAT)clientRc.left, (FLOAT)clientRc.top,
-		(FLOAT)clientRc.right, (FLOAT)clientRc.bottom);
 	RenderPrintf(pD2DTarget, m_pTextFormat, clientRectf, brush,
 		L"Welcome to Paint Sandbox!");
 
@@ -212,8 +250,6 @@ void D3D11CanvasWindowGraphics::Render()
 	//m_driver->RenderD2DTarget(m_d2dTarget);
 
 	// Set up rasterizer
-	RectF clientRcf((float)clientRc.left, (float)clientRc.top,
-		(float)clientRc.right, (float)clientRc.bottom);
 	D3D11_VIEWPORT vp = CD3D11_VIEWPORT(
 		clientRcf.left,
 		clientRcf.top,

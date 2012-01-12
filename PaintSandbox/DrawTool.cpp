@@ -10,12 +10,14 @@
 DrawTool::DrawTool()
 { }
 
-DrawToolPtr DrawTool::Create(DriverPtr driver, CanvasImagePtr image)
+DrawToolPtr DrawTool::Create(DriverPtr driver, CanvasImagePtr image,
+	ExtensibleImagePtr extensibleImage)
 {
 	DrawToolPtr p(new DrawTool);
 
 	p->m_driver = driver;
 	p->m_image = image;
+	p->m_extensibleImage = extensibleImage;
 	p->m_renderer = p->m_driver->CreateDrawToolRenderer(image);
 	p->m_prevRect = RectF(0.0f, 0.0f, 0.0f, 0.0f);
 	p->m_flowRate = 1.0f; // 1 unit of ink per canvas length
@@ -57,5 +59,7 @@ void DrawTool::Flow(const RectF& rc0, const RectF& rc1)
 	{
 		RectF rc = LerpRect(0.0f, (float)numSteps, rc0, rc1, i + 0.5f);
 		m_renderer->RenderCircularGradient(rc, totalWeight / numSteps);
+		// TODO: Use ExtensibleImage to store the image
+		m_extensibleImage->Extend(rc);
 	}
 }
