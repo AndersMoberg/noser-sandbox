@@ -11,14 +11,12 @@ namespace D3D11
 {
 
 D3D11Image::D3D11Image()
-	: m_pTextureSRV(NULL),
-	m_pTextureRTV(NULL)
+	: m_pTextureRTV(NULL)
 { }
 
 D3D11Image::~D3D11Image()
 {
 	SafeRelease(m_pTextureRTV);
-	SafeRelease(m_pTextureSRV);
 }
 
 D3D11ImagePtr D3D11Image::Create(ID3D11Device* pDevice, DXGI_FORMAT format,
@@ -35,8 +33,8 @@ D3D11ImagePtr D3D11Image::Create(ID3D11Device* pDevice, DXGI_FORMAT format,
 		return NULL;
 	}
 
-	hr = pDevice->CreateShaderResourceView(p->m_texture->Get(), NULL, &p->m_pTextureSRV);
-	if (FAILED(hr)) {
+	p->m_srv = ShaderResourceView::Create(pDevice, p->m_texture);
+	if (!p->m_srv) {
 		return NULL;
 	}
 

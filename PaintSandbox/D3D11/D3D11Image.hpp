@@ -11,6 +11,7 @@
 
 #include "Driver.hpp"
 #include "Texture2D.hpp"
+#include "ShaderResourceView.hpp"
 
 namespace D3D11
 {
@@ -27,7 +28,7 @@ public:
 	~D3D11Image();
 
 	Texture2DPtr GetTex() { return m_texture; }
-	ID3D11ShaderResourceView* GetSRV() { return m_pTextureSRV; }
+	ShaderResourceViewPtr GetSRV() { return m_srv; }
 	ID3D11RenderTargetView* GetRTV() { return m_pTextureRTV; }
 
 private:
@@ -35,7 +36,7 @@ private:
 	D3D11Image();
 
 	Texture2DPtr m_texture;
-	ID3D11ShaderResourceView* m_pTextureSRV;
+	ShaderResourceViewPtr m_srv;
 	ID3D11RenderTargetView* m_pTextureRTV;
 
 };
