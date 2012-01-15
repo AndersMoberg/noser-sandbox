@@ -30,9 +30,12 @@ private:
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnWMCreate(HWND hwnd);
 	LRESULT OnWMDestroy();
+	LRESULT OnWMPaint();
 
 	bool CreateDeviceResources();
 	void DestroyDeviceResources();
+
+	void Render();
 
 	HWND m_hWnd;
 

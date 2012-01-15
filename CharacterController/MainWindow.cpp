@@ -93,6 +93,9 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 		case WM_DESTROY:
 			result = pThis->OnWMDestroy();
 			break;
+		case WM_PAINT:
+			result = pThis->OnWMPaint();
+			break;
 		default:
 			result = DefWindowProc(hwnd, uMsg, wParam, lParam);
 			break;
@@ -123,6 +126,19 @@ LRESULT MainWindow::OnWMDestroy()
 	return 0;
 }
 
+LRESULT MainWindow::OnWMPaint()
+{
+	// BeginPaint..EndPaint are required to validate the rectangle so Windows
+	// doesn't send WM_PAINT incessantly
+	PAINTSTRUCT ps;
+	BeginPaint(m_hWnd, &ps);
+
+	Render();
+
+	EndPaint(m_hWnd, &ps);
+	return 0;
+}
+
 bool MainWindow::CreateDeviceResources()
 {
 	if (!m_pD2DTarget)
@@ -147,4 +163,21 @@ bool MainWindow::CreateDeviceResources()
 void MainWindow::DestroyDeviceResources()
 {
 	SafeRelease(m_pD2DTarget);
+}
+
+void MainWindow::Render()
+{
+	CreateDeviceResources();
+
+	m_pD2DTarget->BeginDraw();
+
+	m_pD2DTarget->Clear(D2D1::ColorF(D2D1::ColorF::Aqua));
+
+	HRESULT hr = m_pD2DTarget->EndDraw();
+	if (hr == D2DERR_RECREATE_TARGET)
+	{
+		// Target will be recreated on the next call to Render
+		DestroyDeviceResources();
+	}
+	// TODO: Better handling of other D2D errors.
 }
