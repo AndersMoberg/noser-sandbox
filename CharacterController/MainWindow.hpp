@@ -8,6 +8,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
+#include <d2d1.h>
 
 #include <memory>
 
@@ -30,7 +31,13 @@ private:
 	LRESULT OnWMCreate(HWND hwnd);
 	LRESULT OnWMDestroy();
 
+	bool CreateDeviceResources();
+	void DestroyDeviceResources();
+
 	HWND m_hWnd;
+
+	ID2D1Factory* m_pD2DFactory;
+	ID2D1HwndRenderTarget* m_pD2DTarget;
 
 };
 
