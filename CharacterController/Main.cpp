@@ -15,6 +15,8 @@
 
 #include <cstdlib>
 
+#include "Application.hpp"
+
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nShowCmd)
 {
 #if _DEBUG
@@ -22,7 +24,14 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	int exitCode = EXIT_SUCCESS;
+	int exitCode;
+
+	ApplicationPtr app = Application::Create(hInstance, nShowCmd);
+	if (!app) {
+		exitCode = EXIT_FAILURE;
+	} else {
+		exitCode = app->MessageLoop();
+	}
 
 	return exitCode;
 }
