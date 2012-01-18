@@ -12,6 +12,8 @@
 
 #include <memory>
 
+#include "World.hpp"
+
 class MainWindow;
 typedef std::shared_ptr<MainWindow> MainWindowPtr;
 
@@ -41,6 +43,8 @@ private:
 
 	ID2D1Factory* m_pD2DFactory;
 	ID2D1HwndRenderTarget* m_pD2DTarget;
+
+	WorldPtr m_world;
 
 };
 

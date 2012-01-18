@@ -44,6 +44,11 @@ MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd)
 		return NULL;
 	}
 
+	p->m_world = World::Create();
+	if (!p->m_world) {
+		return NULL;
+	}
+
 	WNDCLASS wc = { 0 };
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WindowProc;
