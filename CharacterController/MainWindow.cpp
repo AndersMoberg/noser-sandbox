@@ -4,6 +4,8 @@
 
 #include "MainWindow.hpp"
 
+#include <vector>
+
 static const LPCTSTR MAINWINDOW_CLASS_NAME =
 	TEXT("CharacterControllerWindowClass");
 
@@ -176,7 +178,26 @@ void MainWindow::Render()
 
 	m_pD2DTarget->BeginDraw();
 
-	m_pD2DTarget->Clear(D2D1::ColorF(D2D1::ColorF::Aqua));
+	m_pD2DTarget->Clear(D2D1::ColorF(D2D1::ColorF::CornflowerBlue));
+
+	const World::WallList& walls = m_world->GetWalls();
+	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
+	{
+		ID2D1PathGeometry* geom;
+		m_pD2DFactory->CreatePathGeometry(&geom);
+
+		ID2D1GeometrySink* sink;
+		geom->Open(&sink);
+
+		sink->BeginFigure(it->start, D2D1_FIGURE_BEGIN_HOLLOW);
+		sink->AddLine(it->end);
+
+		sink->Release();
+
+		ID2D1TransformedGeometry* transGeom;
+
+		geom->Release();
+	}
 
 	HRESULT hr = m_pD2DTarget->EndDraw();
 	if (hr == D2DERR_RECREATE_TARGET)
