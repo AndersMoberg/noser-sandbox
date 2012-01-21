@@ -16,3 +16,14 @@ CameraPtr Camera::Create()
 
 	return p;
 }
+
+Matrix3x2f Camera::GetWorldToViewport(const Rectf& vp) const
+{
+	// TODO: Correct for aspect ratio
+	Rectf visibleRc(
+		m_center.x - m_zoom / 2.0f,
+		m_center.y + m_zoom / 2.0f,
+		m_center.x + m_zoom / 2.0f,
+		m_center.y - m_zoom / 2.0f);
+	return Matrix3x2f::RectLerp(visibleRc, vp);
+}

@@ -19,6 +19,8 @@ public:
 
 	static CameraPtr Create();
 
+	Matrix3x2f GetWorldToViewport(const Rectf& vp) const;
+
 private:
 
 	Camera();

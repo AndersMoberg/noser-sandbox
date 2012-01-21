@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "Camera.hpp"
 #include "World.hpp"
 
 class MainWindow;
@@ -44,6 +45,7 @@ private:
 	ID2D1Factory* m_pD2DFactory;
 	ID2D1HwndRenderTarget* m_pD2DTarget;
 
+	CameraPtr m_camera;
 	WorldPtr m_world;
 
 };
