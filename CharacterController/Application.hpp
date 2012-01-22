@@ -11,6 +11,7 @@
 
 #include <memory>
 
+#include "Game.hpp"
 #include "MainWindow.hpp"
 
 class Application;
@@ -29,6 +30,7 @@ private:
 
 	Application();
 
+	GamePtr m_game;
 	MainWindowPtr m_window;
 
 };
