@@ -191,43 +191,7 @@ void MainWindow::Render()
 
 	m_pD2DTarget->BeginDraw();
 
-	m_pD2DTarget->Clear(D2D1::ColorF(D2D1::ColorF::CornflowerBlue));
-
-	// Create brush for drawing stuff
-	ID2D1SolidColorBrush* brush;
-	m_pD2DTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &brush);
-
-	const World::WallList& walls = m_game->GetWorld()->GetWalls();
-	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
-	{
-		ID2D1PathGeometry* geom;
-		m_pD2DFactory->CreatePathGeometry(&geom);
-
-		ID2D1GeometrySink* sink;
-		geom->Open(&sink);
-
-		sink->BeginFigure(it->start, D2D1_FIGURE_BEGIN_HOLLOW);
-		sink->AddLine(it->end);
-		sink->EndFigure(D2D1_FIGURE_END_OPEN);
-		sink->Close();
-
-		sink->Release();
-
-		D2D1_SIZE_F size = m_pD2DTarget->GetSize();
-		Rectf vp(0.0f, 0.0f, size.width, size.height);
-
-		ID2D1TransformedGeometry* transGeom;
-		m_pD2DFactory->CreateTransformedGeometry(geom,
-			m_game->GetCamera()->GetWorldToViewport(vp), &transGeom);
-
-		geom->Release();
-
-		m_pD2DTarget->DrawGeometry(transGeom, brush);
-
-		transGeom->Release();
-	}
-
-	brush->Release();
+	m_game->Render(m_pD2DTarget);
 
 	HRESULT hr = m_pD2DTarget->EndDraw();
 	if (hr == D2DERR_RECREATE_TARGET)

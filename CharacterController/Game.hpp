@@ -20,8 +20,7 @@ public:
 
 	static GamePtr Create();
 
-	CameraPtr GetCamera() { return m_camera; }
-	WorldPtr GetWorld() { return m_world; }
+	void Render(ID2D1RenderTarget* target);
 
 private:
 
@@ -29,6 +28,7 @@ private:
 
 	CameraPtr m_camera;
 	WorldPtr m_world;
+	Vector2f m_characterPos;
 
 };
 
