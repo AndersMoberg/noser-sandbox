@@ -16,7 +16,7 @@ ApplicationPtr Application::Create(HINSTANCE hInstance, int nShowCmd)
 		return NULL;
 	}
 
-	p->m_window = MainWindow::Create(hInstance, nShowCmd);
+	p->m_window = MainWindow::Create(hInstance, nShowCmd, p->m_game);
 	if (!p->m_window) {
 		return NULL;
 	}

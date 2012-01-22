@@ -37,24 +37,16 @@ MainWindow::~MainWindow()
 	SafeRelease(m_pD2DFactory);
 }
 
-MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd)
+MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd, GamePtr game)
 {
 	MainWindowPtr p(new MainWindow);
+
+	p->m_game = game;
 
 	HRESULT hr;
 
 	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &p->m_pD2DFactory);
 	if (FAILED(hr)) {
-		return NULL;
-	}
-
-	p->m_camera = Camera::Create();
-	if (!p->m_camera) {
-		return NULL;
-	}
-
-	p->m_world = World::Create();
-	if (!p->m_world) {
 		return NULL;
 	}
 
@@ -205,7 +197,7 @@ void MainWindow::Render()
 	ID2D1SolidColorBrush* brush;
 	m_pD2DTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &brush);
 
-	const World::WallList& walls = m_world->GetWalls();
+	const World::WallList& walls = m_game->GetWorld()->GetWalls();
 	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
 	{
 		ID2D1PathGeometry* geom;
@@ -226,7 +218,7 @@ void MainWindow::Render()
 
 		ID2D1TransformedGeometry* transGeom;
 		m_pD2DFactory->CreateTransformedGeometry(geom,
-			m_camera->GetWorldToViewport(vp), &transGeom);
+			m_game->GetCamera()->GetWorldToViewport(vp), &transGeom);
 
 		geom->Release();
 

@@ -7,6 +7,9 @@
 
 #include <memory>
 
+#include "Camera.hpp"
+#include "World.hpp"
+
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
 
@@ -17,9 +20,15 @@ public:
 
 	static GamePtr Create();
 
+	CameraPtr GetCamera() { return m_camera; }
+	WorldPtr GetWorld() { return m_world; }
+
 private:
 
 	Game();
+
+	CameraPtr m_camera;
+	WorldPtr m_world;
 
 };
 

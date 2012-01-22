@@ -12,8 +12,7 @@
 
 #include <memory>
 
-#include "Camera.hpp"
-#include "World.hpp"
+#include "Game.hpp"
 
 class MainWindow;
 typedef std::shared_ptr<MainWindow> MainWindowPtr;
@@ -24,7 +23,7 @@ class MainWindow
 public:
 
 	~MainWindow();
-	static MainWindowPtr Create(HINSTANCE hInstance, int nShowCmd);
+	static MainWindowPtr Create(HINSTANCE hInstance, int nShowCmd, GamePtr game);
 
 private:
 
@@ -46,8 +45,7 @@ private:
 	ID2D1Factory* m_pD2DFactory;
 	ID2D1HwndRenderTarget* m_pD2DTarget;
 
-	CameraPtr m_camera;
-	WorldPtr m_world;
+	GamePtr m_game;
 
 };
 
