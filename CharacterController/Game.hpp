@@ -29,6 +29,7 @@ private:
 	CameraPtr m_camera;
 	WorldPtr m_world;
 	Vector2f m_characterPos;
+	float m_characterRadius;
 
 };
 

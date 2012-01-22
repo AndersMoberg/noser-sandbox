@@ -22,6 +22,7 @@ GamePtr Game::Create()
 	}
 
 	p->m_characterPos = Vector2f(0.0f, 0.0f);
+	p->m_characterRadius = 1.0f;
 
 	return p;
 }
@@ -31,12 +32,17 @@ void Game::Render(ID2D1RenderTarget* target)
 	ID2D1Factory* factory;
 	target->GetFactory(&factory);
 
+	D2D1_SIZE_F targetSize = target->GetSize();
+	Rectf vp(0.0f, 0.0f, targetSize.width, targetSize.height);
+	Matrix3x2f worldToViewport = m_camera->GetWorldToViewport(vp);
+
 	target->Clear(D2D1::ColorF(D2D1::ColorF::CornflowerBlue));
 
 	// Create brush for drawing stuff
 	ID2D1SolidColorBrush* brush;
 	target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &brush);
 
+	// Render walls
 	const World::WallList& walls = m_world->GetWalls();
 	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
 	{
@@ -53,12 +59,8 @@ void Game::Render(ID2D1RenderTarget* target)
 
 		sink->Release();
 
-		D2D1_SIZE_F size = target->GetSize();
-		Rectf vp(0.0f, 0.0f, size.width, size.height);
-
 		ID2D1TransformedGeometry* transGeom;
-		factory->CreateTransformedGeometry(geom,
-			m_camera->GetWorldToViewport(vp), &transGeom);
+		factory->CreateTransformedGeometry(geom, worldToViewport, &transGeom);
 
 		geom->Release();
 
@@ -66,6 +68,13 @@ void Game::Render(ID2D1RenderTarget* target)
 
 		transGeom->Release();
 	}
+
+	// Render character
+	target->SetTransform(worldToViewport);
+	target->DrawEllipse(
+		D2D1::Ellipse(m_characterPos, m_characterRadius, m_characterRadius),
+		brush);
+	target->SetTransform(D2D1::Matrix3x2F::Identity());
 
 	brush->Release();
 }
