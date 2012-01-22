@@ -4,6 +4,8 @@
 
 #include "MainWindow.hpp"
 
+#include <WindowsX.h>
+
 #include <vector>
 
 static const LPCTSTR MAINWINDOW_CLASS_NAME =
@@ -105,6 +107,9 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 		case WM_DESTROY:
 			result = pThis->OnWMDestroy();
 			break;
+		case WM_SIZE:
+			result = pThis->OnWMSize(lParam);
+			break;
 		case WM_PAINT:
 			result = pThis->OnWMPaint();
 			break;
@@ -135,6 +140,17 @@ LRESULT MainWindow::OnWMDestroy()
 	PostQuitMessage(EXIT_SUCCESS);
 
 	m_hWnd = NULL;
+	return 0;
+}
+
+LRESULT MainWindow::OnWMSize(LPARAM lParam)
+{
+	if (m_pD2DTarget)
+	{
+		D2D1_SIZE_U size = D2D1::SizeU(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		m_pD2DTarget->Resize(size);
+	}
+
 	return 0;
 }
 
