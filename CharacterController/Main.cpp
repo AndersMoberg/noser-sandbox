@@ -23,14 +23,19 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 	// Enable memory leak checker
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+	
+	int exitCode = EXIT_FAILURE;
 
-	int exitCode;
-
-	ApplicationPtr app = Application::Create(hInstance, nShowCmd);
-	if (!app) {
-		exitCode = EXIT_FAILURE;
-	} else {
+	try
+	{
+		ApplicationPtr app = Application::Create(hInstance, nShowCmd);
 		exitCode = app->MessageLoop();
+	}
+	catch (const std::exception& e)
+	{
+		OutputDebugStringA(e.what());
+		OutputDebugStringA("\n");
+		exitCode = EXIT_FAILURE;
 	}
 
 	return exitCode;

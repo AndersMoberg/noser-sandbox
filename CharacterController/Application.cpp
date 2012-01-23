@@ -12,14 +12,7 @@ ApplicationPtr Application::Create(HINSTANCE hInstance, int nShowCmd)
 	ApplicationPtr p(new Application);
 
 	p->m_game = Game::Create();
-	if (!p->m_game) {
-		return NULL;
-	}
-
 	p->m_window = MainWindow::Create(hInstance, nShowCmd, p->m_game);
-	if (!p->m_window) {
-		return NULL;
-	}
 
 	return p;
 }
@@ -31,6 +24,9 @@ int Application::MessageLoop()
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		DispatchMessage(&msg);
+		if (m_window->ExceptionThrown()) {
+			throw m_window->GetExceptionProxy();
+		}
 	}
 
 	return (int)msg.wParam;

@@ -47,5 +47,8 @@
     <ClInclude Include="Game.hpp">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="WindowsUtils.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

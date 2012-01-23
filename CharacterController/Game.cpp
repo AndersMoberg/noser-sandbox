@@ -21,14 +21,7 @@ GamePtr Game::Create()
 	p->m_prevTime = li.QuadPart;
 	
 	p->m_camera = Camera::Create();
-	if (!p->m_camera) {
-		return NULL;
-	}
-
 	p->m_world = World::Create();
-	if (!p->m_world) {
-		return NULL;
-	}
 
 	p->m_characterPos = Vector2f(0.0f, 0.0f);
 	p->m_characterRadius = 1.0f;

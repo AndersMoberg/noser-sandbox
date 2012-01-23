@@ -6,23 +6,14 @@
 
 #include <WindowsX.h>
 
-#include <vector>
+#include "WindowsUtils.hpp"
 
 static const LPCTSTR MAINWINDOW_CLASS_NAME =
 	TEXT("CharacterControllerWindowClass");
 
-template<class Interface>
-inline void SafeRelease(Interface*& pInterface)
-{
-	if (pInterface)
-	{
-		pInterface->Release();
-		pInterface = NULL;
-	}
-}
-
 MainWindow::MainWindow()
-	: m_hWnd(NULL),
+	: m_exceptionThrown(false),
+	m_hWnd(NULL),
 	m_pD2DFactory(NULL),
 	m_pD2DTarget(NULL)
 { }
@@ -43,12 +34,7 @@ MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd, GamePtr game
 
 	p->m_game = game;
 
-	HRESULT hr;
-
-	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &p->m_pD2DFactory);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &p->m_pD2DFactory));
 
 	WNDCLASS wc = { 0 };
 	wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -73,7 +59,11 @@ MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd, GamePtr game
 	if (!hWnd)
 	{
 		p->m_hWnd = NULL;
-		return NULL;
+		if (p->m_exceptionThrown) {
+			throw p->m_exceptionProxy;
+		} else {
+			throw std::exception("Failed to create window");
+		}
 	}
 
 	return p;
@@ -88,26 +78,47 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 		LPCREATESTRUCT pcs = (LPCREATESTRUCT)lParam;
 		MainWindow* pThis = (MainWindow*)pcs->lpCreateParams;
 		SetWindowLongPtr(hwnd, 0, (LONG_PTR)pThis);
-		result = pThis->OnWMCreate(hwnd);
+
+		result = -1;
+		try
+		{
+			result = pThis->OnWMCreate(hwnd);
+		}
+		catch (const std::exception& e)
+		{
+			pThis->m_exceptionThrown = true;
+			pThis->m_exceptionProxy = e;
+			result = -1;
+		}
 	}
 	else
 	{
 		MainWindow* pThis = (MainWindow*)GetWindowLongPtr(hwnd, 0);
 
-		switch (uMsg)
+		result = 0;
+		try
 		{
-		case WM_DESTROY:
-			result = pThis->OnWMDestroy();
-			break;
-		case WM_SIZE:
-			result = pThis->OnWMSize(lParam);
-			break;
-		case WM_PAINT:
-			result = pThis->OnWMPaint();
-			break;
-		default:
-			result = DefWindowProc(hwnd, uMsg, wParam, lParam);
-			break;
+			switch (uMsg)
+			{
+			case WM_DESTROY:
+				result = pThis->OnWMDestroy();
+				break;
+			case WM_SIZE:
+				result = pThis->OnWMSize(lParam);
+				break;
+			case WM_PAINT:
+				result = pThis->OnWMPaint();
+				break;
+			default:
+				result = DefWindowProc(hwnd, uMsg, wParam, lParam);
+				break;
+			}
+		}
+		catch (const std::exception& e)
+		{
+			pThis->m_exceptionThrown = true;
+			pThis->m_exceptionProxy = e;
+			result = 0;
 		}
 	}
 
@@ -118,9 +129,7 @@ LRESULT MainWindow::OnWMCreate(HWND hwnd)
 {
 	m_hWnd = hwnd;
 
-	if (!CreateDeviceResources()) {
-		return -1;
-	}
+	CreateDeviceResources();
 
 	return 0;
 }
@@ -164,7 +173,7 @@ LRESULT MainWindow::OnWMPaint()
 	return 0;
 }
 
-bool MainWindow::CreateDeviceResources()
+void MainWindow::CreateDeviceResources()
 {
 	if (!m_pD2DTarget)
 	{
@@ -173,16 +182,11 @@ bool MainWindow::CreateDeviceResources()
 
 		D2D1_SIZE_U size = D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top);
 
-		HRESULT hr = m_pD2DFactory->CreateHwndRenderTarget(
+		CHECK_HR(m_pD2DFactory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
 			D2D1::HwndRenderTargetProperties(m_hWnd, size),
-			&m_pD2DTarget);
-		if (FAILED(hr)) {
-			return false;
-		}
+			&m_pD2DTarget));
 	}
-
-	return true;
 }
 
 void MainWindow::DestroyDeviceResources()
@@ -205,6 +209,7 @@ void MainWindow::Render()
 	m_pD2DTarget->BeginDraw();
 
 	m_game->Render(m_pD2DTarget);
+	throw std::exception("TESTING!!!");
 
 	HRESULT hr = m_pD2DTarget->EndDraw();
 	if (hr == D2DERR_RECREATE_TARGET)
@@ -212,5 +217,8 @@ void MainWindow::Render()
 		// Target will be recreated on the next call to Render
 		DestroyDeviceResources();
 	}
-	// TODO: Better handling of other D2D errors.
+	else
+	{
+		CHECK_HR(hr);
+	}
 }
