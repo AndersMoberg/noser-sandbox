@@ -20,6 +20,7 @@ public:
 
 	static GamePtr Create();
 
+	void Update(const Vector2f& move);
 	void Render(ID2D1RenderTarget* target);
 
 private:

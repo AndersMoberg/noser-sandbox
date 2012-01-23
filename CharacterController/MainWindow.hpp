@@ -38,6 +38,7 @@ private:
 	bool CreateDeviceResources();
 	void DestroyDeviceResources();
 
+	void Update();
 	void Render();
 
 	HWND m_hWnd;

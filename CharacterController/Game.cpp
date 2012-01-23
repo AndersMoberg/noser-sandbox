@@ -27,6 +27,12 @@ GamePtr Game::Create()
 	return p;
 }
 
+void Game::Update(const Vector2f& move)
+{
+	// TODO: Control with time
+	m_characterPos += move;
+}
+
 void Game::Render(ID2D1RenderTarget* target)
 {
 	ID2D1Factory* factory;

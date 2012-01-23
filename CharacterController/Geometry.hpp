@@ -15,6 +15,13 @@ struct Vector2f
 	Vector2f() { }
 	Vector2f(float _x, float _y) : x(_x), y(_y) { }
 
+	Vector2f& operator+=(const Vector2f& rhs)
+	{
+		x += rhs.x;
+		y += rhs.y;
+		return *this;
+	}
+
 	operator D2D1_POINT_2F() const { return D2D1::Point2F(x, y); }
 };
 

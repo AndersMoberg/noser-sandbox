@@ -153,7 +153,12 @@ LRESULT MainWindow::OnWMPaint()
 	PAINTSTRUCT ps;
 	BeginPaint(m_hWnd, &ps);
 
+	// TODO: This is the wrong place to call Update.
+	Update();
 	Render();
+
+	// Trigger animation by invalidating here
+	InvalidateRect(m_hWnd, NULL, FALSE);
 
 	EndPaint(m_hWnd, &ps);
 	return 0;
@@ -183,6 +188,14 @@ bool MainWindow::CreateDeviceResources()
 void MainWindow::DestroyDeviceResources()
 {
 	SafeRelease(m_pD2DTarget);
+}
+
+void MainWindow::Update()
+{
+	// Gather input
+	Vector2f move(0.0f, 0.0f);
+
+	m_game->Update(move);
 }
 
 void MainWindow::Render()
