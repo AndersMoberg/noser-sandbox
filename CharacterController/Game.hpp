@@ -27,6 +27,9 @@ private:
 
 	Game();
 
+	long long m_frequency;
+	long long m_prevTime;
+
 	CameraPtr m_camera;
 	WorldPtr m_world;
 	Vector2f m_characterPos;

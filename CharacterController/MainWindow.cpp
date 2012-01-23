@@ -193,7 +193,7 @@ void MainWindow::DestroyDeviceResources()
 void MainWindow::Update()
 {
 	// Gather input
-	Vector2f move(0.0f, 0.0f);
+	Vector2f move(0.5f, 0.0f);
 
 	m_game->Update(move);
 }

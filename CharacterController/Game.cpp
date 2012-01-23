@@ -10,6 +10,15 @@ Game::Game()
 GamePtr Game::Create()
 {
 	GamePtr p(new Game);
+
+	// The frequency cannot change while the system is running, so it's safe
+	// to query it once
+	LARGE_INTEGER li;
+	QueryPerformanceFrequency(&li);
+	p->m_frequency = li.QuadPart;
+
+	QueryPerformanceCounter(&li);
+	p->m_prevTime = li.QuadPart;
 	
 	p->m_camera = Camera::Create();
 	if (!p->m_camera) {
@@ -29,8 +38,20 @@ GamePtr Game::Create()
 
 void Game::Update(const Vector2f& move)
 {
+	static const float CHAR_SPEED = 1.0f; // world units per second
+
+	// FIXME: Maybe time should be given as an argument to this function,
+	// instead of querying it ourselves.
+	LARGE_INTEGER curTime;
+	QueryPerformanceCounter(&curTime);
+
+	long long timeDiff = curTime.QuadPart - m_prevTime;
+	double timeDiffSecs = (double)timeDiff / m_frequency;
+
 	// TODO: Control with time
-	m_characterPos += move;
+	m_characterPos += (float)(CHAR_SPEED * timeDiffSecs) * move;
+
+	m_prevTime = curTime.QuadPart;
 }
 
 void Game::Render(ID2D1RenderTarget* target)

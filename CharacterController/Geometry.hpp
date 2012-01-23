@@ -25,6 +25,10 @@ struct Vector2f
 	operator D2D1_POINT_2F() const { return D2D1::Point2F(x, y); }
 };
 
+static Vector2f operator*(float lhs, const Vector2f& rhs) {
+	return Vector2f(lhs * rhs.x, lhs * rhs.y);
+}
+
 struct Rectf
 {
 	float left;
