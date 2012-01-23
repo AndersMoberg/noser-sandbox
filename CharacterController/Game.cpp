@@ -71,7 +71,7 @@ void Game::Render(ID2D1RenderTarget* target)
 
 	// Render character
 	target->SetTransform(worldToViewport);
-	target->DrawEllipse(
+	target->FillEllipse(
 		D2D1::Ellipse(m_characterPos, m_characterRadius, m_characterRadius),
 		brush);
 	target->SetTransform(D2D1::Matrix3x2F::Identity());
