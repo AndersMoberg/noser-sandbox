@@ -30,7 +30,7 @@ public:
 private:
 
 	Buffer();
-	bool CreateInternal(ID3D11Device* pDevice, const D3D11_BUFFER_DESC& bd,
+	void CreateInternal(ID3D11Device* pDevice, const D3D11_BUFFER_DESC& bd,
 		const D3D11_SUBRESOURCE_DATA* psrd);
 
 	ID3D11Buffer* m_pBuffer;

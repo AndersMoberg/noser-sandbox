@@ -8,6 +8,7 @@
 #include "D3D11Image.hpp"
 #include "D3D11Utils.hpp"
 #include "Geometry.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -109,7 +110,7 @@ D3D11DriverPtr D3D11Driver::Create()
 #if _DEBUG
 	createFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
-	hr = D3D11CreateDevice(
+	CHECK_HR(D3D11CreateDevice(
 		NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
@@ -118,25 +119,15 @@ D3D11DriverPtr D3D11Driver::Create()
 		D3D11_SDK_VERSION,
 		&p->m_pD3D11Device,
 		NULL,
-		&p->m_pD3D11Context);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+		&p->m_pD3D11Context));
 
 	// Get DXGI adapter from D3D11 device
 
 	IDXGIAdapter* dxgiAdapter = GetDXGIAdapterFromD3D11Device(p->m_pD3D11Device);
-	if (!dxgiAdapter) {
-		return NULL;
-	}
 
 	// Get DXGI factory from adapter
 
-	hr = dxgiAdapter->GetParent(IID_PPV_ARGS(&p->m_pDXGIFactory));
-	if (FAILED(hr)) {
-		SafeRelease(dxgiAdapter);
-		return NULL;
-	}
+	CHECK_HR(dxgiAdapter->GetParent(IID_PPV_ARGS(&p->m_pDXGIFactory)));
 
 	// Create D3D10.1 device using the same adapter chosen by D3D11CreateDevice
 
@@ -147,29 +138,19 @@ D3D11DriverPtr D3D11Driver::Create()
 #endif
 	// TODO: Will feature level 10.1 work for most people? I think Direct2D can
 	// work with any feature level.
-	hr = D3D10CreateDevice1(dxgiAdapter, D3D10_DRIVER_TYPE_HARDWARE, NULL,
-		createFlags, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &p->m_pD3D10Device);
-	if (FAILED(hr)) {
-		SafeRelease(dxgiAdapter);
-		return NULL;
-	}
+	CHECK_HR(D3D10CreateDevice1(dxgiAdapter, D3D10_DRIVER_TYPE_HARDWARE, NULL,
+		createFlags, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &p->m_pD3D10Device));
 
 	SafeRelease(dxgiAdapter);
 
 	// Create Direct2D factory
 
-	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &p->m_pD2DFactory);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &p->m_pD2DFactory));
 
 	// Create DirectWrite factory
 
-	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
-		__uuidof(IDWriteFactory), (IUnknown**)&p->m_pDWriteFactory);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
+		__uuidof(IDWriteFactory), (IUnknown**)&p->m_pDWriteFactory));
 
 	// Create blend state for Porter-Duff "over" operation
 
@@ -182,17 +163,11 @@ D3D11DriverPtr D3D11Driver::Create()
 	bld.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
 	bld.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	p->m_overBlend = BlendState::Create(p->m_pD3D11Device, bld);
-	if (!p->m_overBlend) {
-		return NULL;
-	}
 
 	// Create bilinear sampler
 
 	D3D11_SAMPLER_DESC sd = CD3D11_SAMPLER_DESC(CD3D11_DEFAULT());
 	p->m_bilinearSampler = SamplerState::Create(p->m_pD3D11Device, sd);
-	if (!p->m_bilinearSampler) {
-		return NULL;
-	}
 
 	// Create simple 2D quad vertex buffer
 
@@ -200,9 +175,6 @@ D3D11DriverPtr D3D11Driver::Create()
 		D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_IMMUTABLE);
 	D3D11_SUBRESOURCE_DATA srd = { SIMPLE2D_QUAD, 0, 0 };
 	p->m_simple2DQuad = Buffer::Create(p->m_pD3D11Device, bd, srd);
-	if (!p->m_simple2DQuad) {
-		return NULL;
-	}
 
 	// Create simple 2D quad vertex shader
 
@@ -211,32 +183,20 @@ D3D11DriverPtr D3D11Driver::Create()
 		SIMPLE2D_INPUT_LAYOUT,
 		sizeof(SIMPLE2D_INPUT_LAYOUT)/sizeof(D3D11_INPUT_ELEMENT_DESC),
 		&p->m_simple2DInputLayout);
-	if (!p->m_simple2DQuadVShader) {
-		return NULL;
-	}
 
 	// Create simple 2d quad vertex shader parameters buffer
 
 	p->m_simple2DQuadParams = ConstantBuffer::Create(p->m_pD3D11Device,
 		sizeof(Simple2DQuadVShaderParams));
-	if (!p->m_simple2DQuadParams) {
-		return NULL;
-	}
 
 	// Create textured pixel shader
 
 	p->m_texturedPShader = CreatePixelShaderFromCode(p->m_pD3D11Device,
 		TEXTURED_PIXEL_SHADER, "main", "ps_4_0");
-	if (!p->m_texturedPShader) {
-		return NULL;
-	}
 
 	// Create circular gradient shader
 
 	p->m_circularGradientShader = CircularGradientShader::Create(p->m_pD3D11Device);
-	if (!p->m_circularGradientShader) {
-		return NULL;
-	}
 
 	return p;
 }

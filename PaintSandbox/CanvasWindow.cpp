@@ -12,7 +12,8 @@
 static const LPCTSTR CANVASWINDOW_CLASS_NAME = TEXT("CanvasWindowClass");
 
 CanvasWindow::CanvasWindow()
-	: m_hWnd(NULL)
+	: m_exceptionThrown(false),
+	m_hWnd(NULL)
 { }
 
 CanvasWindow::~CanvasWindow()
@@ -29,28 +30,23 @@ CanvasWindowPtr CanvasWindow::Create(DriverPtr driver, HINSTANCE hInstance, int 
 	CanvasWindowPtr p(new CanvasWindow);
 
 	p->m_driver = driver;
-
 	p->m_camera = Camera::Create();
-	if (!p->m_camera) {
-		return NULL;
-	}
-
 	p->m_image = CanvasImage::Create(driver, RectF(-10.0f, 10.0f, 10.0f, -10.0f), 2048, 2048);
-	if (!p->m_image) {
-		return NULL;
-	}
-
 	p->m_extensibleImage = ExtensibleImage::Create(Vector2f(256.0f, 256.0f));
-	if (!p->m_extensibleImage) {
-		return NULL;
-	}
-
 	p->m_drawTool = DrawTool::Create(p->m_driver, p->m_image, p->m_extensibleImage);
-	if (!p->m_drawTool) {
-		return NULL;
-	}
+	
+	// Register window class
 
-	p->RegisterWindowClass(hInstance);
+	WNDCLASS wc = { 0 };
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc = WindowProc;
+	wc.cbWndExtra = sizeof(LONG_PTR);
+	wc.hInstance = hInstance;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.lpszClassName = CANVASWINDOW_CLASS_NAME;
+	RegisterClass(&wc);
+
+	// Create window
 
 	HWND hWnd = CreateWindow(
 		CANVASWINDOW_CLASS_NAME,
@@ -62,25 +58,17 @@ CanvasWindowPtr CanvasWindow::Create(DriverPtr driver, HINSTANCE hInstance, int 
 		NULL,
 		hInstance,
 		p.get());
-	if (!hWnd) {
+	if (!hWnd)
+	{
 		p->m_hWnd = NULL;
-		return NULL;
+		if (p->m_exceptionThrown) {
+			throw p->m_exceptionProxy;
+		} else {
+			throw std::exception("Failed to create window");
+		}
 	}
 
 	return p;
-}
-
-void CanvasWindow::RegisterWindowClass(HINSTANCE hInstance)
-{
-	WNDCLASS wc = { 0 };
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = WindowProc;
-	wc.cbWndExtra = sizeof(LONG_PTR);
-	wc.hInstance = hInstance;
-	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wc.lpszClassName = CANVASWINDOW_CLASS_NAME;
-
-	RegisterClass(&wc);
 }
 
 LRESULT CALLBACK CanvasWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -91,42 +79,57 @@ LRESULT CALLBACK CanvasWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, L
 	{
 		LPCREATESTRUCT pcs = (LPCREATESTRUCT)lParam;
 		CanvasWindow* pThis = (CanvasWindow*)pcs->lpCreateParams;
-
 		SetWindowLongPtr(hwnd, 0, (LONG_PTR)pThis);
 
-		if (!pThis) {
-			result = -1;
-		} else {
+		result = -1;
+		try
+		{
 			result = pThis->OnWMCreate(hwnd);
+		}
+		catch (const std::exception& e)
+		{
+			pThis->m_exceptionThrown = true;
+			pThis->m_exceptionProxy = e;
+			result = -1;
 		}
 	}
 	else
 	{
 		CanvasWindow* pThis = (CanvasWindow*)GetWindowLongPtr(hwnd, 0);
 
-		switch (uMsg)
+		result = 0;
+		try
 		{
-		case WM_DESTROY:
-			result = pThis->OnWMDestroy();
-			break;
-		case WM_SIZE:
-			result = pThis->OnWMSize();
-			break;
-		case WM_PAINT:
-			result = pThis->OnWMPaint();
-			break;
-		case WM_MOUSEMOVE:
-			result = pThis->OnWMMouseMove(wParam, lParam);
-			break;
-		case WM_LBUTTONDOWN:
-			result = pThis->OnWMLButtonDown(wParam, lParam);
-			break;
-		case WM_LBUTTONUP:
-			result = pThis->OnWMLButtonUp(wParam, lParam);
-			break;
-		default:
-			result = DefWindowProc(hwnd, uMsg, wParam, lParam);
-			break;
+			switch (uMsg)
+			{
+			case WM_DESTROY:
+				result = pThis->OnWMDestroy();
+				break;
+			case WM_SIZE:
+				result = pThis->OnWMSize();
+				break;
+			case WM_PAINT:
+				result = pThis->OnWMPaint();
+				break;
+			case WM_MOUSEMOVE:
+				result = pThis->OnWMMouseMove(wParam, lParam);
+				break;
+			case WM_LBUTTONDOWN:
+				result = pThis->OnWMLButtonDown(wParam, lParam);
+				break;
+			case WM_LBUTTONUP:
+				result = pThis->OnWMLButtonUp(wParam, lParam);
+				break;
+			default:
+				result = DefWindowProc(hwnd, uMsg, wParam, lParam);
+				break;
+			}
+		}
+		catch (const std::exception& e)
+		{
+			pThis->m_exceptionThrown = true;
+			pThis->m_exceptionProxy = e;
+			result = 0;
 		}
 	}
 
@@ -138,10 +141,6 @@ LRESULT CanvasWindow::OnWMCreate(HWND hwnd)
 	m_hWnd = hwnd;
 
 	m_graphics = m_driver->CreateWindowGraphics(m_hWnd, m_camera);
-	if (!m_graphics) {
-		return -1;
-	}
-
 	m_graphics->SetCanvasImage(m_image, m_extensibleImage);
 
 	return 0;

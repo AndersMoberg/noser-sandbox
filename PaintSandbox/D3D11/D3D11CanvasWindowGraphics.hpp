@@ -41,7 +41,7 @@ private:
 
 	D3D11CanvasWindowGraphics();
 
-	bool CreateSwapChainResources();
+	void CreateSwapChainResources();
 	void DestroySwapChainResources();
 
 	void Render();

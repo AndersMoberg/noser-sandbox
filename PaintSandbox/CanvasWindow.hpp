@@ -28,11 +28,13 @@ public:
 	static CanvasWindowPtr Create(DriverPtr driver, HINSTANCE hInstance, int nShowCmd);
 	~CanvasWindow();
 
+	bool IsExceptionThrown() const { return m_exceptionThrown; }
+	const std::exception& GetExceptionProxy() const { return m_exceptionProxy; }
+
 private:
 
 	CanvasWindow();
 
-	void RegisterWindowClass(HINSTANCE hInstance);
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	LRESULT OnWMCreate(HWND hwnd);
@@ -44,6 +46,9 @@ private:
 	LRESULT OnWMLButtonUp(WPARAM wParam, LPARAM lParam);
 
 	Vector2f TransformClientToCanvas(const Vector2f& v);
+
+	bool m_exceptionThrown;
+	std::exception m_exceptionProxy;
 
 	DriverPtr m_driver;
 	CameraPtr m_camera;

@@ -5,6 +5,7 @@
 #include "Texture2D.hpp"
 
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -22,10 +23,7 @@ Texture2DPtr Texture2D::Create(ID3D11Device* pDevice, const D3D11_TEXTURE2D_DESC
 {
 	Texture2DPtr p(new Texture2D);
 
-	HRESULT hr = pDevice->CreateTexture2D(&t2dd, NULL, &p->m_pTexture);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(pDevice->CreateTexture2D(&t2dd, NULL, &p->m_pTexture));
 
 	return p;
 }

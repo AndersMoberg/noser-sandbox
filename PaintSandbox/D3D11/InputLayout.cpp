@@ -5,6 +5,7 @@
 #include "InputLayout.hpp"
 
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -24,11 +25,8 @@ InputLayoutPtr InputLayout::Create(ID3D11Device* pDevice,
 {
 	InputLayoutPtr p(new InputLayout);
 
-	HRESULT hr = pDevice->CreateInputLayout(pInputElementDescs, numElements,
-		pShaderBytecode, bytecodeSize, &p->m_pInputLayout);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(pDevice->CreateInputLayout(pInputElementDescs, numElements,
+		pShaderBytecode, bytecodeSize, &p->m_pInputLayout));
 
 	return p;
 }

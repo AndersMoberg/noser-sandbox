@@ -5,6 +5,7 @@
 #include "VertexShader.hpp"
 
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -23,11 +24,8 @@ VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice,
 {
 	VertexShaderPtr p(new VertexShader);
 	
-	HRESULT hr = pDevice->CreateVertexShader(pBytecode,
-		bytecodeLength, NULL, &p->m_pVertexShader);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(pDevice->CreateVertexShader(pBytecode,
+		bytecodeLength, NULL, &p->m_pVertexShader));
 
 	return p;
 }

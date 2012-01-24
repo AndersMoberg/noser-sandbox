@@ -46,14 +46,7 @@ CircularGradientShaderPtr CircularGradientShader::Create(ID3D11Device* pDevice)
 	CircularGradientShaderPtr p(new CircularGradientShader);
 
 	p->m_shader = CreatePixelShaderFromCode(pDevice, CIRCULAR_GRADIENT_SHADER, "main", "ps_4_0");
-	if (!p->m_shader) {
-		return NULL;
-	}
-
 	p->m_params = ConstantBuffer::Create(pDevice, sizeof(Params));
-	if (!p->m_params) {
-		return NULL;
-	}
 
 	return p;
 }

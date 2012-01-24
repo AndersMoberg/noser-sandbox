@@ -11,10 +11,19 @@
 
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nShowCmd)
 {
-	ApplicationPtr app = Application::Create(hInstance, nShowCmd);
-	if (!app) {
-		return EXIT_FAILURE;
+	int exitCode = EXIT_FAILURE;
+
+	try
+	{
+		ApplicationPtr app = Application::Create(hInstance, nShowCmd);
+		exitCode = app->MessageLoop();
+	}
+	catch (const std::exception& e)
+	{
+		OutputDebugStringA(e.what());
+		OutputDebugStringA("\n");
+		exitCode = EXIT_FAILURE;
 	}
 
-	return app->MessageLoop();
+	return exitCode;
 }

@@ -5,6 +5,7 @@
 #include "D2DTarget.hpp"
 
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -30,57 +31,35 @@ D2DTargetPtr D2DTarget::Create(ID2D1Factory* pD2DFactory,
 {
 	D2DTargetPtr p(new D2DTarget);
 
-	HRESULT hr;
-
 	// Create texture for rendering into
 
 	D3D11_TEXTURE2D_DESC t2dd = CD3D11_TEXTURE2D_DESC(D2DTEXTURE_FORMAT,
 		width, height, 1, 1, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
 		D3D11_USAGE_DEFAULT, 0, 1, 0, D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX);
 	p->m_d2dTexture = Texture2D::Create(pD3D11Device, t2dd);
-	if (!p->m_d2dTexture) {
-		return NULL;
-	}
 
 	// Create SRV for texture
 
 	p->m_d2dTextureSRV = ShaderResourceView::Create(pD3D11Device, p->m_d2dTexture);
-	if (!p->m_d2dTextureSRV) {
-		return NULL;
-	}
 
 	// Obtain mutex for D3D11
 
-	hr = p->m_d2dTexture->Get()->QueryInterface(IID_PPV_ARGS(&p->m_pD3D11Mutex));
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(p->m_d2dTexture->Get()->QueryInterface(IID_PPV_ARGS(&p->m_pD3D11Mutex)));
 
 	// Open texture on D3D10 device
 
 	IDXGISurface* dxgiSurface = OpenD3D11TextureOnD3D10Device(p->m_d2dTexture->Get(), pD3D10Device);
-	if (!dxgiSurface) {
-		return NULL;
-	}
 
 	// Obtain mutex for Direct2D
 
-	hr = dxgiSurface->QueryInterface(IID_PPV_ARGS(&p->m_pD2DMutex));
-	if (FAILED(hr)) {
-		SafeRelease(dxgiSurface);
-		return NULL;
-	}
+	CHECK_HR(dxgiSurface->QueryInterface(IID_PPV_ARGS(&p->m_pD2DMutex)));
 
 	// Create Direct2D render target
 
 	D2D1_RENDER_TARGET_PROPERTIES rtp = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
-	hr = pD2DFactory->CreateDxgiSurfaceRenderTarget(dxgiSurface, rtp, &p->m_pD2DTarget);
-	if (FAILED(hr)) {
-		SafeRelease(dxgiSurface);
-		return false;
-	}
+	CHECK_HR(pD2DFactory->CreateDxgiSurfaceRenderTarget(dxgiSurface, rtp, &p->m_pD2DTarget));
 
 	SafeRelease(dxgiSurface);
 
@@ -89,24 +68,24 @@ D2DTargetPtr D2DTarget::Create(ID2D1Factory* pD2DFactory,
 
 ID3D11ShaderResourceView* D2DTarget::AcquireSRV()
 {
-	m_pD3D11Mutex->AcquireSync(0, INFINITE);
+	CHECK_HR(m_pD3D11Mutex->AcquireSync(0, INFINITE));
 	return m_d2dTextureSRV->Get();
 }
 
 void D2DTarget::ReleaseSRV()
 {
-	m_pD3D11Mutex->ReleaseSync(0);
+	CHECK_HR(m_pD3D11Mutex->ReleaseSync(0));
 }
 
 ID2D1RenderTarget* D2DTarget::AcquireTarget()
 {
-	m_pD2DMutex->AcquireSync(0, INFINITE);
+	CHECK_HR(m_pD2DMutex->AcquireSync(0, INFINITE));
 	return m_pD2DTarget;
 }
 
 void D2DTarget::ReleaseTarget()
 {
-	m_pD2DMutex->ReleaseSync(0);
+	CHECK_HR(m_pD2DMutex->ReleaseSync(0));
 }
 
 }

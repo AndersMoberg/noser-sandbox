@@ -12,14 +12,7 @@ ApplicationPtr Application::Create(HINSTANCE hInstance, int nShowCmd)
 	ApplicationPtr p(new Application);
 
 	p->m_driver = D3D11::D3D11Driver::Create();
-	if (!p->m_driver) {
-		return NULL;
-	}
-
 	p->m_canvasWindow = CanvasWindow::Create(p->m_driver, hInstance, nShowCmd);
-	if (!p->m_canvasWindow) {
-		return NULL;
-	}
 
 	return p;
 }
@@ -27,9 +20,14 @@ ApplicationPtr Application::Create(HINSTANCE hInstance, int nShowCmd)
 int Application::MessageLoop()
 {
 	MSG msg;
+
 	while (GetMessage(&msg, NULL, 0, 0))
 	{
 		DispatchMessage(&msg);
+		if (m_canvasWindow->IsExceptionThrown()) {
+			throw m_canvasWindow->GetExceptionProxy();
+		}
 	}
+
 	return (int)msg.wParam;
 }

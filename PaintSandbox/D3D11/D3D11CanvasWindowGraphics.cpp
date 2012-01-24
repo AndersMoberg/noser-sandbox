@@ -7,6 +7,7 @@
 #include "D3D11Driver.hpp"
 #include "D3D11Image.hpp"
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -31,8 +32,6 @@ D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(
 {
 	D3D11CanvasWindowGraphicsPtr p(new D3D11CanvasWindowGraphics);
 
-	HRESULT hr;
-
 	p->m_hWnd = hWnd;
 	p->m_driver = driver;
 	p->m_camera = camera;
@@ -43,12 +42,9 @@ D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(
 
 	// Create text format
 
-	hr = pDWriteFactory->CreateTextFormat(
+	CHECK_HR(pDWriteFactory->CreateTextFormat(
 		L"Calibri", NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL, 24.0f, L"en-US", &p->m_pTextFormat);
-	if (FAILED(hr)) {
-		return false;
-	}
+		DWRITE_FONT_STRETCH_NORMAL, 24.0f, L"en-US", &p->m_pTextFormat));
 
 	// Create swap chain
 
@@ -59,40 +55,26 @@ D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(
 	scd.BufferCount = 1;
 	scd.OutputWindow = hWnd;
 	scd.Windowed = TRUE;
-	hr = pDXGIFactory->CreateSwapChain(pDevice, &scd, &p->m_pSwapChain);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(pDXGIFactory->CreateSwapChain(pDevice, &scd, &p->m_pSwapChain));
 
-	if (!p->CreateSwapChainResources()) {
-		return NULL;
-	}
+	p->CreateSwapChainResources();
 
 	return p;
 }
 
-bool D3D11CanvasWindowGraphics::CreateSwapChainResources()
+void D3D11CanvasWindowGraphics::CreateSwapChainResources()
 {
-	HRESULT hr;
-
 	ID3D11Device* pDevice = m_driver->GetD3D11Device();
 
 	// Get back buffer RTV
 
 	ID3D11Texture2D* texture = NULL;
-	hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&texture));
-	if (FAILED(hr)) {
-		return false;
-	}
+	CHECK_HR(m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&texture)));
 
 	D3D11_TEXTURE2D_DESC t2dd;
 	texture->GetDesc(&t2dd);
 
-	hr = pDevice->CreateRenderTargetView(texture, NULL, &m_pBackBufferRTV);
-	if (FAILED(hr)) {
-		SafeRelease(texture);
-		return false;
-	}
+	CHECK_HR(pDevice->CreateRenderTargetView(texture, NULL, &m_pBackBufferRTV));
 
 	SafeRelease(texture);
 
@@ -100,11 +82,6 @@ bool D3D11CanvasWindowGraphics::CreateSwapChainResources()
 
 	m_d2dTarget = D2DTarget::Create(m_driver->GetD2DFactory(),
 		pDevice, m_driver->GetD3D10Device(), t2dd.Width, t2dd.Height);
-	if (!m_d2dTarget) {
-		return false;
-	}
-
-	return true;
 }
 
 void D3D11CanvasWindowGraphics::DestroySwapChainResources()

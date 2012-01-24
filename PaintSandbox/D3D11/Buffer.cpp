@@ -5,6 +5,7 @@
 #include "Buffer.hpp"
 
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -23,22 +24,15 @@ BufferPtr Buffer::Create(ID3D11Device* pDevice, const D3D11_BUFFER_DESC& bd,
 {
 	BufferPtr p(new Buffer);
 
-	if (!p->CreateInternal(pDevice, bd, &srd)) {
-		return NULL;
-	}
+	p->CreateInternal(pDevice, bd, &srd);
 
 	return p;
 }
 
-bool Buffer::CreateInternal(ID3D11Device* pDevice, const D3D11_BUFFER_DESC& bd,
+void Buffer::CreateInternal(ID3D11Device* pDevice, const D3D11_BUFFER_DESC& bd,
 	const D3D11_SUBRESOURCE_DATA* psrd)
 {
-	HRESULT hr = pDevice->CreateBuffer(&bd, psrd, &m_pBuffer);
-	if (FAILED(hr)) {
-		return false;
-	}
-
-	return true;
+	CHECK_HR(pDevice->CreateBuffer(&bd, psrd, &m_pBuffer));
 }
 
 }

@@ -5,6 +5,7 @@
 #include "SamplerState.hpp"
 
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -22,10 +23,7 @@ SamplerStatePtr SamplerState::Create(ID3D11Device* pDevice, const D3D11_SAMPLER_
 {
 	SamplerStatePtr p(new SamplerState);
 
-	HRESULT hr = pDevice->CreateSamplerState(&sd, &p->m_pSamplerState);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(pDevice->CreateSamplerState(&sd, &p->m_pSamplerState));
 
 	return p;
 }

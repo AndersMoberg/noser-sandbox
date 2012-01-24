@@ -5,6 +5,7 @@
 #include "RenderTargetView.hpp"
 
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -22,10 +23,7 @@ RenderTargetViewPtr RenderTargetView::Create(ID3D11Device* pDevice, Texture2DPtr
 {
 	RenderTargetViewPtr p(new RenderTargetView);
 
-	HRESULT hr = pDevice->CreateRenderTargetView(texture->Get(), NULL, &p->m_pRTV);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(pDevice->CreateRenderTargetView(texture->Get(), NULL, &p->m_pRTV));
 
 	return p;
 }

@@ -5,6 +5,7 @@
 #include "PixelShader.hpp"
 
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -23,11 +24,8 @@ PixelShaderPtr PixelShader::Create(ID3D11Device* pDevice,
 {
 	PixelShaderPtr p(new PixelShader);
 
-	HRESULT hr = pDevice->CreatePixelShader(pBytecode, bytecodeLength,
-		NULL, &p->m_pPixelShader);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(pDevice->CreatePixelShader(pBytecode, bytecodeLength,
+		NULL, &p->m_pPixelShader));
 
 	return p;
 }

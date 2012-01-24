@@ -5,6 +5,7 @@
 #include "BlendState.hpp"
 
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -22,10 +23,7 @@ BlendStatePtr BlendState::Create(ID3D11Device* pDevice, const D3D11_BLEND_DESC& 
 {
 	BlendStatePtr p(new BlendState);
 
-	HRESULT hr = pDevice->CreateBlendState(&bd, &p->m_pBlendState);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(pDevice->CreateBlendState(&bd, &p->m_pBlendState));
 
 	return p;
 }

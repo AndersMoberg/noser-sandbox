@@ -18,9 +18,6 @@ CanvasImagePtr CanvasImage::Create(DriverPtr driver, const RectF& canvasRc,
 	p->m_height = height;
 
 	p->m_driverImage = driver->CreateImage(width, height);
-	if (!p->m_driverImage) {
-		return NULL;
-	}
 
 	p->m_canvasRc = canvasRc;
 

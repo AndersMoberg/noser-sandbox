@@ -5,6 +5,7 @@
 #include "ShaderResourceView.hpp"
 
 #include "D3D11Utils.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -22,10 +23,7 @@ ShaderResourceViewPtr ShaderResourceView::Create(ID3D11Device* pDevice, Texture2
 {
 	ShaderResourceViewPtr p(new ShaderResourceView);
 
-	HRESULT hr = pDevice->CreateShaderResourceView(texture->Get(), NULL, &p->m_pSRV);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(pDevice->CreateShaderResourceView(texture->Get(), NULL, &p->m_pSRV));
 
 	return p;
 }

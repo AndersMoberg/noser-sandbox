@@ -6,6 +6,8 @@
 
 #include <D3Dcompiler.h>
 
+#include "WindowsUtils.hpp"
+
 namespace D3D11
 {
 
@@ -29,7 +31,7 @@ static ID3DBlob* CompileShader(const char* src, const char* entryPoint, const ch
 	}
 	if (FAILED(hr)) {
 		SafeRelease(pCode);
-		return NULL;
+		throw std::exception("Failed to compile HLSL shader");
 	}
 
 	return pCode;
@@ -37,20 +39,11 @@ static ID3DBlob* CompileShader(const char* src, const char* entryPoint, const ch
 
 IDXGIAdapter* GetDXGIAdapterFromD3D11Device(ID3D11Device* device)
 {
-	HRESULT hr;
-
 	IDXGIDevice* dxgiDevice = NULL;
-	hr = device->QueryInterface(&dxgiDevice);
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(device->QueryInterface(&dxgiDevice));
 
 	IDXGIAdapter* dxgiAdapter = NULL;
-	hr = dxgiDevice->GetAdapter(&dxgiAdapter);
-	if (FAILED(hr)) {
-		SafeRelease(dxgiDevice);
-		return NULL;
-	}
+	CHECK_HR(dxgiDevice->GetAdapter(&dxgiAdapter));
 
 	SafeRelease(dxgiDevice);
 
@@ -59,32 +52,20 @@ IDXGIAdapter* GetDXGIAdapterFromD3D11Device(ID3D11Device* device)
 
 IDXGISurface* OpenD3D11TextureOnD3D10Device(ID3D11Texture2D* texture, ID3D10Device1* device)
 {
-	HRESULT hr;
-
 	// Obtain share handle for texture
 
 	IDXGIResource* dxgiResource = NULL;
-	hr = texture->QueryInterface(IID_PPV_ARGS(&dxgiResource));
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(texture->QueryInterface(IID_PPV_ARGS(&dxgiResource)));
 
 	HANDLE shareHandle = NULL;
-	hr = dxgiResource->GetSharedHandle(&shareHandle);
-	if (FAILED(hr)) {
-		SafeRelease(dxgiResource);
-		return NULL;
-	}
+	CHECK_HR(dxgiResource->GetSharedHandle(&shareHandle));
 
 	SafeRelease(dxgiResource);
 
 	// Open D3D11 texture on D3D10 device
 
 	IDXGISurface* dxgiSurface = NULL;
-	hr = device->OpenSharedResource(shareHandle, IID_PPV_ARGS(&dxgiSurface));
-	if (FAILED(hr)) {
-		return NULL;
-	}
+	CHECK_HR(device->OpenSharedResource(shareHandle, IID_PPV_ARGS(&dxgiSurface)));
 
 	return dxgiSurface;
 }
@@ -95,25 +76,14 @@ VertexShaderPtr CreateVertexShaderFromCode(ID3D11Device* pDevice,
 	InputLayoutPtr* ppInputLayout)
 {
 	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
-	if (!pCode) {
-		return NULL;
-	}
 
 	VertexShaderPtr shader = VertexShader::Create(pDevice,
 		pCode->GetBufferPointer(), pCode->GetBufferSize());
-	if (!shader) {
-		SafeRelease(pCode);
-		return NULL;
-	}
 
 	if (ppInputLayout)
 	{
 		*ppInputLayout = InputLayout::Create(pDevice, pInputElementDescs,
 			numElements, pCode->GetBufferPointer(), pCode->GetBufferSize());
-		if (!*ppInputLayout) {
-			SafeRelease(pCode);
-			return NULL;
-		}
 	}
 
 	SafeRelease(pCode);
@@ -124,16 +94,9 @@ PixelShaderPtr CreatePixelShaderFromCode(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target)
 {
 	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
-	if (!pCode) {
-		return NULL;
-	}
 
 	PixelShaderPtr shader = PixelShader::Create(pDevice,
 		pCode->GetBufferPointer(), pCode->GetBufferSize());
-	if (!shader) {
-		SafeRelease(pCode);
-		return NULL;
-	}
 
 	SafeRelease(pCode);
 	return shader;
