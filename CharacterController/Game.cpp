@@ -121,6 +121,8 @@ void Game::Update(const Vector2f& move)
 			{
 				// If more than one wall constrains the character, no movement
 				// is possible.
+				// FIXME: Collisions can be missed if a wall isn't tested
+				// against the new actualVel!
 				if (constrained)
 				{
 					actualVel = Vector2f(0.0f, 0.0f);
