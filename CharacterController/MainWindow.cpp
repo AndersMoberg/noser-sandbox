@@ -209,7 +209,6 @@ void MainWindow::Render()
 	m_pD2DTarget->BeginDraw();
 
 	m_game->Render(m_pD2DTarget);
-	throw std::exception("TESTING!!!");
 
 	HRESULT hr = m_pD2DTarget->EndDraw();
 	if (hr == D2DERR_RECREATE_TARGET)
