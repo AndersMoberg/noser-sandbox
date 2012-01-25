@@ -56,7 +56,7 @@ void Game::Render(ID2D1RenderTarget* target)
 	Rectf vp(0.0f, 0.0f, targetSize.width, targetSize.height);
 	Matrix3x2f worldToViewport = m_camera->GetWorldToViewport(vp);
 
-	target->Clear(D2D1::ColorF(D2D1::ColorF::CornflowerBlue));
+	target->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
 	// Create brush for drawing stuff
 	ID2D1SolidColorBrush* brush;
