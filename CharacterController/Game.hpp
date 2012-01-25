@@ -35,6 +35,10 @@ private:
 	Vector2f m_characterPos;
 	float m_characterRadius;
 
+	// velocities for display
+	Vector2f m_intendedVel;
+	Vector2f m_actualVel;
+
 };
 
 #endif

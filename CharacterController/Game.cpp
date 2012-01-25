@@ -5,6 +5,8 @@
 #include "Game.hpp"
 
 Game::Game()
+	: m_intendedVel(0.0f, 0.0f),
+	m_actualVel(0.0f, 0.0f)
 { }
 
 GamePtr Game::Create()
@@ -139,6 +141,8 @@ void Game::Update(const Vector2f& move)
 	}
 
 	m_characterPos += actualVel * (float)timeDiffSecs;
+	m_intendedVel = intendedVel;
+	m_actualVel = actualVel;
 
 	m_prevTime = curTime.QuadPart;
 }
@@ -190,6 +194,12 @@ void Game::Render(ID2D1RenderTarget* target)
 	target->FillEllipse(
 		D2D1::Ellipse(m_characterPos, m_characterRadius, m_characterRadius),
 		brush);
+	// Render intended velocity as a green line
+	brush->SetColor(D2D1::ColorF(D2D1::ColorF::Red));
+	target->DrawLine(m_characterPos, m_characterPos + m_intendedVel, brush, m_characterRadius/8.0f);
+	// Render actualVelocity as a blue line
+	brush->SetColor(D2D1::ColorF(D2D1::ColorF::Blue));
+	target->DrawLine(m_characterPos, m_characterPos + m_actualVel, brush, m_characterRadius/8.0f);
 	target->SetTransform(D2D1::Matrix3x2F::Identity());
 
 	brush->Release();
