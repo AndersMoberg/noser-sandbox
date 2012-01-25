@@ -31,7 +31,7 @@ GamePtr Game::Create()
 
 void Game::Update(const Vector2f& move)
 {
-	static const float CHAR_SPEED = 1.0f; // world units per second
+	static const float CHAR_SPEED = 5.0f; // world units per second
 
 	// FIXME: Maybe time should be given as an argument to this function,
 	// instead of querying it ourselves.
