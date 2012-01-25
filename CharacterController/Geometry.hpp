@@ -15,18 +15,47 @@ struct Vector2f
 	Vector2f() { }
 	Vector2f(float _x, float _y) : x(_x), y(_y) { }
 
-	Vector2f& operator+=(const Vector2f& rhs)
-	{
+	Vector2f operator-(const Vector2f& rhs) const { return Vector2f(x - rhs.x, y - rhs.y); }
+	Vector2f operator*(float rhs) const { return Vector2f(x * rhs, y * rhs); }
+
+	Vector2f& operator+=(const Vector2f& rhs) {
 		x += rhs.x;
 		y += rhs.y;
 		return *this;
 	}
 
 	operator D2D1_POINT_2F() const { return D2D1::Point2F(x, y); }
+
+	float LengthSquared() const { return x * x + y * y; }
+	Vector2f Perpendicular() const { return Vector2f(-y, x); }
+
+	// Return the dot product of a and b.
+	// Equivalent to |a|*|b|*cos(angle)
+	static float Dot(const Vector2f& a, const Vector2f& b)
+	{
+		return a.x * b.x + a.y * b.y;
+	}
+
+	// Return the vector projection of a onto b.
+	static Vector2f Projection(const Vector2f& a, const Vector2f& b)
+	{
+		float l2 = b.LengthSquared();
+		if (l2 != 0.0f) {
+			return b * (Dot(a, b) / l2);
+		} else {
+			return a;
+		}
+	}
 };
 
-static Vector2f operator*(float lhs, const Vector2f& rhs) {
+inline Vector2f operator*(float lhs, const Vector2f& rhs) {
 	return Vector2f(lhs * rhs.x, lhs * rhs.y);
+}
+
+static float DistancePointLineSquared(const Vector2f& p, const Vector2f& l1, const Vector2f& l2)
+{
+	float c = Vector2f::Dot((l2 - l1).Perpendicular(), p - l1);
+	return c*c / (l2 - l1).LengthSquared();
 }
 
 struct Rectf
