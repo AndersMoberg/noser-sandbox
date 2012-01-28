@@ -27,6 +27,8 @@ private:
 
 	Game();
 
+	void Step(const Vector2f& move);
+
 	long long m_frequency;
 	long long m_prevTime;
 

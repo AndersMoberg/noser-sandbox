@@ -4,6 +4,8 @@
 
 #include "Game.hpp"
 
+static const float STEPS_PER_SEC = 3600.0f;
+
 Game::Game()
 	: m_intendedVel(0.0f, 0.0f),
 	m_actualVel(0.0f, 0.0f)
@@ -94,16 +96,23 @@ static Vector2f CorrectVelAgainstWall(const Vector2f& ws, const Vector2f& we,
 
 void Game::Update(const Vector2f& move)
 {
-	static const float CHAR_SPEED = 5.0f; // world units per second
-
 	// FIXME: Maybe time should be given as an argument to this function,
 	// instead of querying it ourselves.
 	LARGE_INTEGER curTime;
 	QueryPerformanceCounter(&curTime);
 	
-	// TODO: Control time. We should have a minimum time step.
 	long long timeDiff = curTime.QuadPart - m_prevTime;
-	double timeDiffSecs = (double)timeDiff / m_frequency;
+
+	for (long long t = 0; t < timeDiff; t += (long long)(m_frequency / STEPS_PER_SEC))
+	{
+		Step(move);
+		m_prevTime += (long long)(m_frequency / STEPS_PER_SEC);
+	}
+}
+
+void Game::Step(const Vector2f& move)
+{
+	static const float CHAR_SPEED = 5.0f; // world units per second
 
 	Vector2f intendedVel = CHAR_SPEED * move;
 
@@ -140,11 +149,9 @@ void Game::Update(const Vector2f& move)
 		}
 	}
 
-	m_characterPos += actualVel * (float)timeDiffSecs;
+	m_characterPos += actualVel / STEPS_PER_SEC;
 	m_intendedVel = intendedVel;
 	m_actualVel = actualVel;
-
-	m_prevTime = curTime.QuadPart;
 }
 
 void Game::Render(ID2D1RenderTarget* target)

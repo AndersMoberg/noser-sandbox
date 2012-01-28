@@ -18,6 +18,7 @@ struct Vector2f
 	Vector2f operator+(const Vector2f& rhs) const { return Vector2f(x + rhs.x, y + rhs.y); }
 	Vector2f operator-(const Vector2f& rhs) const { return Vector2f(x - rhs.x, y - rhs.y); }
 	Vector2f operator*(float rhs) const { return Vector2f(x * rhs, y * rhs); }
+	Vector2f operator/(float rhs) const { return Vector2f(x / rhs, y / rhs); }
 
 	Vector2f& operator+=(const Vector2f& rhs) {
 		x += rhs.x;
