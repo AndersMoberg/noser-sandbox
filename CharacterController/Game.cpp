@@ -27,7 +27,7 @@ GamePtr Game::Create()
 	p->m_camera = Camera::Create();
 	p->m_world = World::Create();
 
-	p->m_characterPos = Vector2f(0.0f, 0.0f);
+	p->m_characterPos = Vector2f(0.0f, 3.0f);
 	p->m_characterRadius = 1.0f;
 
 	return p;

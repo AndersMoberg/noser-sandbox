@@ -12,7 +12,7 @@ CameraPtr Camera::Create()
 	CameraPtr p(new Camera);
 
 	p->m_center = Vector2f(0.0f, 0.0f);
-	p->m_zoom = 16.0f;
+	p->m_zoom = 8.0f;
 
 	return p;
 }
