@@ -27,6 +27,7 @@ private:
 
 	Vector2f m_center;
 	float m_zoom; // Number of world units visible on shortest axis
+	float m_elevation; // In degrees: 0 is from the side, 90 is top-down
 
 };
 

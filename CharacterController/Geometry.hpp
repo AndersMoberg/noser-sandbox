@@ -7,6 +7,12 @@
 
 #include <d2d1.h>
 
+static const float M_PIf = 3.14159265358979323846f;
+
+inline float DegToRad(float deg) {
+	return deg * M_PIf / 180.0f;
+}
+
 struct Vector2f
 {
 	float x;
@@ -57,7 +63,7 @@ inline Vector2f operator*(float lhs, const Vector2f& rhs) {
 static float DistancePointLineSquared(const Vector2f& p, const Vector2f& l1, const Vector2f& l2)
 {
 	float c = Vector2f::Dot((l2 - l1).Perpendicular(), p - l1);
-	return c*c / (l2 - l1).LengthSquared();
+	return c * c / (l2 - l1).LengthSquared();
 }
 
 struct Rectf
@@ -75,19 +81,43 @@ struct Rectf
 
 struct Matrix3x2f
 {
-	float m11;
-	float m12;
-	float m21;
-	float m22;
-	float m31;
-	float m32;
+	float _11;
+	float _12;
+	float _21;
+	float _22;
+	float _31;
+	float _32;
 
 	Matrix3x2f() { }
-	Matrix3x2f(float _11, float _12, float _21, float _22, float _31, float _32)
-		: m11(_11), m12(_12), m21(_21), m22(_22), m31(_31), m32(_32)
+	Matrix3x2f(float m11, float m12, float m21, float m22, float m31, float m32)
+		: _11(m11), _12(m12), _21(m21), _22(m22), _31(m31), _32(m32)
 	{ }
 
-	operator D2D1_MATRIX_3X2_F() const { return D2D1::Matrix3x2F(m11, m12, m21, m22, m31, m32); }
+	// Matrix multiplication: This matrix is post-multiplied by rhs, and rhs
+	// is pre-multiplied by this matrix.
+	Matrix3x2f operator*(const Matrix3x2f& rhs) const
+	{
+		return Matrix3x2f(
+			_11 * rhs._11 + _12 * rhs._21,
+			_11 * rhs._12 + _12 * rhs._22,
+			_21 * rhs._11 + _22 * rhs._21,
+			_21 * rhs._12 + _22 * rhs._22,
+			_31 * rhs._11 + _32 * rhs._21 + rhs._31,
+			_31 * rhs._12 + _32 * rhs._22 + rhs._32);
+	}
+
+	operator D2D1_MATRIX_3X2_F() const { return D2D1::Matrix3x2F(_11, _12, _21, _22, _31, _32); }
+
+	static Matrix3x2f Scale(const Vector2f& scale, const Vector2f& center = Vector2f(0.0f, 0.0f))
+	{
+		return Matrix3x2f(
+			scale.x, 0.0f,
+			0.0f, scale.y,
+			center.x - scale.x * center.x, center.y - scale.y * center.y);
+	}
+	static Matrix3x2f Scale(float x, float y, const Vector2f& center = Vector2f(0.0f, 0.0f)) {
+		return Scale(Vector2f(x, y), center);
+	}
 
 	static Matrix3x2f RectLerp(const Rectf& from, const Rectf& to);
 };

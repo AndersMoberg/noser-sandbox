@@ -112,7 +112,7 @@ void Game::Update(const Vector2f& move)
 
 void Game::Step(const Vector2f& move)
 {
-	static const float CHAR_SPEED = 5.0f; // world units per second
+	static const float CHAR_SPEED = 8.0f; // world units per second
 
 	Vector2f intendedVel = CHAR_SPEED * move;
 

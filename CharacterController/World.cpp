@@ -13,14 +13,14 @@ WorldPtr World::Create()
 
 	// Assemble a few walls for testing
 	Wall wall;
-	wall.start = Vector2f(5.0f, 5.0f);
-	wall.end = Vector2f(11.0f, 1.0f);
+	wall.start = Vector2f(0.0f, 5.0f);
+	wall.end = Vector2f(5.0f, 0.0f);
 	p->m_walls.push_back(wall);
-	wall.start = Vector2f(11.0f, 1.0f);
-	wall.end = Vector2f(-5.0f, -3.0f);
+	wall.start = Vector2f(5.0f, 0.0f);
+	wall.end = Vector2f(0.0f, -5.0f);
 	p->m_walls.push_back(wall);
-	wall.start = Vector2f(-5.0f, -3.0f);
-	wall.end = Vector2f(-11.0f, 1.0f);
+	wall.start = Vector2f(0.0f, -5.0f);
+	wall.end = Vector2f(-5.0f, 0.0f);
 	p->m_walls.push_back(wall);
 
 	return p;

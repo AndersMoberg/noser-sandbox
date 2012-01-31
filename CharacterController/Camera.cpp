@@ -13,6 +13,7 @@ CameraPtr Camera::Create()
 
 	p->m_center = Vector2f(0.0f, 0.0f);
 	p->m_zoom = 8.0f;
+	p->m_elevation = 35.0f;
 
 	return p;
 }
@@ -43,5 +44,10 @@ Matrix3x2f Camera::GetWorldToViewport(const Rectf& vp) const
 			m_center.y - m_zoom * aspect);
 	}
 
-	return Matrix3x2f::RectLerp(from, vp);
+	// FIXME: What is the correct way to convert elevation angle to Y scaling
+	// factor?
+	Matrix3x2f elevationScale = Matrix3x2f::Scale(
+		1.0f, sin(DegToRad(m_elevation)));
+
+	return elevationScale * Matrix3x2f::RectLerp(from, vp);
 }
