@@ -4,6 +4,11 @@
 
 #include "Camera.hpp"
 
+// Elevation angle for true isometric projection: equal to
+// asin(tan(30 degrees))
+// See <http://en.wikipedia.org/wiki/Isometric_projection>
+static const float ISOMETRIC_ELEVATION_DEG = 35.264389682754654315377000330019f;
+
 Camera::Camera()
 { }
 
@@ -13,7 +18,7 @@ CameraPtr Camera::Create()
 
 	p->m_center = Vector2f(0.0f, 0.0f);
 	p->m_zoom = 8.0f;
-	p->m_elevation = 35.0f;
+	p->m_elevation = ISOMETRIC_ELEVATION_DEG;
 
 	return p;
 }
