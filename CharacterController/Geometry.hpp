@@ -77,6 +77,8 @@ struct Rectf
 	Rectf(float l, float t, float r, float b)
 		: left(l), top(t), right(r), bottom(b)
 	{ }
+
+	operator D2D1_RECT_F() const { return D2D1::RectF(left, top, right, bottom); }
 };
 
 struct Matrix3x2f

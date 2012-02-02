@@ -4,16 +4,33 @@
 
 #include "Game.hpp"
 
+#include "WindowsUtils.hpp"
+
 static const float STEPS_PER_SEC = 3600.0f;
 
 Game::Game()
-	: m_intendedVel(0.0f, 0.0f),
+	: m_pDWriteFactory(NULL),
+	m_pDialogTextFormat(NULL),
+	m_intendedVel(0.0f, 0.0f),
 	m_actualVel(0.0f, 0.0f)
 { }
+
+Game::~Game()
+{
+	SafeRelease(m_pDialogTextFormat);
+	SafeRelease(m_pDWriteFactory);
+}
 
 GamePtr Game::Create()
 {
 	GamePtr p(new Game);
+
+	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
+		__uuidof(IDWriteFactory), (IUnknown**)&p->m_pDWriteFactory));
+
+	CHECK_HR(p->m_pDWriteFactory->CreateTextFormat(L"Calibri", NULL,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL, 24.0f, L"en-US", &p->m_pDialogTextFormat));
 
 	// The frequency cannot change while the system is running, so it's safe
 	// to query it once
@@ -209,5 +226,29 @@ void Game::Render(ID2D1RenderTarget* target)
 	target->DrawLine(m_characterPos, m_characterPos + m_actualVel, brush, m_characterRadius/8.0f);
 	target->SetTransform(D2D1::Matrix3x2F::Identity());
 
+	// Render text overlay
+	RenderPrintf(target, m_pDialogTextFormat, vp, brush,
+		L"Hello %d!", 123);
+
 	brush->Release();
+}
+
+void Game::RenderPrintf(ID2D1RenderTarget* pD2DTarget,
+	IDWriteTextFormat* textFormat, const D2D1_RECT_F& layoutRect,
+	ID2D1Brush* defaultForegroundBrush,
+	LPCWSTR msg, ...)
+{
+	va_list args = NULL;
+	va_start(args, msg);
+
+	int len = _vscwprintf(msg, args);
+
+	WCHAR* buf = new WCHAR[len + 1];
+	vswprintf_s(buf, len + 1, msg, args);
+
+	va_end(args);
+
+	pD2DTarget->DrawTextW(buf, len, textFormat, layoutRect, defaultForegroundBrush);
+
+	delete[] buf;
 }

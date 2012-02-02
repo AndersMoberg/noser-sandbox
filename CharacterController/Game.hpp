@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#include <dwrite.h>
+
 #include "Camera.hpp"
 #include "World.hpp"
 
@@ -18,6 +20,7 @@ class Game
 
 public:
 
+	~Game();
 	static GamePtr Create();
 
 	void Update(const Vector2f& move);
@@ -28,6 +31,14 @@ private:
 	Game();
 
 	void Step(const Vector2f& move);
+
+	void RenderPrintf(ID2D1RenderTarget* pD2DTarget,
+		IDWriteTextFormat* textFormat, const D2D1_RECT_F& layoutRect,
+		ID2D1Brush* defaultForegroundBrush,
+		LPCWSTR msg, ...);
+
+	IDWriteFactory* m_pDWriteFactory;
+	IDWriteTextFormat* m_pDialogTextFormat;
 
 	long long m_frequency;
 	long long m_prevTime;
