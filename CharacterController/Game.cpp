@@ -50,6 +50,7 @@ GamePtr Game::Create()
 	return p;
 }
 
+// ws: wall start; we: wall end; p: character position; pRadius: character radius
 static bool TestWallPosConstraint(const Vector2f& ws, const Vector2f& we,
 	const Vector2f& p, float pRadius)
 {
@@ -58,16 +59,20 @@ static bool TestWallPosConstraint(const Vector2f& ws, const Vector2f& we,
 	bool pastS = Vector2f::Dot(we - ws, p - ws) > 0.0f;
 	bool pastE = Vector2f::Dot(ws - we, p - we) > 0.0f;
 	if (pastS && pastE) {
+		// character is not near either end
 		return DistancePointLineSquared(p, ws, we) <= pRadius*pRadius;
 	} else if (pastS) {
+		// character is near we
 		return (p - we).LengthSquared() <= pRadius*pRadius;
 	} else if (pastE) {
+		// character is near ws
 		return (p - ws).LengthSquared() <= pRadius*pRadius;
 	} else {
 		return false;
 	}
 }
 
+// ws: wall start; we: wall end; p: character position; v: character velocity
 static bool TestWallVelConstraint(const Vector2f& ws, const Vector2f& we,
 	const Vector2f& p, const Vector2f& v)
 {
@@ -77,20 +82,24 @@ static bool TestWallVelConstraint(const Vector2f& ws, const Vector2f& we,
 	bool pastS = Vector2f::Dot(we - ws, p - ws) > 0.0f;
 	bool pastE = Vector2f::Dot(ws - we, p - we) > 0.0f;
 	if (pastS && pastE) {
+		// character is not near either end
 		Vector2f wallPerp = (we - ws).Perpendicular();
 		Vector2f wallSToP = p - ws;
 		// NOTE: I did all this math on paper at one point, but I should review
 		// soon.
 		return Vector2f::Dot(wallPerp, wallSToP) * Vector2f::Dot(wallPerp, v) <= 0.0f;
 	} else if (pastS) {
+		// character is near we
 		return Vector2f::Dot(v, p - we) <= 0.0f;
 	} else if (pastE) {
+		// character is near ws
 		return Vector2f::Dot(v, p - ws) <= 0.0f;
 	} else {
 		return false;
 	}
 }
 
+// ws: wall start; we: wall end; p: character position; v: character velocity
 static Vector2f CorrectVelAgainstWall(const Vector2f& ws, const Vector2f& we,
 	const Vector2f& p, const Vector2f& v)
 {
@@ -101,10 +110,13 @@ static Vector2f CorrectVelAgainstWall(const Vector2f& ws, const Vector2f& we,
 	bool pastS = Vector2f::Dot(we - ws, p - ws) > 0.0f;
 	bool pastE = Vector2f::Dot(ws - we, p - we) > 0.0f;
 	if (pastS && pastE) {
+		// character is not near either end
 		return Vector2f::Projection(v, we - ws);
 	} else if (pastS) {
+		// character is near we
 		return Vector2f::Projection(v, (p - we).Perpendicular());
 	} else if (pastE) {
+		// character is near ws
 		return Vector2f::Projection(v, (p - ws).Perpendicular());
 	} else {
 		return v;
@@ -213,7 +225,7 @@ void Game::Render(ID2D1RenderTarget* target)
 	target->FillEllipse(
 		D2D1::Ellipse(m_characterPos, m_characterRadius, m_characterRadius),
 		brush);
-	// Render intended velocity as a green line
+	// Render intended velocity as a red line
 	brush->SetColor(D2D1::ColorF(D2D1::ColorF::Red));
 	target->DrawLine(m_characterPos, m_characterPos + m_intendedVel, brush, m_characterRadius/8.0f);
 	// Render actualVelocity as a blue line
