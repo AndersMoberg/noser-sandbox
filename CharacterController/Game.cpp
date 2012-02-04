@@ -186,32 +186,27 @@ void Game::Render(ID2D1RenderTarget* target)
 	ID2D1SolidColorBrush* brush;
 	target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &brush);
 
+	ID2D1PathGeometry* geom;
+	factory->CreatePathGeometry(&geom);
+	ID2D1GeometrySink* sink;
+	geom->Open(&sink);
+
 	// Render walls
 	const World::WallList& walls = m_world->GetWalls();
 	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
 	{
-		ID2D1PathGeometry* geom;
-		factory->CreatePathGeometry(&geom);
-
-		ID2D1GeometrySink* sink;
-		geom->Open(&sink);
-
 		sink->BeginFigure(it->start, D2D1_FIGURE_BEGIN_HOLLOW);
 		sink->AddLine(it->end);
 		sink->EndFigure(D2D1_FIGURE_END_OPEN);
-		sink->Close();
-
-		sink->Release();
-
-		ID2D1TransformedGeometry* transGeom;
-		factory->CreateTransformedGeometry(geom, worldToViewport, &transGeom);
-
-		geom->Release();
-
-		target->DrawGeometry(transGeom, brush);
-
-		transGeom->Release();
 	}
+	
+	sink->Close();
+	sink->Release();
+	ID2D1TransformedGeometry* transGeom;
+	factory->CreateTransformedGeometry(geom, worldToViewport, &transGeom);
+	geom->Release();
+	target->DrawGeometry(transGeom, brush);
+	transGeom->Release();
 
 	// Render character
 	target->SetTransform(worldToViewport);
