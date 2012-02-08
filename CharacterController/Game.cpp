@@ -139,6 +139,29 @@ void Game::Update(const Vector2f& move)
 	}
 }
 
+Game::Collisions Game::CheckCharacterCollisions(const Vector2f& pos, const Vector2f& vel)
+{
+	Collisions result;
+
+	const World::WallList& walls = m_world->GetWalls();
+	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
+	{
+		bool posConstrained = TestWallPosConstraint(it->start, it->end,
+			pos, m_characterRadius);
+		if (posConstrained)
+		{
+			bool velConstrained = TestWallVelConstraint(it->start, it->end,
+				pos, vel);
+			if (velConstrained)
+			{
+				result.push_back(&*it);
+			}
+		}
+	}
+
+	return result;
+}
+
 void Game::Step(const Vector2f& move)
 {
 	static const float CHAR_SPEED = 8.0f; // world units per second
@@ -147,35 +170,46 @@ void Game::Step(const Vector2f& move)
 
 	Vector2f actualVel = intendedVel;
 
-	bool constrained = false;
-	const World::WallList& walls = m_world->GetWalls();
-	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
+	Collisions collisions = CheckCharacterCollisions(m_characterPos, actualVel);
+	if (collisions.size() == 1)
 	{
-		bool posConstrained = TestWallPosConstraint(it->start, it->end,
-			m_characterPos, m_characterRadius);
-		if (posConstrained)
+		const Wall* wall = collisions.back();
+		actualVel = CorrectVelAgainstWall(wall->start, wall->end,
+			m_characterPos, actualVel);
+	}
+	else if (collisions.size() >= 2)
+	{
+		const Wall* wall1 = collisions.front();
+		const Wall* wall2 = collisions.back();
+		// Find wall1 correction, test against wall2, then vice-versa
+		Vector2f wall1Correct = CorrectVelAgainstWall(wall1->start, wall1->end,
+			m_characterPos, actualVel);
+		Vector2f wall2Correct = CorrectVelAgainstWall(wall2->start, wall2->end,
+			m_characterPos, actualVel);
+		if (!TestWallVelConstraint(wall2->start, wall2->end, m_characterPos,
+			wall1Correct))
 		{
-			bool velConstrained = TestWallVelConstraint(it->start, it->end,
-				m_characterPos, actualVel);
-			if (velConstrained)
-			{
-				// If more than one wall constrains the character, no movement
-				// is possible.
-				// FIXME: Collisions can be missed if a wall isn't tested
-				// against the new actualVel!
-				if (constrained)
-				{
-					actualVel = Vector2f(0.0f, 0.0f);
-					break;
-				}
-				else
-				{
-					constrained = true;
-					actualVel = CorrectVelAgainstWall(it->start, it->end,
-						m_characterPos, actualVel);
-				}
-			}
+			actualVel = wall1Correct;
 		}
+		else if (!TestWallVelConstraint(wall1->start, wall1->end, m_characterPos,
+			wall2Correct))
+		{
+			actualVel = wall2Correct;
+		}
+		else if (wall1Correct == wall2Correct)
+		{
+			// FIXME: Comparison is sensitive to tiny floating-point errors
+			actualVel = wall1Correct;
+		}
+		else
+		{
+			actualVel = Vector2f(0.0f, 0.0f);
+		}
+	}
+	else if (collisions.size() > 2)
+	{
+		// TODO: Generalize the algorithm above for more than 2 constraints
+		actualVel = Vector2f(0.0f, 0.0f);
 	}
 
 	m_characterPos += actualVel / STEPS_PER_SEC;

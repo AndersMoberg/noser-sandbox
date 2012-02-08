@@ -30,6 +30,9 @@ private:
 
 	Game();
 
+	typedef std::list<const Wall*> Collisions;
+	Collisions CheckCharacterCollisions(const Vector2f& pos, const Vector2f& vel);
+
 	void Step(const Vector2f& move);
 
 	void RenderPrintf(ID2D1RenderTarget* pD2DTarget,
