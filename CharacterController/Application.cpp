@@ -21,11 +21,22 @@ int Application::MessageLoop()
 {
 	MSG msg;
 
-	while (GetMessage(&msg, NULL, 0, 0))
+	for (;;)
 	{
-		DispatchMessage(&msg);
-		if (m_window->ExceptionThrown()) {
-			throw m_window->GetExceptionProxy();
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_QUIT) {
+				break;
+			}
+
+			DispatchMessage(&msg);
+			if (m_window->ExceptionThrown()) {
+				throw m_window->GetExceptionProxy();
+			}
+		}
+		else
+		{
+			m_window->Update();
 		}
 	}
 

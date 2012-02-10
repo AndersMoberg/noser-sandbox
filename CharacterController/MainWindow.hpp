@@ -25,6 +25,8 @@ public:
 	~MainWindow();
 	static MainWindowPtr Create(HINSTANCE hInstance, int nShowCmd, GamePtr game);
 
+	void Update();
+
 	// C++ exceptions thrown in a window procedure get ignored. The exception
 	// proxy is meant to pass them through.
 	bool ExceptionThrown() const { return m_exceptionThrown; }
@@ -45,7 +47,6 @@ private:
 	void CreateDeviceResources();
 	void DestroyDeviceResources();
 
-	void Update();
 	void Render();
 
 	bool m_exceptionThrown;

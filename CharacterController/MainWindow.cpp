@@ -170,12 +170,7 @@ LRESULT MainWindow::OnWMPaint()
 	PAINTSTRUCT ps;
 	BeginPaint(m_hWnd, &ps);
 
-	// TODO: This is the wrong place to call Update.
-	Update();
 	Render();
-
-	// Trigger animation by invalidating here
-	InvalidateRect(m_hWnd, NULL, FALSE);
 
 	EndPaint(m_hWnd, &ps);
 	return 0;
@@ -269,6 +264,8 @@ void MainWindow::Update()
 	}
 
 	m_game->Update(move);
+
+	InvalidateRect(m_hWnd, NULL, FALSE);
 }
 
 void MainWindow::Render()

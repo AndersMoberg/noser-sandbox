@@ -33,15 +33,17 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 
 		ApplicationPtr app = Application::Create(hInstance, nShowCmd);
 		exitCode = app->MessageLoop();
+
+		timeEndPeriod(1);
 	}
 	catch (const std::exception& e)
 	{
+		timeEndPeriod(1);
+
 		OutputDebugStringA(e.what());
 		OutputDebugStringA("\n");
 		exitCode = EXIT_FAILURE;
 	}
-
-	timeEndPeriod(1);
 
 	return exitCode;
 }
