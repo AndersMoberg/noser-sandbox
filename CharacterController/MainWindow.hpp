@@ -26,6 +26,7 @@ public:
 	static MainWindowPtr Create(HINSTANCE hInstance, int nShowCmd, GamePtr game);
 
 	void Update();
+	void Render();
 
 	// C++ exceptions thrown in a window procedure get ignored. The exception
 	// proxy is meant to pass them through.
@@ -40,14 +41,11 @@ private:
 	LRESULT OnWMCreate(HWND hwnd);
 	LRESULT OnWMDestroy();
 	LRESULT OnWMSize(LPARAM lParam);
-	LRESULT OnWMPaint();
 	LRESULT OnWMKeyDown(WPARAM wParam);
 	LRESULT OnWMKeyUp(WPARAM wParam);
 
 	void CreateDeviceResources();
 	void DestroyDeviceResources();
-
-	void Render();
 
 	bool m_exceptionThrown;
 	std::exception m_exceptionProxy;

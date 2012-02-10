@@ -108,9 +108,6 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 			case WM_SIZE:
 				result = pThis->OnWMSize(lParam);
 				break;
-			case WM_PAINT:
-				result = pThis->OnWMPaint();
-				break;
 			case WM_KEYDOWN:
 				result = pThis->OnWMKeyDown(wParam);
 				break;
@@ -160,19 +157,6 @@ LRESULT MainWindow::OnWMSize(LPARAM lParam)
 		m_pD2DTarget->Resize(size);
 	}
 
-	return 0;
-}
-
-LRESULT MainWindow::OnWMPaint()
-{
-	// BeginPaint..EndPaint are required to validate the rectangle so Windows
-	// doesn't send WM_PAINT incessantly
-	PAINTSTRUCT ps;
-	BeginPaint(m_hWnd, &ps);
-
-	Render();
-
-	EndPaint(m_hWnd, &ps);
 	return 0;
 }
 

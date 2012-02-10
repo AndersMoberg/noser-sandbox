@@ -37,6 +37,7 @@ int Application::MessageLoop()
 		else
 		{
 			m_window->Update();
+			m_window->Render();
 		}
 	}
 
