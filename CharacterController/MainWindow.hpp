@@ -41,6 +41,7 @@ private:
 	LRESULT OnWMCreate(HWND hwnd);
 	LRESULT OnWMDestroy();
 	LRESULT OnWMSize(LPARAM lParam);
+	LRESULT OnWMPaint();
 	LRESULT OnWMKeyDown(WPARAM wParam);
 	LRESULT OnWMKeyUp(WPARAM wParam);
 

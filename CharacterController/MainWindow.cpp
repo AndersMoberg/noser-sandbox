@@ -108,6 +108,9 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 			case WM_SIZE:
 				result = pThis->OnWMSize(lParam);
 				break;
+			case WM_PAINT:
+				result = pThis->OnWMPaint();
+				break;
 			case WM_KEYDOWN:
 				result = pThis->OnWMKeyDown(wParam);
 				break;
@@ -157,6 +160,13 @@ LRESULT MainWindow::OnWMSize(LPARAM lParam)
 		m_pD2DTarget->Resize(size);
 	}
 
+	return 0;
+}
+
+LRESULT MainWindow::OnWMPaint()
+{
+	Render();
+	ValidateRect(m_hWnd, NULL);
 	return 0;
 }
 
