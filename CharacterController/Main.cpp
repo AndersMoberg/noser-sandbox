@@ -11,6 +11,7 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
+#include <MMSystem.h>
 #include <tchar.h>
 
 #include <cstdlib>
@@ -25,9 +26,11 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 #endif
 	
 	int exitCode = EXIT_FAILURE;
-
+	
 	try
 	{
+		timeBeginPeriod(1);
+
 		ApplicationPtr app = Application::Create(hInstance, nShowCmd);
 		exitCode = app->MessageLoop();
 	}
@@ -37,6 +40,8 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 		OutputDebugStringA("\n");
 		exitCode = EXIT_FAILURE;
 	}
+
+	timeEndPeriod(1);
 
 	return exitCode;
 }
