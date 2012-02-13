@@ -4,8 +4,17 @@
 
 #include "Application.hpp"
 
+#include "WorldEditorFrame.hpp"
+
 bool Application::OnInit()
 {
-	wxMessageBox("Hello!");
+	if (!wxApp::OnInit()) {
+		return false;
+	}
+
+	WorldEditorFrame* frame = new WorldEditorFrame;
+
+	frame->Show();
+
 	return true;
 }

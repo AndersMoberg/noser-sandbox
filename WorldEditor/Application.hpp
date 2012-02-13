@@ -9,7 +9,10 @@
 
 class Application : public wxApp
 {
+public:
 	virtual bool OnInit();
 };
+
+wxDECLARE_APP(Application);
 
 #endif
