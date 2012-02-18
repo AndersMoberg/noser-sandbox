@@ -44,8 +44,11 @@ GamePtr Game::Create()
 	p->m_camera = Camera::Create();
 	p->m_world = World::Create();
 
-	p->m_characterPos = Vector2f(0.0f, 3.0f);
-	p->m_characterRadius = 1.0f;
+	p->m_playerCharacter = CharacterPtr(new Character);
+	p->m_playerCharacter->pos = Vector2f(0.0f, 3.0f);
+	p->m_playerCharacter->radius = 1.0f;
+
+	p->m_characters.push_back(p->m_playerCharacter);
 
 	return p;
 }
@@ -139,7 +142,8 @@ void Game::Update(const Vector2f& move)
 	}
 }
 
-Game::Collisions Game::CheckCharacterCollisions(const Vector2f& pos, const Vector2f& vel)
+Game::Collisions Game::CheckCharacterCollisions(
+	const Character& character, const Vector2f& vel)
 {
 	Collisions result;
 
@@ -147,11 +151,11 @@ Game::Collisions Game::CheckCharacterCollisions(const Vector2f& pos, const Vecto
 	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
 	{
 		bool posConstrained = TestWallPosConstraint(it->start, it->end,
-			pos, m_characterRadius);
+			character.pos, character.radius);
 		if (posConstrained)
 		{
 			bool velConstrained = TestWallVelConstraint(it->start, it->end,
-				pos, vel);
+				character.pos, vel);
 			if (velConstrained)
 			{
 				result.push_back(&*it);
@@ -170,12 +174,12 @@ void Game::Step(const Vector2f& move)
 
 	Vector2f actualVel = intendedVel;
 
-	Collisions collisions = CheckCharacterCollisions(m_characterPos, actualVel);
+	Collisions collisions = CheckCharacterCollisions(*m_playerCharacter, actualVel);
 	if (collisions.size() == 1)
 	{
 		const Wall* wall = collisions.back();
 		actualVel = CorrectVelAgainstWall(wall->start, wall->end,
-			m_characterPos, actualVel);
+			m_playerCharacter->pos, actualVel);
 	}
 	else if (collisions.size() >= 2)
 	{
@@ -183,15 +187,15 @@ void Game::Step(const Vector2f& move)
 		const Wall* wall2 = collisions.back();
 		// Find wall1 correction, test against wall2, then vice-versa
 		Vector2f wall1Correct = CorrectVelAgainstWall(wall1->start, wall1->end,
-			m_characterPos, actualVel);
+			m_playerCharacter->pos, actualVel);
 		Vector2f wall2Correct = CorrectVelAgainstWall(wall2->start, wall2->end,
-			m_characterPos, actualVel);
-		if (!TestWallVelConstraint(wall2->start, wall2->end, m_characterPos,
+			m_playerCharacter->pos, actualVel);
+		if (!TestWallVelConstraint(wall2->start, wall2->end, m_playerCharacter->pos,
 			wall1Correct))
 		{
 			actualVel = wall1Correct;
 		}
-		else if (!TestWallVelConstraint(wall1->start, wall1->end, m_characterPos,
+		else if (!TestWallVelConstraint(wall1->start, wall1->end, m_playerCharacter->pos,
 			wall2Correct))
 		{
 			actualVel = wall2Correct;
@@ -212,7 +216,7 @@ void Game::Step(const Vector2f& move)
 		actualVel = Vector2f(0.0f, 0.0f);
 	}
 
-	m_characterPos += actualVel / STEPS_PER_SEC;
+	m_playerCharacter->pos += actualVel / STEPS_PER_SEC;
 	m_intendedVel = intendedVel;
 	m_actualVel = actualVel;
 }
@@ -257,14 +261,17 @@ void Game::Render(ID2D1RenderTarget* target)
 	// Render character
 	target->SetTransform(worldToViewport);
 	target->FillEllipse(
-		D2D1::Ellipse(m_characterPos, m_characterRadius, m_characterRadius),
+		D2D1::Ellipse(m_playerCharacter->pos, m_playerCharacter->radius,
+		m_playerCharacter->radius),
 		brush);
 	// Render intended velocity as a red line
 	brush->SetColor(D2D1::ColorF(D2D1::ColorF::Red));
-	target->DrawLine(m_characterPos, m_characterPos + m_intendedVel, brush, m_characterRadius/8.0f);
+	target->DrawLine(m_playerCharacter->pos,
+		m_playerCharacter->pos + m_intendedVel, brush, m_playerCharacter->radius/8.0f);
 	// Render actualVelocity as a blue line
 	brush->SetColor(D2D1::ColorF(D2D1::ColorF::Blue));
-	target->DrawLine(m_characterPos, m_characterPos + m_actualVel, brush, m_characterRadius/8.0f);
+	target->DrawLine(m_playerCharacter->pos,
+		m_playerCharacter->pos + m_actualVel, brush, m_playerCharacter->radius/8.0f);
 	target->SetTransform(D2D1::Matrix3x2F::Identity());
 
 	// Render text overlay

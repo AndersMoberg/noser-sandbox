@@ -15,6 +15,16 @@
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
 
+struct Character
+{
+	Vector2f pos;
+	float radius;
+};
+
+typedef std::shared_ptr<Character> CharacterPtr;
+
+typedef std::list<CharacterPtr> CharacterList;
+
 class Game
 {
 
@@ -31,7 +41,7 @@ private:
 	Game();
 
 	typedef std::list<const Wall*> Collisions;
-	Collisions CheckCharacterCollisions(const Vector2f& pos, const Vector2f& vel);
+	Collisions CheckCharacterCollisions(const Character& character, const Vector2f& vel);
 
 	void Step(const Vector2f& move);
 
@@ -48,8 +58,9 @@ private:
 
 	CameraPtr m_camera;
 	WorldPtr m_world;
-	Vector2f m_characterPos;
-	float m_characterRadius;
+	CharacterList m_characters;
+
+	CharacterPtr m_playerCharacter;
 
 	// velocities for display
 	Vector2f m_intendedVel;
