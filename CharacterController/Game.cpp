@@ -47,8 +47,12 @@ GamePtr Game::Create()
 	p->m_playerCharacter = CharacterPtr(new Character);
 	p->m_playerCharacter->pos = Vector2f(0.0f, 3.0f);
 	p->m_playerCharacter->radius = 1.0f;
-
 	p->m_characters.push_back(p->m_playerCharacter);
+
+	CharacterPtr npc(new Character);
+	npc->pos = Vector2f(5.0f, 4.0f);
+	npc->radius = 1.0f;
+	p->m_characters.push_back(npc);
 
 	return p;
 }
@@ -258,12 +262,17 @@ void Game::Render(ID2D1RenderTarget* target)
 	target->DrawGeometry(transGeom, brush);
 	transGeom->Release();
 
-	// Render character
+	// Render characters
 	target->SetTransform(worldToViewport);
-	target->FillEllipse(
-		D2D1::Ellipse(m_playerCharacter->pos, m_playerCharacter->radius,
-		m_playerCharacter->radius),
-		brush);
+
+	for (CharacterList::const_iterator it = m_characters.begin();
+		it != m_characters.end(); ++it)
+	{
+		target->FillEllipse(
+			D2D1::Ellipse((*it)->pos, (*it)->radius, (*it)->radius),
+			brush);
+	}
+
 	// Render intended velocity as a red line
 	brush->SetColor(D2D1::ColorF(D2D1::ColorF::Red));
 	target->DrawLine(m_playerCharacter->pos,
