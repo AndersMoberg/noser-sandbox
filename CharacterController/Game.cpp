@@ -11,12 +11,14 @@ static const float STEPS_PER_SEC = 3600.0f;
 Game::Game()
 	: m_pDWriteFactory(NULL),
 	m_pDialogTextFormat(NULL),
+	m_pBlackBrush(NULL),
 	m_intendedVel(0.0f, 0.0f),
 	m_actualVel(0.0f, 0.0f)
 { }
 
 Game::~Game()
 {
+	SafeRelease(m_pBlackBrush);
 	SafeRelease(m_pDialogTextFormat);
 	SafeRelease(m_pDWriteFactory);
 }
@@ -230,15 +232,16 @@ void Game::Render(ID2D1RenderTarget* target)
 	ID2D1Factory* factory;
 	target->GetFactory(&factory);
 
+	if (!m_pBlackBrush)
+	{
+		target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &m_pBlackBrush);
+	}
+
 	D2D1_SIZE_F targetSize = target->GetSize();
 	Rectf vp(0.0f, 0.0f, targetSize.width, targetSize.height);
 	Matrix3x2f worldToViewport = m_camera->GetWorldToViewport(vp);
 
 	target->Clear(D2D1::ColorF(D2D1::ColorF::White));
-
-	// Create brush for drawing stuff
-	ID2D1SolidColorBrush* brush;
-	target->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &brush);
 
 	ID2D1PathGeometry* geom;
 	factory->CreatePathGeometry(&geom);
@@ -259,7 +262,7 @@ void Game::Render(ID2D1RenderTarget* target)
 	ID2D1TransformedGeometry* transGeom;
 	factory->CreateTransformedGeometry(geom, worldToViewport, &transGeom);
 	geom->Release();
-	target->DrawGeometry(transGeom, brush);
+	target->DrawGeometry(transGeom, m_pBlackBrush);
 	transGeom->Release();
 
 	// Render characters
@@ -270,24 +273,27 @@ void Game::Render(ID2D1RenderTarget* target)
 	{
 		target->FillEllipse(
 			D2D1::Ellipse((*it)->pos, (*it)->radius, (*it)->radius),
-			brush);
+			m_pBlackBrush);
 	}
 
 	// Render intended velocity as a red line
-	brush->SetColor(D2D1::ColorF(D2D1::ColorF::Red));
+	m_pBlackBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Red));
 	target->DrawLine(m_playerCharacter->pos,
-		m_playerCharacter->pos + m_intendedVel, brush, m_playerCharacter->radius/8.0f);
+		m_playerCharacter->pos + m_intendedVel, m_pBlackBrush, m_playerCharacter->radius/8.0f);
 	// Render actualVelocity as a blue line
-	brush->SetColor(D2D1::ColorF(D2D1::ColorF::Blue));
+	m_pBlackBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Blue));
 	target->DrawLine(m_playerCharacter->pos,
-		m_playerCharacter->pos + m_actualVel, brush, m_playerCharacter->radius/8.0f);
+		m_playerCharacter->pos + m_actualVel, m_pBlackBrush, m_playerCharacter->radius/8.0f);
 	target->SetTransform(D2D1::Matrix3x2F::Identity());
 
+	m_pBlackBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+
 	// Render text overlay
-	RenderPrintf(target, m_pDialogTextFormat, vp, brush,
+	RenderPrintf(target, m_pDialogTextFormat, vp, m_pBlackBrush,
 		L"Hello %d!", 123);
 
-	brush->Release();
+	Rectf buttonRc(100.0f, 100.0f, 180.0f, 150.0f);
+	RenderButton(target, buttonRc, L"Button");
 }
 
 void Game::RenderPrintf(ID2D1RenderTarget* pD2DTarget,
@@ -308,4 +314,12 @@ void Game::RenderPrintf(ID2D1RenderTarget* pD2DTarget,
 	pD2DTarget->DrawTextW(buf, len, textFormat, layoutRect, defaultForegroundBrush);
 
 	delete[] buf;
+}
+
+void Game::RenderButton(ID2D1RenderTarget* target,
+	const Rectf& rc, const std::wstring& label)
+{
+	target->DrawRectangle(rc, m_pBlackBrush);
+	target->DrawTextW(label.c_str(), label.size(), m_pDialogTextFormat,
+		rc, m_pBlackBrush);
 }

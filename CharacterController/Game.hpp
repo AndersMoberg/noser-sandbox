@@ -50,8 +50,14 @@ private:
 		ID2D1Brush* defaultForegroundBrush,
 		LPCWSTR msg, ...);
 
+	void RenderButton(ID2D1RenderTarget* target, const Rectf& rc,
+		const std::wstring& label);
+
 	IDWriteFactory* m_pDWriteFactory;
 	IDWriteTextFormat* m_pDialogTextFormat;
+
+	// Resources specific to D2D target!
+	ID2D1SolidColorBrush* m_pBlackBrush;
 
 	long long m_frequency;
 	long long m_prevTime;
