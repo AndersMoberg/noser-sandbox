@@ -13,7 +13,8 @@ Game::Game()
 	m_pDialogTextFormat(NULL),
 	m_pBlackBrush(NULL),
 	m_intendedVel(0.0f, 0.0f),
-	m_actualVel(0.0f, 0.0f)
+	m_actualVel(0.0f, 0.0f),
+	m_talking(false)
 { }
 
 Game::~Game()
@@ -51,10 +52,10 @@ GamePtr Game::Create()
 	p->m_playerCharacter->radius = 1.0f;
 	p->m_characters.push_back(p->m_playerCharacter);
 
-	CharacterPtr npc(new Character);
-	npc->pos = Vector2f(5.0f, 4.0f);
-	npc->radius = 1.0f;
-	p->m_characters.push_back(npc);
+	p->m_npcCharacter = CharacterPtr(new Character);
+	p->m_npcCharacter->pos = Vector2f(5.0f, 4.0f);
+	p->m_npcCharacter->radius = 1.0f;
+	p->m_characters.push_back(p->m_npcCharacter);
 
 	return p;
 }
@@ -132,7 +133,7 @@ static Vector2f CorrectVelAgainstWall(const Vector2f& ws, const Vector2f& we,
 	}
 }
 
-void Game::Update(const Vector2f& move)
+void Game::Update(const Vector2f& move, bool spaceTrigger)
 {
 	// FIXME: Maybe time should be given as an argument to this function,
 	// instead of querying it ourselves.
@@ -141,10 +142,17 @@ void Game::Update(const Vector2f& move)
 	
 	long long timeDiff = curTime.QuadPart - m_prevTime;
 
-	for (long long t = 0; t < timeDiff; t += (long long)(m_frequency / STEPS_PER_SEC))
+	if (spaceTrigger && CanPlayerTalk())
 	{
-		Step(move);
-		m_prevTime += (long long)(m_frequency / STEPS_PER_SEC);
+		m_talking = true;
+	}
+	else
+	{
+		for (long long t = 0; t < timeDiff; t += (long long)(m_frequency / STEPS_PER_SEC))
+		{
+			Step(move);
+			m_prevTime += (long long)(m_frequency / STEPS_PER_SEC);
+		}
 	}
 }
 
@@ -289,11 +297,16 @@ void Game::Render(ID2D1RenderTarget* target)
 	m_pBlackBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
 
 	// Render text overlay
-	RenderPrintf(target, m_pDialogTextFormat, vp, m_pBlackBrush,
-		L"Hello %d!", 123);
-
-	Rectf buttonRc(100.0f, 100.0f, 180.0f, 150.0f);
-	RenderButton(target, buttonRc, L"Button");
+	if (CanPlayerTalk() && !m_talking)
+	{
+		RenderPrintf(target, m_pDialogTextFormat, vp, m_pBlackBrush,
+			L"Press Space to talk", 123);
+	}
+	else if (m_talking)
+	{
+		Rectf buttonRc(100.0f, 100.0f, 180.0f, 150.0f);
+		RenderButton(target, buttonRc, L"Button");
+	}
 }
 
 void Game::RenderPrintf(ID2D1RenderTarget* pD2DTarget,
@@ -322,4 +335,16 @@ void Game::RenderButton(ID2D1RenderTarget* target,
 	target->DrawRectangle(rc, m_pBlackBrush);
 	target->DrawTextW(label.c_str(), label.size(), m_pDialogTextFormat,
 		rc, m_pBlackBrush);
+}
+
+bool Game::CanPlayerTalk()
+{
+	// Compare player character and npc player positions
+	Vector2f npcToPlayer = m_playerCharacter->pos - m_npcCharacter->pos;
+	float canTalkDistance = 2.5f;
+	if (npcToPlayer.LengthSquared() <= canTalkDistance*canTalkDistance)
+	{
+		return true;
+	}
+	return false;
 }

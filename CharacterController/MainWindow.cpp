@@ -17,7 +17,8 @@ MainWindow::MainWindow()
 	m_pD2DFactory(NULL),
 	m_pD2DTarget(NULL),
 	m_leftToRightKeys(0),
-	m_downToUpKeys(0)
+	m_downToUpKeys(0),
+	m_spaceTrigger(false)
 { }
 
 MainWindow::~MainWindow()
@@ -186,6 +187,9 @@ LRESULT MainWindow::OnWMKeyDown(WPARAM wParam)
 	case VK_DOWN:
 		m_downToUpKeys = -1;
 		break;
+	case VK_SPACE:
+		m_spaceTrigger = true;
+		break;
 	}
 	return 0;
 }
@@ -257,7 +261,8 @@ void MainWindow::Update()
 		move = Vector2f(SQRT_1_OVER_2, SQRT_1_OVER_2); // Northeast
 	}
 
-	m_game->Update(move);
+	m_game->Update(move, m_spaceTrigger);
+	m_spaceTrigger = false;
 
 	InvalidateRect(m_hWnd, NULL, FALSE);
 }

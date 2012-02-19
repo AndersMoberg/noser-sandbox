@@ -33,7 +33,7 @@ public:
 	~Game();
 	static GamePtr Create();
 
-	void Update(const Vector2f& move);
+	void Update(const Vector2f& move, bool spaceTrigger);
 	void Render(ID2D1RenderTarget* target);
 
 private:
@@ -53,6 +53,8 @@ private:
 	void RenderButton(ID2D1RenderTarget* target, const Rectf& rc,
 		const std::wstring& label);
 
+	bool CanPlayerTalk();
+
 	IDWriteFactory* m_pDWriteFactory;
 	IDWriteTextFormat* m_pDialogTextFormat;
 
@@ -67,10 +69,13 @@ private:
 	CharacterList m_characters;
 
 	CharacterPtr m_playerCharacter;
+	CharacterPtr m_npcCharacter;
 
 	// velocities for display
 	Vector2f m_intendedVel;
 	Vector2f m_actualVel;
+
+	bool m_talking;
 
 };
 
