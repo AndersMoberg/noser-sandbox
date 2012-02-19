@@ -9,6 +9,7 @@
 
 #include <dwrite.h>
 
+#include "Button.hpp"
 #include "Camera.hpp"
 #include "World.hpp"
 
@@ -25,7 +26,7 @@ typedef std::shared_ptr<Character> CharacterPtr;
 
 typedef std::list<CharacterPtr> CharacterList;
 
-class Game
+class Game : public std::enable_shared_from_this<Game>
 {
 
 public:
@@ -35,6 +36,8 @@ public:
 
 	void Update(const Vector2f& move, bool spaceTrigger);
 	void Render(ID2D1RenderTarget* target);
+	
+	void RenderButton(ButtonPtr button, ID2D1RenderTarget* target);
 
 private:
 
@@ -49,9 +52,6 @@ private:
 		IDWriteTextFormat* textFormat, const D2D1_RECT_F& layoutRect,
 		ID2D1Brush* defaultForegroundBrush,
 		LPCWSTR msg, ...);
-
-	void RenderButton(ID2D1RenderTarget* target, const Rectf& rc,
-		const std::wstring& label);
 
 	bool CanPlayerTalk();
 
@@ -76,6 +76,7 @@ private:
 	Vector2f m_actualVel;
 
 	bool m_talking;
+	ButtonPtr m_button;
 
 };
 

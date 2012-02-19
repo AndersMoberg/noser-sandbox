@@ -57,6 +57,9 @@ GamePtr Game::Create()
 	p->m_npcCharacter->radius = 1.0f;
 	p->m_characters.push_back(p->m_npcCharacter);
 
+	p->m_button = Button::Create(
+		Rectf(100.0f, 100.0f, 180.0f, 150.0f), L"Button");
+
 	return p;
 }
 
@@ -304,8 +307,9 @@ void Game::Render(ID2D1RenderTarget* target)
 	}
 	else if (m_talking)
 	{
-		Rectf buttonRc(100.0f, 100.0f, 180.0f, 150.0f);
-		RenderButton(target, buttonRc, L"Button");
+		//Rectf buttonRc(100.0f, 100.0f, 180.0f, 150.0f);
+		//RenderButton(target, buttonRc, L"Button");
+		m_button->Render(shared_from_this(), target);
 	}
 }
 
@@ -329,12 +333,19 @@ void Game::RenderPrintf(ID2D1RenderTarget* pD2DTarget,
 	delete[] buf;
 }
 
-void Game::RenderButton(ID2D1RenderTarget* target,
-	const Rectf& rc, const std::wstring& label)
+//void Game::RenderButton(ID2D1RenderTarget* target,
+//	const Rectf& rc, const std::wstring& label)
+//{
+//	target->DrawRectangle(rc, m_pBlackBrush);
+//	target->DrawTextW(label.c_str(), label.size(), m_pDialogTextFormat,
+//		rc, m_pBlackBrush);
+//}
+
+void Game::RenderButton(ButtonPtr button, ID2D1RenderTarget* target)
 {
-	target->DrawRectangle(rc, m_pBlackBrush);
-	target->DrawTextW(label.c_str(), label.size(), m_pDialogTextFormat,
-		rc, m_pBlackBrush);
+	target->DrawRectangle(button->GetRect(), m_pBlackBrush);
+	target->DrawTextW(button->GetLabel().c_str(), button->GetLabel().size(), m_pDialogTextFormat,
+		button->GetRect(), m_pBlackBrush);
 }
 
 bool Game::CanPlayerTalk()
