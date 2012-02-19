@@ -7,6 +7,7 @@
 #include "Game.hpp"
 
 Button::Button()
+	: m_selected(false)
 { }
 
 ButtonPtr Button::Create(const Rectf& rect, const std::wstring& label)

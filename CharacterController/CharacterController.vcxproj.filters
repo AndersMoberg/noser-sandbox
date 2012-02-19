@@ -30,6 +30,9 @@
     <ClCompile Include="Button.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="ButtonGroup.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -54,6 +57,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Button.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonGroup.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

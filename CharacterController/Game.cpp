@@ -5,6 +5,7 @@
 #include "Game.hpp"
 
 #include "WindowsUtils.hpp"
+#include "ButtonGroup.hpp"
 
 static const float STEPS_PER_SEC = 3600.0f;
 
@@ -57,8 +58,9 @@ GamePtr Game::Create()
 	p->m_npcCharacter->radius = 1.0f;
 	p->m_characters.push_back(p->m_npcCharacter);
 
-	p->m_button = Button::Create(
-		Rectf(100.0f, 100.0f, 180.0f, 150.0f), L"Button");
+	p->m_buttonGroup = ButtonGroup::Create(Vector2f(200.0f, 200.0f));
+	p->m_buttonGroup->AddButton(L"Left");
+	p->m_buttonGroup->AddButton(L"Right");
 
 	return p;
 }
@@ -309,7 +311,7 @@ void Game::Render(ID2D1RenderTarget* target)
 	{
 		//Rectf buttonRc(100.0f, 100.0f, 180.0f, 150.0f);
 		//RenderButton(target, buttonRc, L"Button");
-		m_button->Render(shared_from_this(), target);
+		m_buttonGroup->Render(shared_from_this(), target);
 	}
 }
 
@@ -343,7 +345,8 @@ void Game::RenderPrintf(ID2D1RenderTarget* pD2DTarget,
 
 void Game::RenderButton(ButtonPtr button, ID2D1RenderTarget* target)
 {
-	target->DrawRectangle(button->GetRect(), m_pBlackBrush);
+	target->DrawRectangle(button->GetRect(), m_pBlackBrush,
+		button->IsSelected() ? 3.0f : 1.0f);
 	target->DrawTextW(button->GetLabel().c_str(), button->GetLabel().size(), m_pDialogTextFormat,
 		button->GetRect(), m_pBlackBrush);
 }

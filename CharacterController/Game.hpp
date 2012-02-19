@@ -9,12 +9,15 @@
 
 #include <dwrite.h>
 
-#include "Button.hpp"
 #include "Camera.hpp"
 #include "World.hpp"
 
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
+class Button;
+typedef std::shared_ptr<Button> ButtonPtr;
+class ButtonGroup;
+typedef std::shared_ptr<ButtonGroup> ButtonGroupPtr;
 
 struct Character
 {
@@ -76,7 +79,7 @@ private:
 	Vector2f m_actualVel;
 
 	bool m_talking;
-	ButtonPtr m_button;
+	ButtonGroupPtr m_buttonGroup;
 
 };
 
