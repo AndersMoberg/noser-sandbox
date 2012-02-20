@@ -23,7 +23,10 @@ public:
 
 	static ButtonPtr Create(const Rectf& rect, const std::wstring& label);
 
-	void Render(GamePtr game);
+	void Render(ID2D1RenderTarget* target,
+		ID2D1Brush* borderBrush,
+		ID2D1Brush* textBrush,
+		IDWriteTextFormat* labelTextFormat);
 
 	const Rectf& GetRect() const { return m_rect; }
 	void SetRect(const Rectf& rc) { m_rect = rc; }

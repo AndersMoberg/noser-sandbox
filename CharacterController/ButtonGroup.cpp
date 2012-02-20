@@ -59,7 +59,10 @@ void ButtonGroup::Update(const Vector2f& move)
 	}
 }
 
-void ButtonGroup::Render(GamePtr game)
+void ButtonGroup::Render(ID2D1RenderTarget* target,
+	ID2D1Brush* borderBrush,
+	ID2D1Brush* textBrush,
+	IDWriteTextFormat* labelTextFormat)
 {
 	float totalWidth = m_buttons.size() * DEFAULT_BUTTON_SIZE.x;
 	float totalHeight = DEFAULT_BUTTON_SIZE.y;
@@ -79,6 +82,6 @@ void ButtonGroup::Render(GamePtr game)
 		++buttonNum;
 
 		(*it)->SetRect(loc);
-		(*it)->Render(game);
+		(*it)->Render(target, borderBrush, textBrush, labelTextFormat);
 	}
 }

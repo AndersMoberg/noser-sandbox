@@ -335,9 +335,7 @@ void Game::Render()
 	}
 	else if (m_talking)
 	{
-		//Rectf buttonRc(100.0f, 100.0f, 180.0f, 150.0f);
-		//RenderButton(target, buttonRc, L"Button");
-		m_buttonGroup->Render(shared_from_this());
+		m_buttonGroup->Render(m_pD2DTarget, m_pBlackBrush, m_pBlackBrush, m_pDialogTextFormat);
 	}
 }
 
@@ -359,14 +357,6 @@ void Game::RenderPrintf(ID2D1RenderTarget* pD2DTarget,
 	pD2DTarget->DrawTextW(buf, len, textFormat, layoutRect, defaultForegroundBrush);
 
 	delete[] buf;
-}
-
-void Game::RenderButton(ButtonPtr button)
-{
-	m_pD2DTarget->DrawRectangle(button->GetRect(), m_pBlackBrush,
-		button->IsSelected() ? 3.0f : 1.0f);
-	m_pD2DTarget->DrawTextW(button->GetLabel().c_str(), button->GetLabel().size(), m_pDialogTextFormat,
-		button->GetRect(), m_pBlackBrush);
 }
 
 bool Game::CanPlayerTalk()
