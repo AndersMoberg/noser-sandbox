@@ -37,8 +37,11 @@ public:
 	~Game();
 	static GamePtr Create();
 
+	void SetRenderTarget(ID2D1RenderTarget* target);
+	void UnsetRenderTarget();
+
 	void Update(const Vector2f& move, bool spaceTrigger);
-	void Render(ID2D1RenderTarget* target);
+	void Render();
 	
 	void RenderButton(ButtonPtr button, ID2D1RenderTarget* target);
 
@@ -61,7 +64,8 @@ private:
 	IDWriteFactory* m_pDWriteFactory;
 	IDWriteTextFormat* m_pDialogTextFormat;
 
-	// Resources specific to D2D target!
+	// Resources specific to D2D target
+	ID2D1RenderTarget* m_pD2DTarget; // NOT owned by class
 	ID2D1SolidColorBrush* m_pBlackBrush;
 
 	long long m_frequency;

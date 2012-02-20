@@ -228,10 +228,13 @@ void MainWindow::CreateDeviceResources()
 			D2D1::HwndRenderTargetProperties(m_hWnd, size),
 			&m_pD2DTarget));
 	}
+
+	m_game->SetRenderTarget(m_pD2DTarget);
 }
 
 void MainWindow::DestroyDeviceResources()
 {
+	m_game->UnsetRenderTarget();
 	SafeRelease(m_pD2DTarget);
 }
 
@@ -273,7 +276,7 @@ void MainWindow::Render()
 
 	m_pD2DTarget->BeginDraw();
 
-	m_game->Render(m_pD2DTarget);
+	m_game->Render();
 
 	HRESULT hr = m_pD2DTarget->EndDraw();
 	if (hr == D2DERR_RECREATE_TARGET)
