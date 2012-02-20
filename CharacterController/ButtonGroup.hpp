@@ -23,7 +23,8 @@ public:
 	static ButtonGroupPtr Create(const Vector2f& anchor);
 
 	void AddButton(const std::wstring& label);
-
+	
+	void Update(const Vector2f& move);
 	void Render(GamePtr game, ID2D1RenderTarget* target);
 
 private:
@@ -33,6 +34,7 @@ private:
 	typedef std::vector<ButtonPtr> ButtonList;
 	ButtonList m_buttons;
 
+	bool m_selectTriggered;
 	Vector2f m_anchor;
 	int m_selected;
 

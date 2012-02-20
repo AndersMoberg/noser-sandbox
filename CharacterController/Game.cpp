@@ -147,9 +147,19 @@ void Game::Update(const Vector2f& move, bool spaceTrigger)
 	
 	long long timeDiff = curTime.QuadPart - m_prevTime;
 
-	if (spaceTrigger && CanPlayerTalk())
+	if (m_talking)
+	{
+		if (spaceTrigger) {
+			m_talking = false;
+		} else {
+			m_buttonGroup->Update(move);
+		}
+		m_prevTime = curTime.QuadPart;
+	}
+	else if (spaceTrigger && CanPlayerTalk())
 	{
 		m_talking = true;
+		m_prevTime = curTime.QuadPart;
 	}
 	else
 	{

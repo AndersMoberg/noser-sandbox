@@ -5,7 +5,8 @@
 #include "ButtonGroup.hpp"
 
 ButtonGroup::ButtonGroup()
-	: m_selected(0)
+	: m_selected(0),
+	m_selectTriggered(false)
 { }
 
 ButtonGroupPtr ButtonGroup::Create(const Vector2f& anchor)
@@ -25,6 +26,39 @@ void ButtonGroup::AddButton(const std::wstring& label)
 
 static const Vector2f DEFAULT_BUTTON_SIZE(80.0f, 50.0f);
 
+void ButtonGroup::Update(const Vector2f& move)
+{
+	if (!m_selectTriggered)
+	{
+		if (move.x < -0.5f)
+		{
+			// Move left
+			if (m_selected > 0) {
+				--m_selected;
+			} else {
+				m_selected = m_buttons.size()-1;
+			}
+			m_selectTriggered = true;
+		}
+		else if (move.x > 0.5f)
+		{
+			// Move right
+			if (m_selected < m_buttons.size()-1) {
+				++m_selected;
+			} else {
+				m_selected = 0;
+			}
+			m_selectTriggered = true;
+		}
+	}
+	else
+	{
+		if (move.x >= -0.5f && move.x <= 0.5f) {
+			m_selectTriggered = false;
+		}
+	}
+}
+
 void ButtonGroup::Render(GamePtr game, ID2D1RenderTarget* target)
 {
 	float totalWidth = m_buttons.size() * DEFAULT_BUTTON_SIZE.x;
@@ -41,6 +75,7 @@ void ButtonGroup::Render(GamePtr game, ID2D1RenderTarget* target)
 			topLeft.y,
 			topLeft.x + DEFAULT_BUTTON_SIZE.x * (buttonNum+1),
 			topLeft.y + DEFAULT_BUTTON_SIZE.y);
+		(*it)->SetSelected(buttonNum == m_selected);
 		++buttonNum;
 
 		(*it)->SetRect(loc);
