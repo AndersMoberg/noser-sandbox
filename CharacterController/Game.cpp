@@ -331,7 +331,7 @@ void Game::Render()
 	if (CanPlayerTalk() && !m_talking)
 	{
 		RenderPrintf(m_pD2DTarget, m_pDialogTextFormat, vp, m_pBlackBrush,
-			L"Press Space to talk", 123);
+			L"Press Space to talk");
 	}
 	else if (m_talking)
 	{
