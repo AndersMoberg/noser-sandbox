@@ -12,6 +12,7 @@ static const float STEPS_PER_SEC = 3600.0f;
 Game::Game()
 	: m_pDWriteFactory(NULL),
 	m_pDialogTextFormat(NULL),
+	m_pD2DTarget(NULL),
 	m_pBlackBrush(NULL),
 	m_intendedVel(0.0f, 0.0f),
 	m_actualVel(0.0f, 0.0f),
@@ -336,7 +337,7 @@ void Game::Render()
 	{
 		//Rectf buttonRc(100.0f, 100.0f, 180.0f, 150.0f);
 		//RenderButton(target, buttonRc, L"Button");
-		m_buttonGroup->Render(shared_from_this(), m_pD2DTarget);
+		m_buttonGroup->Render(shared_from_this());
 	}
 }
 
@@ -360,11 +361,11 @@ void Game::RenderPrintf(ID2D1RenderTarget* pD2DTarget,
 	delete[] buf;
 }
 
-void Game::RenderButton(ButtonPtr button, ID2D1RenderTarget* target)
+void Game::RenderButton(ButtonPtr button)
 {
-	target->DrawRectangle(button->GetRect(), m_pBlackBrush,
+	m_pD2DTarget->DrawRectangle(button->GetRect(), m_pBlackBrush,
 		button->IsSelected() ? 3.0f : 1.0f);
-	target->DrawTextW(button->GetLabel().c_str(), button->GetLabel().size(), m_pDialogTextFormat,
+	m_pD2DTarget->DrawTextW(button->GetLabel().c_str(), button->GetLabel().size(), m_pDialogTextFormat,
 		button->GetRect(), m_pBlackBrush);
 }
 

@@ -19,3 +19,8 @@ ButtonPtr Button::Create(const Rectf& rect, const std::wstring& label)
 
 	return p;
 }
+
+void Button::Render(GamePtr game)
+{
+	game->RenderButton(shared_from_this());
+}

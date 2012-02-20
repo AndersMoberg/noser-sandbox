@@ -23,8 +23,7 @@ public:
 
 	static ButtonPtr Create(const Rectf& rect, const std::wstring& label);
 
-	template<typename TRenderTarget>
-	void Render(GamePtr game, TRenderTarget *target);
+	void Render(GamePtr game);
 
 	const Rectf& GetRect() const { return m_rect; }
 	void SetRect(const Rectf& rc) { m_rect = rc; }
@@ -41,11 +40,5 @@ private:
 	bool m_selected;
 
 };
-
-template<typename TRenderTarget>
-void Button::Render(GamePtr game, TRenderTarget *target)
-{
-	game->RenderButton(shared_from_this(), target);
-}
 
 #endif

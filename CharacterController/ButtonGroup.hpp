@@ -25,7 +25,7 @@ public:
 	void AddButton(const std::wstring& label);
 	
 	void Update(const Vector2f& move);
-	void Render(GamePtr game, ID2D1RenderTarget* target);
+	void Render(GamePtr game);
 
 private:
 

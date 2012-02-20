@@ -43,7 +43,7 @@ public:
 	void Update(const Vector2f& move, bool spaceTrigger);
 	void Render();
 	
-	void RenderButton(ButtonPtr button, ID2D1RenderTarget* target);
+	void RenderButton(ButtonPtr button);
 
 private:
 
