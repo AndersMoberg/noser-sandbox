@@ -25,10 +25,7 @@ public:
 	void AddButton(const std::wstring& label);
 	
 	void Update(const Vector2f& move);
-	void Render(ID2D1RenderTarget* target,
-		ID2D1Brush* borderBrush,
-		ID2D1Brush* textBrush,
-		IDWriteTextFormat* labelTextFormat);
+	void Render(GameRenderTargetPtr target);
 
 private:
 

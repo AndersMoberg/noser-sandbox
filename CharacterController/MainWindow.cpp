@@ -229,12 +229,12 @@ void MainWindow::CreateDeviceResources()
 			&m_pD2DTarget));
 	}
 
-	m_game->SetRenderTarget(m_pD2DTarget);
+	m_game->SetD2DTarget(m_pD2DTarget);
 }
 
 void MainWindow::DestroyDeviceResources()
 {
-	m_game->UnsetRenderTarget();
+	m_game->ReleaseD2DTarget();
 	SafeRelease(m_pD2DTarget);
 }
 

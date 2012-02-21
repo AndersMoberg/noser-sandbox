@@ -10,23 +10,21 @@
 
 #include "Geometry.hpp"
 #include "Game.hpp"
+#include "GameRenderTarget.hpp"
 
 class Button;
 typedef std::shared_ptr<Button> ButtonPtr;
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
 
-class Button : public std::enable_shared_from_this<Button>
+class Button
 {
 
 public:
 
 	static ButtonPtr Create(const Rectf& rect, const std::wstring& label);
 
-	void Render(ID2D1RenderTarget* target,
-		ID2D1Brush* borderBrush,
-		ID2D1Brush* textBrush,
-		IDWriteTextFormat* labelTextFormat);
+	void Render(GameRenderTargetPtr target);
 
 	const Rectf& GetRect() const { return m_rect; }
 	void SetRect(const Rectf& rc) { m_rect = rc; }

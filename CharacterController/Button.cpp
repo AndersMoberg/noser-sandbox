@@ -20,12 +20,11 @@ ButtonPtr Button::Create(const Rectf& rect, const std::wstring& label)
 	return p;
 }
 
-void Button::Render(ID2D1RenderTarget* target,
-	ID2D1Brush* borderBrush,
-	ID2D1Brush* textBrush,
-	IDWriteTextFormat* labelTextFormat)
+void Button::Render(GameRenderTargetPtr target)
 {
-	target->DrawRectangle(m_rect, borderBrush, m_selected ? 3.0f : 1.0f);
-	target->DrawTextW(m_label.c_str(), m_label.size(),
-		labelTextFormat, m_rect, textBrush);
+	ID2D1RenderTarget* d2dTarget = target->GetD2DTarget();
+
+	d2dTarget->DrawRectangle(m_rect, target->GetBlackBrush(), m_selected ? 3.0f : 1.0f);
+	d2dTarget->DrawTextW(m_label.c_str(), m_label.size(),
+		target->GetDialogTextFormat(), m_rect, target->GetBlackBrush());
 }

@@ -10,32 +10,18 @@
 static const float STEPS_PER_SEC = 3600.0f;
 
 Game::Game()
-	: m_pDWriteFactory(NULL),
-	m_pDialogTextFormat(NULL),
-	m_pD2DTarget(NULL),
-	m_pBlackBrush(NULL),
-	m_intendedVel(0.0f, 0.0f),
+	: m_intendedVel(0.0f, 0.0f),
 	m_actualVel(0.0f, 0.0f),
 	m_talking(false)
 { }
 
 Game::~Game()
 {
-	SafeRelease(m_pBlackBrush);
-	SafeRelease(m_pDialogTextFormat);
-	SafeRelease(m_pDWriteFactory);
 }
 
 GamePtr Game::Create()
 {
 	GamePtr p(new Game);
-
-	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
-		__uuidof(IDWriteFactory), (IUnknown**)&p->m_pDWriteFactory));
-
-	CHECK_HR(p->m_pDWriteFactory->CreateTextFormat(L"Calibri", NULL,
-		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL, 24.0f, L"en-US", &p->m_pDialogTextFormat));
 
 	// The frequency cannot change while the system is running, so it's safe
 	// to query it once
@@ -46,6 +32,8 @@ GamePtr Game::Create()
 	QueryPerformanceCounter(&li);
 	p->m_prevTime = li.QuadPart;
 	
+	p->m_renderTarget = GameRenderTarget::Create();
+
 	p->m_camera = Camera::Create();
 	p->m_world = World::Create();
 
@@ -66,19 +54,14 @@ GamePtr Game::Create()
 	return p;
 }
 
-void Game::SetRenderTarget(ID2D1RenderTarget* target)
+void Game::SetD2DTarget(ID2D1RenderTarget* target)
 {
-	if (m_pD2DTarget != target)
-	{
-		UnsetRenderTarget();
-		m_pD2DTarget = target;
-	}
+	m_renderTarget->SetD2DTarget(target);
 }
 
-void Game::UnsetRenderTarget()
+void Game::ReleaseD2DTarget()
 {
-	SafeRelease(m_pBlackBrush);
-	m_pD2DTarget = NULL;
+	m_renderTarget->ReleaseD2DTarget();
 }
 
 // ws: wall start; we: wall end; p: character position; pRadius: character radius
@@ -268,19 +251,16 @@ void Game::Step(const Vector2f& move)
 
 void Game::Render()
 {
+	ID2D1RenderTarget* d2dTarget = m_renderTarget->GetD2DTarget();
+
 	ID2D1Factory* factory;
-	m_pD2DTarget->GetFactory(&factory);
+	d2dTarget->GetFactory(&factory);
 
-	if (!m_pBlackBrush)
-	{
-		m_pD2DTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), &m_pBlackBrush);
-	}
-
-	D2D1_SIZE_F targetSize = m_pD2DTarget->GetSize();
+	D2D1_SIZE_F targetSize = d2dTarget->GetSize();
 	Rectf vp(0.0f, 0.0f, targetSize.width, targetSize.height);
 	Matrix3x2f worldToViewport = m_camera->GetWorldToViewport(vp);
 
-	m_pD2DTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+	d2dTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
 
 	ID2D1PathGeometry* geom;
 	factory->CreatePathGeometry(&geom);
@@ -301,41 +281,45 @@ void Game::Render()
 	ID2D1TransformedGeometry* transGeom;
 	factory->CreateTransformedGeometry(geom, worldToViewport, &transGeom);
 	geom->Release();
-	m_pD2DTarget->DrawGeometry(transGeom, m_pBlackBrush);
+	d2dTarget->DrawGeometry(transGeom, m_renderTarget->GetBlackBrush());
 	transGeom->Release();
 
 	// Render characters
-	m_pD2DTarget->SetTransform(worldToViewport);
+	d2dTarget->SetTransform(worldToViewport);
 
 	for (CharacterList::const_iterator it = m_characters.begin();
 		it != m_characters.end(); ++it)
 	{
-		m_pD2DTarget->FillEllipse(
+		d2dTarget->FillEllipse(
 			D2D1::Ellipse((*it)->pos, (*it)->radius, (*it)->radius),
-			m_pBlackBrush);
+			m_renderTarget->GetBlackBrush());
 	}
 
 	// Render intended velocity as a red line
-	m_pBlackBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Red));
-	m_pD2DTarget->DrawLine(m_playerCharacter->pos,
-		m_playerCharacter->pos + m_intendedVel, m_pBlackBrush, m_playerCharacter->radius/8.0f);
+	// XXX: Black brush is used.
+	m_renderTarget->GetBlackBrush()->SetColor(D2D1::ColorF(D2D1::ColorF::Red));
+	d2dTarget->DrawLine(m_playerCharacter->pos,
+		m_playerCharacter->pos + m_intendedVel,
+		m_renderTarget->GetBlackBrush(), m_playerCharacter->radius/8.0f);
 	// Render actualVelocity as a blue line
-	m_pBlackBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Blue));
-	m_pD2DTarget->DrawLine(m_playerCharacter->pos,
-		m_playerCharacter->pos + m_actualVel, m_pBlackBrush, m_playerCharacter->radius/8.0f);
-	m_pD2DTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+	m_renderTarget->GetBlackBrush()->SetColor(D2D1::ColorF(D2D1::ColorF::Blue));
+	d2dTarget->DrawLine(m_playerCharacter->pos,
+		m_playerCharacter->pos + m_actualVel,
+		m_renderTarget->GetBlackBrush(), m_playerCharacter->radius/8.0f);
+	d2dTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 
-	m_pBlackBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
+	m_renderTarget->GetBlackBrush()->SetColor(D2D1::ColorF(D2D1::ColorF::Black));
 
 	// Render text overlay
 	if (CanPlayerTalk() && !m_talking)
 	{
-		RenderPrintf(m_pD2DTarget, m_pDialogTextFormat, vp, m_pBlackBrush,
+		RenderPrintf(d2dTarget, m_renderTarget->GetDialogTextFormat(), vp,
+			m_renderTarget->GetBlackBrush(),
 			L"Press Space to talk");
 	}
 	else if (m_talking)
 	{
-		m_buttonGroup->Render(m_pD2DTarget, m_pBlackBrush, m_pBlackBrush, m_pDialogTextFormat);
+		m_buttonGroup->Render(m_renderTarget);
 	}
 }
 

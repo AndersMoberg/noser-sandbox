@@ -11,6 +11,7 @@
 
 #include "Camera.hpp"
 #include "World.hpp"
+#include "GameRenderTarget.hpp"
 
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
@@ -29,7 +30,7 @@ typedef std::shared_ptr<Character> CharacterPtr;
 
 typedef std::list<CharacterPtr> CharacterList;
 
-class Game : public std::enable_shared_from_this<Game>
+class Game
 {
 
 public:
@@ -37,8 +38,8 @@ public:
 	~Game();
 	static GamePtr Create();
 
-	void SetRenderTarget(ID2D1RenderTarget* target);
-	void UnsetRenderTarget();
+	void SetD2DTarget(ID2D1RenderTarget* target);
+	void ReleaseD2DTarget();
 
 	void Update(const Vector2f& move, bool spaceTrigger);
 	void Render();
@@ -61,15 +62,10 @@ private:
 
 	bool CanPlayerTalk();
 
-	IDWriteFactory* m_pDWriteFactory;
-	IDWriteTextFormat* m_pDialogTextFormat;
-
-	// Resources specific to D2D target
-	ID2D1RenderTarget* m_pD2DTarget; // NOT owned by class
-	ID2D1SolidColorBrush* m_pBlackBrush;
-
 	long long m_frequency;
 	long long m_prevTime;
+
+	GameRenderTargetPtr m_renderTarget;
 
 	CameraPtr m_camera;
 	WorldPtr m_world;
