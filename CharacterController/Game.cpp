@@ -313,9 +313,14 @@ void Game::Render()
 	// Render text overlay
 	if (CanPlayerTalk() && !m_talking)
 	{
-		RenderPrintf(d2dTarget, m_renderTarget->GetDialogTextFormat(), vp,
-			m_renderTarget->GetBlackBrush(),
-			L"Press Space to talk");
+		//RenderPrintf(d2dTarget, m_renderTarget->GetDialogTextFormat(), vp,
+		//	m_renderTarget->GetBlackBrush(),
+		//	L"Press Space to talk");
+		m_renderTarget->DrawText(L"Press Space to talk",
+			m_renderTarget->GetDialogTextFormat(),
+			m_renderTarget->GetBlackBrush(), 0.5f,
+			NULL,
+			Vector2f(100.0f, 100.0f));
 	}
 	else if (m_talking)
 	{

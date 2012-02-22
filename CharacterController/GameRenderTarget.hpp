@@ -7,8 +7,13 @@
 
 #include <d2d1.h>
 #include <dwrite.h>
+#undef DrawText
 
 #include <memory>
+#include <string>
+
+
+#include "Geometry.hpp"
 
 class GameRenderTarget;
 typedef std::shared_ptr<GameRenderTarget> GameRenderTargetPtr;
@@ -28,6 +33,13 @@ public:
 	ID2D1SolidColorBrush* GetBlackBrush() { return m_pBlackBrush; }
 
 	IDWriteTextFormat* GetDialogTextFormat() { return m_pDialogTextFormat; }
+
+	void DrawText(const std::wstring& text,
+		IDWriteTextFormat* textFormat,
+		ID2D1Brush* strokeBrush,
+		float strokeWidth,
+		ID2D1Brush* fillBrush,
+		const Vector2f& origin);
 
 private:
 
