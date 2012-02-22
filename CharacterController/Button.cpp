@@ -25,6 +25,9 @@ void Button::Render(GameRenderTargetPtr target)
 	ID2D1RenderTarget* d2dTarget = target->GetD2DTarget();
 
 	d2dTarget->DrawRectangle(m_rect, target->GetBlackBrush(), m_selected ? 3.0f : 1.0f);
-	d2dTarget->DrawTextW(m_label.c_str(), m_label.size(),
-		target->GetDialogTextFormat(), m_rect, target->GetBlackBrush());
+	target->DrawText(m_label,
+		target->GetDialogTextFormat(),
+		NULL, 0.0f,
+		target->GetBlackBrush(),
+		m_rect);
 }

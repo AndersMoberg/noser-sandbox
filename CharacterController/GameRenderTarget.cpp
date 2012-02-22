@@ -30,6 +30,7 @@ GameRenderTargetPtr GameRenderTarget::Create()
 	CHECK_HR(p->m_pDWriteFactory->CreateTextFormat(L"Calibri", NULL,
 		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL, 24.0f, L"en-US", &p->m_pDialogTextFormat));
+	p->m_pDialogTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
 
 	return p;
 }
@@ -237,15 +238,18 @@ void GameRenderTarget::DrawText(const std::wstring& text,
 	ID2D1Brush* strokeBrush,
 	float strokeWidth,
 	ID2D1Brush* fillBrush,
-	const Vector2f& origin)
+	const Rectf& layoutBox)
 {
 	IDWriteTextLayout* textLayout = NULL;
 	CHECK_HR(m_pDWriteFactory->CreateTextLayout(
-		text.c_str(), text.size(), textFormat, 1000.0f, 1000.0f, &textLayout));
+		text.c_str(), text.size(), textFormat,
+		layoutBox.right - layoutBox.left,
+		layoutBox.bottom - layoutBox.top,
+		&textLayout));
 
 	OutlinedTextRenderer renderer(m_pD2DTarget, strokeBrush, strokeWidth, fillBrush);
 	// XXX: Code assumes that renderer is not saved by textLayout->Draw
-	CHECK_HR(textLayout->Draw(NULL, &renderer, origin.x, origin.y));
+	CHECK_HR(textLayout->Draw(NULL, &renderer, layoutBox.left, layoutBox.top));
 
 	SafeRelease(textLayout);
 }

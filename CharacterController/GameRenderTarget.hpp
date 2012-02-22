@@ -39,7 +39,7 @@ public:
 		ID2D1Brush* strokeBrush,
 		float strokeWidth,
 		ID2D1Brush* fillBrush,
-		const Vector2f& origin);
+		const Rectf& layoutBox);
 
 private:
 
