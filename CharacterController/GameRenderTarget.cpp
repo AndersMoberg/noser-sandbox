@@ -30,7 +30,6 @@ GameRenderTargetPtr GameRenderTarget::Create()
 	CHECK_HR(p->m_pDWriteFactory->CreateTextFormat(L"Calibri", NULL,
 		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL, 24.0f, L"en-US", &p->m_pDialogTextFormat));
-	p->m_pDialogTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
 
 	return p;
 }

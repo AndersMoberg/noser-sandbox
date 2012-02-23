@@ -91,6 +91,7 @@
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="RevealingText.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +103,7 @@
     <ClInclude Include="GameRenderTarget.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="MainWindow.hpp" />
+    <ClInclude Include="RevealingText.hpp" />
     <ClInclude Include="WindowsUtils.hpp" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>

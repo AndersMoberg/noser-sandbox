@@ -12,6 +12,7 @@
 #include "Camera.hpp"
 #include "World.hpp"
 #include "GameRenderTarget.hpp"
+#include "RevealingText.hpp"
 
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
@@ -79,6 +80,7 @@ private:
 	Vector2f m_actualVel;
 
 	bool m_talking;
+	RevealingTextPtr m_revealingText;
 	ButtonGroupPtr m_buttonGroup;
 
 };

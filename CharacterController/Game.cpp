@@ -47,6 +47,9 @@ GamePtr Game::Create()
 	p->m_npcCharacter->radius = 1.0f;
 	p->m_characters.push_back(p->m_npcCharacter);
 
+	p->m_revealingText = RevealingText::Create(L"Dialogue will go in here. This is some really long dialogue designed to test the Revealing Text object.",
+		Rectf(0.0f, 0.0f, 640.0f, 480.0f));
+
 	p->m_buttonGroup = ButtonGroup::Create(Vector2f(200.0f, 200.0f));
 	p->m_buttonGroup->AddButton(L"Left");
 	p->m_buttonGroup->AddButton(L"Right");
@@ -151,6 +154,7 @@ void Game::Update(const Vector2f& move, bool spaceTrigger)
 		if (spaceTrigger) {
 			m_talking = false;
 		} else {
+			m_revealingText->Update(curTime.QuadPart);
 			m_buttonGroup->Update(move);
 		}
 		m_prevTime = curTime.QuadPart;
@@ -158,6 +162,7 @@ void Game::Update(const Vector2f& move, bool spaceTrigger)
 	else if (spaceTrigger && CanPlayerTalk())
 	{
 		m_talking = true;
+		m_revealingText->Start(curTime.QuadPart, m_frequency, 128.0f);
 		m_prevTime = curTime.QuadPart;
 	}
 	else
@@ -321,6 +326,7 @@ void Game::Render()
 	}
 	else if (m_talking)
 	{
+		m_revealingText->Render(m_renderTarget);
 		m_buttonGroup->Render(m_renderTarget);
 	}
 }

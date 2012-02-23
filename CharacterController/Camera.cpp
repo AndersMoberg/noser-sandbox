@@ -18,7 +18,7 @@ CameraPtr Camera::Create()
 
 	p->m_center = Vector2f(0.0f, 0.0f);
 	p->m_zoom = 8.0f;
-	p->m_elevation = 90.0f;
+	p->m_elevation = ISOMETRIC_ELEVATION_DEG;
 
 	return p;
 }
