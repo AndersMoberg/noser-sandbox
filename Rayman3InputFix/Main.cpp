@@ -61,7 +61,35 @@ public:
 	STDMETHOD(EnumDevices)(DWORD dwDevType, LPDIENUMDEVICESCALLBACKA lpCallback, LPVOID pvRef, DWORD dwFlags)
 	{
 		OutputDebugStringA("EnumDevices called\n");
-		return m_realDirectInput->EnumDevices(dwDevType, lpCallback, pvRef, dwFlags);
+
+		if (dwDevType == DI8DEVCLASS_ALL)
+		{
+			HRESULT hr;
+
+			// Here is the fix: Enumerate gamepad devices FIRST, then keyboard, mouse, and other.
+			hr = m_realDirectInput->EnumDevices(DI8DEVCLASS_GAMECTRL, lpCallback, pvRef, dwFlags);
+			if (FAILED(hr)) {
+				return hr;
+			}
+			hr = m_realDirectInput->EnumDevices(DI8DEVCLASS_KEYBOARD, lpCallback, pvRef, dwFlags);
+			if (FAILED(hr)) {
+				return hr;
+			}
+			hr = m_realDirectInput->EnumDevices(DI8DEVCLASS_POINTER, lpCallback, pvRef, dwFlags);
+			if (FAILED(hr)) {
+				return hr;
+			}
+			hr = m_realDirectInput->EnumDevices(DI8DEVCLASS_DEVICE, lpCallback, pvRef, dwFlags);
+			if (FAILED(hr)) {
+				return hr;
+			}
+
+			return hr;
+		}
+		else
+		{
+			return m_realDirectInput->EnumDevices(dwDevType, lpCallback, pvRef, dwFlags);
+		}
 	}
 
 	STDMETHOD(GetDeviceStatus)(REFGUID rguidInstance)
