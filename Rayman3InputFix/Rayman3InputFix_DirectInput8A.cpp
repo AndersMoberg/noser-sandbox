@@ -319,7 +319,7 @@ HRESULT Rayman3InputFix_DirectInput8A::CreateDevice(REFGUID rguid, LPDIRECTINPUT
 	{
 		OutputDebugStringA("XInput device created\n");
 		Rayman3XInput_DirectInputDevice8A* ppv = NULL;
-		HRESULT hr = Rayman3XInput_DirectInputDevice8A::Create(&ppv);
+		HRESULT hr = Rayman3XInput_DirectInputDevice8A::Create(&ppv, xinputDevice);
 		*lplpDirectInputDevice = ppv;
 		return hr;
 	}
