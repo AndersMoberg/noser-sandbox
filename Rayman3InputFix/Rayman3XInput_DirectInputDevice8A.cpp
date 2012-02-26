@@ -88,7 +88,7 @@ HRESULT Rayman3XInput_DirectInputDevice8A::GetCapabilities(LPDIDEVCAPS lpDIDevCa
 	}
 
 	lpDIDevCaps->dwFlags = DIDC_ATTACHED | DIDC_EMULATED | DIDC_POLLEDDATAFORMAT
-		| DIDC_POLLEDDEVICE;
+		| DIDC_POLLEDDEVICE | DIDC_FORCEFEEDBACK;
 	lpDIDevCaps->dwDevType = DI8DEVTYPE_GAMEPAD | (DI8DEVTYPEGAMEPAD_STANDARD << 8);
 	lpDIDevCaps->dwAxes = 4;
 	lpDIDevCaps->dwButtons = 12; // The left and right triggers are treated as buttons
@@ -341,11 +341,14 @@ HRESULT Rayman3XInput_DirectInputDevice8A::CreateEffect(THIS_ REFGUID,LPCDIEFFEC
 	OutputDebugStringA("R3XI: CreateEffect called\n");
 	return E_NOTIMPL;
 }
-HRESULT Rayman3XInput_DirectInputDevice8A::EnumEffects(THIS_ LPDIENUMEFFECTSCALLBACKA,LPVOID,DWORD)
+
+HRESULT Rayman3XInput_DirectInputDevice8A::EnumEffects(LPDIENUMEFFECTSCALLBACKA lpCallback, LPVOID pvRef, DWORD dwEffType)
 {
 	OutputDebugStringA("R3XI: EnumEffects called\n");
-	return E_NOTIMPL;
+	Debug("dwEffType == 0x%X\n", dwEffType);
+	return DI_OK;
 }
+
 HRESULT Rayman3XInput_DirectInputDevice8A::GetEffectInfo(THIS_ LPDIEFFECTINFOA,REFGUID)
 {
 	OutputDebugStringA("R3XI: GetEffectInfo called\n");
