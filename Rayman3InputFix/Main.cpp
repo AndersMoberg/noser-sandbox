@@ -5,6 +5,15 @@
 #include <InitGuid.h>
 #include <dinput.h>
 
+#include <list>
+#include <string>
+
+#ifdef _UNICODE
+typedef std::wstring tstring;
+#else
+typedef std::string tstring;
+#endif
+
 class Rayman3InputFix_DirectInput8A : public IDirectInput8A
 {
 
@@ -61,34 +70,91 @@ public:
 	STDMETHOD(EnumDevices)(DWORD dwDevType, LPDIENUMDEVICESCALLBACKA lpCallback, LPVOID pvRef, DWORD dwFlags)
 	{
 		OutputDebugStringA("EnumDevices called\n");
+		
+		HRESULT hr;
+
+		// The bug: Rayman 3 expects EnumDevices to give results in a certain
+		// order, where gamepads come before the keyboard. DirectInput makes
+		// no guarantee about the order.
+		// The fix: Call DirectInput's EnumDevices, then sort the results in
+		// an order where gamepads come first, then give them to Rayman 3.
+
+		typedef std::list<DIDEVICEINSTANCEA> DeviceInstanceList;
+		struct DeviceEnumerator
+		{
+			DeviceInstanceList devices;
+
+			static BOOL FAR PASCAL Callback(LPCDIDEVICEINSTANCEA lpddi, LPVOID pvRef)
+			{
+				DeviceEnumerator* self = (DeviceEnumerator*)pvRef;
+				self->devices.push_back(*lpddi);
+				return DIENUM_CONTINUE;
+			}
+
+			bool Contains(const GUID& guidInstance)
+			{
+				for (DeviceInstanceList::const_iterator it = devices.begin();
+					it != devices.end(); ++it)
+				{
+					if (it->guidInstance == guidInstance) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+
+		DeviceEnumerator gameDevices;
+		hr = m_realDirectInput->EnumDevices(DI8DEVCLASS_GAMECTRL, DeviceEnumerator::Callback, &gameDevices, dwFlags);
+		if (FAILED(hr)) {
+			return hr;
+		}
+
+		DeviceEnumerator allDevices;
+		hr = m_realDirectInput->EnumDevices(DI8DEVCLASS_ALL, DeviceEnumerator::Callback, &allDevices, dwFlags);
+		if (FAILED(hr)) {
+			return hr;
+		}
+
+		DeviceInstanceList sortedDevices;
+		// First, add all devices in gameDevices
+		for (DeviceInstanceList::const_iterator it = gameDevices.devices.begin();
+			it != gameDevices.devices.end(); ++it)
+		{
+			sortedDevices.push_back(*it);
+		}
+
+		// Then, add all devices in allDevices that aren't in gameDevices
+		for (DeviceInstanceList::const_iterator it = allDevices.devices.begin();
+			it != allDevices.devices.end(); ++it)
+		{
+			if (!gameDevices.Contains(it->guidInstance)) {
+				sortedDevices.push_back(*it);
+			}
+		}
 
 		if (dwDevType == DI8DEVCLASS_ALL)
 		{
-			HRESULT hr;
-
-			// Here is the fix: Enumerate gamepad devices FIRST, then keyboard, mouse, and other.
-			hr = m_realDirectInput->EnumDevices(DI8DEVCLASS_GAMECTRL, lpCallback, pvRef, dwFlags);
-			if (FAILED(hr)) {
-				return hr;
-			}
-			hr = m_realDirectInput->EnumDevices(DI8DEVCLASS_KEYBOARD, lpCallback, pvRef, dwFlags);
-			if (FAILED(hr)) {
-				return hr;
-			}
-			hr = m_realDirectInput->EnumDevices(DI8DEVCLASS_POINTER, lpCallback, pvRef, dwFlags);
-			if (FAILED(hr)) {
-				return hr;
-			}
-			hr = m_realDirectInput->EnumDevices(DI8DEVCLASS_DEVICE, lpCallback, pvRef, dwFlags);
-			if (FAILED(hr)) {
-				return hr;
+			for (DeviceInstanceList::const_iterator it = sortedDevices.begin();
+				it != sortedDevices.end(); ++it)
+			{
+				OutputDebugStringA("Enumerating Product: ");
+				OutputDebugStringA(it->tszProductName);
+				OutputDebugStringA(" Instance: ");
+				OutputDebugStringA(it->tszInstanceName);
+				OutputDebugStringA("\n");
+				if (lpCallback(&*it, pvRef) == DIENUM_STOP) {
+					break;
+				}
 			}
 
-			return hr;
+			return DI_OK;
 		}
 		else
 		{
-			return m_realDirectInput->EnumDevices(dwDevType, lpCallback, pvRef, dwFlags);
+			// Rayman 3 never does this
+			OutputDebugStringA("EnumDevices called with dwDevType != DI8DEVCLASS_ALL!\n");
+			return DIERR_INVALIDPARAM;
 		}
 	}
 
@@ -207,8 +273,18 @@ HRESULT Rayman3InputFix_DirectInput8A::CreateInternal(HINSTANCE hInstance)
 	HRESULT hr;
 
 	// Load the system's dinput8.dll
-	// TODO: Use Windows installation directory instead of hardcoding it
-	m_realDInput8Dll = LoadLibrary(TEXT("C:\\WINDOWS\\System32\\dinput8.dll"));
+
+	UINT len = GetSystemDirectory(NULL, 0);
+	TCHAR* systemDir = new TCHAR[len];
+	if (!systemDir) {
+		return E_OUTOFMEMORY;
+	}
+	GetSystemDirectory(systemDir, len);
+	tstring dinput8Path(systemDir);
+	delete[] systemDir;
+
+	dinput8Path.append(TEXT("\\dinput8.dll"));
+	m_realDInput8Dll = LoadLibrary(dinput8Path.c_str());
 	if (!m_realDInput8Dll) {
 		return E_FAIL;
 	}
