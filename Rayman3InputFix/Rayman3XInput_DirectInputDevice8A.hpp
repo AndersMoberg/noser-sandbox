@@ -9,6 +9,8 @@
 #include <dinput.h>
 #include <Xinput.h>
 
+#include <list>
+#include <map>
 #include <vector>
 
 class Rayman3XInput_DirectInputDevice8A : public IDirectInputDevice8A
@@ -65,32 +67,25 @@ private:
 	int m_controller;
 	XINPUT_STATE m_controllerState;
 
-	typedef void (*DataFormatHandlerFunction)(LPVOID dst, const XINPUT_STATE& state);
-	struct DataFormatHandler
+	class Control
 	{
-		DataFormatHandler(DataFormatHandlerFunction _func, DWORD _offset)
-			: func(_func), offset(_offset)
-		{ }
-
-		DataFormatHandlerFunction func;
-		DWORD offset;
+	public:
+		virtual ~Control() { }
+		virtual GUID GetGUID() = 0;
+		virtual bool IsTypeCompatible(DWORD dwType) = 0;
+		virtual void GetRange(LPDIPROPRANGE prop) = 0;
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) = 0;
 	};
-	typedef std::vector<DataFormatHandler> DataFormatHandlers;
 
-	DataFormatHandlers m_dataFormatHandlers;
+	typedef std::shared_ptr<Control> ControlPtr;
 
-	static void ZeroByteDataFormatHandler(LPVOID dst, const XINPUT_STATE& state) {
-		*(BYTE*)dst = 0;
-	}
-	static void ZeroDwordDataFormatHandler(LPVOID dst, const XINPUT_STATE& state) {
-		*(DWORD*)dst = 0;
-	}
-	static void XAxisDataFormatHandler(LPVOID dst, const XINPUT_STATE& state) {
-		*(DWORD*)dst = state.Gamepad.sThumbLX;
-	}
-	static void YAxisDataFormatHandler(LPVOID dst, const XINPUT_STATE& state) {
-		*(DWORD*)dst = state.Gamepad.sThumbLY;
-	}
+	typedef std::list<ControlPtr> ControlList;
+	typedef std::map<DWORD, ControlPtr> AssignedControlMap; // Key is data format offset
+	ControlList m_availableControls;
+	AssignedControlMap m_assignedControls;
+
+	void ResetControls();
+	void AssignZeroControl(DWORD offset, DWORD dwType);
 
 };
 

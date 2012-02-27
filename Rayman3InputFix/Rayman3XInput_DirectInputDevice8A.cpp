@@ -32,7 +32,9 @@ HRESULT Rayman3XInput_DirectInputDevice8A::Create(Rayman3XInput_DirectInputDevic
 
 Rayman3XInput_DirectInputDevice8A::Rayman3XInput_DirectInputDevice8A()
 	: m_refCount(1)
-{ }
+{
+	ResetControls();
+}
 
 Rayman3XInput_DirectInputDevice8A::~Rayman3XInput_DirectInputDevice8A()
 { }
@@ -137,11 +139,17 @@ HRESULT Rayman3XInput_DirectInputDevice8A::GetProperty(REFGUID rguidProp, LPDIPR
 			return DIERR_INVALIDPARAM;
 		}
 
-		Debug("Querying DIPROP_RANGE for object %d\n", pdiph->dwObj);
+		Debug("Querying DIPROP_RANGE for object at offset %d\n", pdiph->dwObj);
+
+		AssignedControlMap::const_iterator it = m_assignedControls.find(pdiph->dwObj);
+		if (it == m_assignedControls.end())
+		{
+			Debug("No assigned control at offset\n");
+			return DIERR_OBJECTNOTFOUND;
+		}
 
 		LPDIPROPRANGE prop = (LPDIPROPRANGE)pdiph;
-		prop->lMin = -32768;
-		prop->lMax = 32767;
+		it->second->GetRange(prop);
 		return DI_OK;
 	}
 	else
@@ -194,10 +202,10 @@ HRESULT Rayman3XInput_DirectInputDevice8A::GetDeviceState(DWORD cbData, LPVOID l
 	OutputDebugStringA("R3XI: GetDeviceState called\n");
 
 	BYTE* data = (BYTE*)lpvData;
-	for (DataFormatHandlers::const_iterator it = m_dataFormatHandlers.begin();
-		it != m_dataFormatHandlers.end(); ++it)
+	for (AssignedControlMap::const_iterator it = m_assignedControls.begin();
+		it != m_assignedControls.end(); ++it)
 	{
-		it->func(&data[it->offset], m_controllerState);
+		it->second->GetState(&data[it->first], m_controllerState);
 	}
 
 	return DI_OK;
@@ -213,14 +221,14 @@ HRESULT Rayman3XInput_DirectInputDevice8A::SetDataFormat(LPCDIDATAFORMAT lpdf)
 {
 	OutputDebugStringA("R3XI: SetDataFormat called\n");
 
+	ResetControls();
+
 	if (lpdf->dwSize != sizeof(DIDATAFORMAT) ||
 		lpdf->dwObjSize != sizeof(DIOBJECTDATAFORMAT))
 	{
 		Debug("SetDataFormat called with invalid lpdf\n");
 		return DIERR_INVALIDPARAM;
 	}
-
-	m_dataFormatHandlers.reserve(lpdf->dwNumObjs);
 
 	for (DWORD i = 0; i < lpdf->dwNumObjs; ++i)
 	{
@@ -241,63 +249,56 @@ HRESULT Rayman3XInput_DirectInputDevice8A::SetDataFormat(LPCDIDATAFORMAT lpdf)
 		Debug("  Type: 0x%.08X\n", odf->dwType);
 		Debug("  Flags: 0x%.08X\n", odf->dwFlags);
 
-		if (odf->pguid == NULL)
+		if (odf->pguid != NULL)
 		{
-			if (DIDFT_GETTYPE(odf->dwType) == DIDFT_BUTTON)
+			// Find first available control with matching GUID
+			ControlList::const_iterator it;
+			for (it = m_availableControls.begin(); it != m_availableControls.end(); ++it)
 			{
-				m_dataFormatHandlers.push_back(
-					DataFormatHandler(ZeroByteDataFormatHandler, odf->dwOfs));
+				if ((*it)->GetGUID() == *odf->pguid) {
+					break;
+				}
+			}
+
+			if (it != m_availableControls.end() &&
+				(*it)->IsTypeCompatible(DIDFT_GETTYPE(odf->dwType)))
+			{
+				// Assign the control to the offset
+				Debug("Control assigned\n");
+				m_assignedControls[odf->dwOfs] = *it;
+				m_availableControls.erase(it);
 			}
 			else
 			{
-				Debug("Unknown data type %X in format\n", DIDFT_GETTYPE(odf->dwType));
-				return DIERR_INVALIDPARAM;
+				// No matching control found. Assign a "zero" control.
+				Debug("No control assigned; assigning zero control\n");
+				AssignZeroControl(odf->dwOfs, DIDFT_GETTYPE(odf->dwType));
 			}
-		}
-		else if (*odf->pguid == GUID_XAxis)
-		{
-			m_dataFormatHandlers.push_back(
-				DataFormatHandler(XAxisDataFormatHandler, odf->dwOfs));
-		}
-		else if (*odf->pguid == GUID_YAxis)
-		{
-			m_dataFormatHandlers.push_back(
-				DataFormatHandler(YAxisDataFormatHandler, odf->dwOfs));
-		}
-		else if (*odf->pguid == GUID_ZAxis)
-		{
-			m_dataFormatHandlers.push_back(
-				DataFormatHandler(ZeroDwordDataFormatHandler, odf->dwOfs));
-		}
-		else if (*odf->pguid == GUID_RxAxis)
-		{
-			m_dataFormatHandlers.push_back(
-				DataFormatHandler(ZeroDwordDataFormatHandler, odf->dwOfs));
-		}
-		else if (*odf->pguid == GUID_RyAxis)
-		{
-			m_dataFormatHandlers.push_back(
-				DataFormatHandler(ZeroDwordDataFormatHandler, odf->dwOfs));
-		}
-		else if (*odf->pguid == GUID_RzAxis)
-		{
-			m_dataFormatHandlers.push_back(
-				DataFormatHandler(ZeroDwordDataFormatHandler, odf->dwOfs));
-		}
-		else if (*odf->pguid == GUID_Slider)
-		{
-			m_dataFormatHandlers.push_back(
-				DataFormatHandler(ZeroDwordDataFormatHandler, odf->dwOfs));
-		}
-		else if (*odf->pguid == GUID_POV)
-		{
-			m_dataFormatHandlers.push_back(
-				DataFormatHandler(ZeroDwordDataFormatHandler, odf->dwOfs));
 		}
 		else
 		{
-			Debug("Unknown object GUID\n");
-			return DIERR_INVALIDPARAM;
+			// Find first available control compatible with type
+			ControlList::const_iterator it;
+			for (it = m_availableControls.begin(); it != m_availableControls.end(); ++it)
+			{
+				if ((*it)->IsTypeCompatible(DIDFT_GETTYPE(odf->dwType))) {
+					break;
+				}
+			}
+
+			if (it != m_availableControls.end())
+			{
+				Debug("Control assigned");
+				// Assign the control to the offset
+				m_assignedControls[odf->dwOfs] = *it;
+				m_availableControls.erase(it);
+			}
+			else
+			{
+				Debug("No control assigned; assigning zero control");
+				// No matching control found. Assign a "zero" control.
+				AssignZeroControl(odf->dwOfs, DIDFT_GETTYPE(odf->dwType));
+			}
 		}
 	}
 
@@ -345,7 +346,18 @@ HRESULT Rayman3XInput_DirectInputDevice8A::CreateEffect(THIS_ REFGUID,LPCDIEFFEC
 HRESULT Rayman3XInput_DirectInputDevice8A::EnumEffects(LPDIENUMEFFECTSCALLBACKA lpCallback, LPVOID pvRef, DWORD dwEffType)
 {
 	OutputDebugStringA("R3XI: EnumEffects called\n");
-	Debug("dwEffType == 0x%X\n", dwEffType);
+	if (dwEffType == DIEFT_ALL || dwEffType == DIEFT_CONSTANTFORCE)
+	{
+		Debug("Enumerated constant force effect\n");
+		DIEFFECTINFOA ei = { 0 };
+		ei.dwSize = sizeof(DIEFFECTINFOA);
+		ei.guid = GUID_ConstantForce;
+		ei.dwEffType = DIEFT_CONSTANTFORCE;
+		ei.dwStaticParams = 0;
+		ei.dwDynamicParams = 0;
+		strcpy_s(ei.tszName, "Vibration");
+		lpCallback(&ei, pvRef);
+	}
 	return DI_OK;
 }
 
@@ -359,11 +371,14 @@ HRESULT Rayman3XInput_DirectInputDevice8A::GetForceFeedbackState(THIS_ LPDWORD)
 	OutputDebugStringA("R3XI: GetForceFeedbackState called\n");
 	return E_NOTIMPL;
 }
-HRESULT Rayman3XInput_DirectInputDevice8A::SendForceFeedbackCommand(THIS_ DWORD)
+
+HRESULT Rayman3XInput_DirectInputDevice8A::SendForceFeedbackCommand(DWORD dwFlags)
 {
 	OutputDebugStringA("R3XI: SendForceFeedbackCommand called\n");
-	return E_NOTIMPL;
+	Debug("Unknown force feedback command 0x%X\n", dwFlags);
+	return DI_OK;
 }
+
 HRESULT Rayman3XInput_DirectInputDevice8A::EnumCreatedEffectObjects(THIS_ LPDIENUMCREATEDEFFECTOBJECTSCALLBACK,LPVOID,DWORD)
 {
 	OutputDebugStringA("R3XI: EnumCreatedEffectObjects called\n");
@@ -412,4 +427,123 @@ HRESULT Rayman3XInput_DirectInputDevice8A::GetImageInfo(THIS_ LPDIDEVICEIMAGEINF
 {
 	OutputDebugStringA("R3XI: GetImageInfo called\n");
 	return E_NOTIMPL;
+}
+
+void Rayman3XInput_DirectInputDevice8A::ResetControls()
+{
+	m_availableControls.clear();
+	m_assignedControls.clear();
+
+	class ThumbLXControl : public Control
+	{
+		virtual GUID GetGUID() {
+			return GUID_XAxis;
+		}
+		virtual bool IsTypeCompatible(DWORD dwType) {
+			return dwType == DIDFT_AXIS;
+		}
+		virtual void GetRange(LPDIPROPRANGE prop) {
+			prop->lMin = -32768;
+			prop->lMax = 32767;
+		}
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
+			*(DWORD*)dst = state.Gamepad.sThumbLX;
+		}
+	};
+
+	class ThumbLYControl : public Control
+	{
+		virtual GUID GetGUID() {
+			return GUID_YAxis;
+		}
+		virtual bool IsTypeCompatible(DWORD dwType) {
+			return dwType == DIDFT_AXIS;
+		}
+		virtual void GetRange(LPDIPROPRANGE prop) {
+			prop->lMin = -32767;
+			prop->lMax = 32768;
+		}
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
+			// Axis is inverted from what DirectInput expects
+			*(DWORD*)dst = -state.Gamepad.sThumbLY;
+		}
+	};
+
+	m_availableControls.push_back(std::shared_ptr<Control>(new ThumbLXControl));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ThumbLYControl));
+}
+
+void Rayman3XInput_DirectInputDevice8A::AssignZeroControl(DWORD offset, DWORD dwType)
+{
+	class ZeroAxisControl : public Control
+	{
+	public:
+		virtual GUID GetGUID() {
+			return GUID_ZAxis;
+		}
+		virtual bool IsTypeCompatible(DWORD dwType) {
+			return dwType == DIDFT_AXIS;
+		}
+		virtual void GetRange(LPDIPROPRANGE prop) {
+			prop->lMin = -1000;
+			prop->lMax = 1000;
+		}
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
+			*(DWORD*)dst = 0;
+		}
+	};
+
+	class ZeroButtonControl : public Control
+	{
+	public:
+		virtual GUID GetGUID() {
+			return GUID_Button;
+		}
+		virtual bool IsTypeCompatible(DWORD dwType) {
+			return dwType == DIDFT_BUTTON;
+		}
+		virtual void GetRange(LPDIPROPRANGE prop) {
+			prop->lMin = 0;
+			prop->lMax = 1;
+		}
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
+			*(BYTE*)dst = 0;
+		}
+	};
+
+	class ZeroPovControl : public Control
+	{
+	public:
+		virtual GUID GetGUID() {
+			return GUID_POV;
+		}
+		virtual bool IsTypeCompatible(DWORD dwType) {
+			return dwType == DIDFT_POV;
+		}
+		virtual void GetRange(LPDIPROPRANGE prop) {
+			// Value is -1 for center or position in hundredths of a degree
+			// clockwise from north (0 to 35999)
+			prop->lMin = -1;
+			prop->lMax = 35999;
+		}
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
+			*(DWORD*)dst = -1; // -1 indicates center position
+		}
+	};
+
+	switch (dwType)
+	{
+	case DIDFT_AXIS:
+		m_assignedControls[offset] = std::shared_ptr<Control>(new ZeroAxisControl);
+		break;
+	case DIDFT_BUTTON:
+		m_assignedControls[offset] = std::shared_ptr<Control>(new ZeroButtonControl);
+		break;
+	case DIDFT_POV:
+		m_assignedControls[offset] = std::shared_ptr<Control>(new ZeroPovControl);
+		break;
+	default:
+		Debug("Don't know how to assign zero control to type 0x%X\n", dwType);
+		break;
+	}
 }
