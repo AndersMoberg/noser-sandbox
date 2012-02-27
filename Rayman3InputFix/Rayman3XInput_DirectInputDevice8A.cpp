@@ -375,7 +375,25 @@ HRESULT Rayman3XInput_DirectInputDevice8A::GetForceFeedbackState(THIS_ LPDWORD)
 HRESULT Rayman3XInput_DirectInputDevice8A::SendForceFeedbackCommand(DWORD dwFlags)
 {
 	OutputDebugStringA("R3XI: SendForceFeedbackCommand called\n");
-	Debug("Unknown force feedback command 0x%X\n", dwFlags);
+	if (dwFlags == DISFFC_PAUSE)
+	{
+		XINPUT_VIBRATION xv;
+		xv.wLeftMotorSpeed = 0;
+		xv.wRightMotorSpeed = 0;
+		XInputSetState(m_controller, &xv);
+	}
+	else if (dwFlags == DISFFC_CONTINUE)
+	{
+		// I THINK what this does is just trigger some vibration for a small
+		// amount of time.
+		// XXX: This code is disabled until I figure out a way to support it.
+		//XINPUT_VIBRATION xv;
+		//xv.wLeftMotorSpeed = 65535;
+		//xv.wRightMotorSpeed = 0;
+		//XInputSetState(m_controller, &xv);
+	} else {
+		Debug("Unknown force feedback command 0x%X\n", dwFlags);
+	}
 	return DI_OK;
 }
 
