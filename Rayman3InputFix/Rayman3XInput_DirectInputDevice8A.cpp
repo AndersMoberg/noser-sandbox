@@ -469,8 +469,125 @@ void Rayman3XInput_DirectInputDevice8A::ResetControls()
 		}
 	};
 
+	class ThumbRXControl : public Control
+	{
+		virtual GUID GetGUID() {
+			return GUID_RxAxis;
+		}
+		virtual bool IsTypeCompatible(DWORD dwType) {
+			return dwType == DIDFT_AXIS;
+		}
+		virtual void GetRange(LPDIPROPRANGE prop) {
+			prop->lMin = -32768;
+			prop->lMax = 32767;
+		}
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
+			*(DWORD*)dst = state.Gamepad.sThumbRX;
+		}
+	};
+
+	class ThumbRYControl : public Control
+	{
+		virtual GUID GetGUID() {
+			return GUID_RyAxis;
+		}
+		virtual bool IsTypeCompatible(DWORD dwType) {
+			return dwType == DIDFT_AXIS;
+		}
+		virtual void GetRange(LPDIPROPRANGE prop) {
+			prop->lMin = -32767;
+			prop->lMax = 32768;
+		}
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
+			// Axis is inverted from what DirectInput expects
+			*(DWORD*)dst = -state.Gamepad.sThumbRY;
+		}
+	};
+
+	class ButtonControl : public Control
+	{
+	public:
+		ButtonControl(WORD buttonMask)
+			: m_buttonMask(buttonMask)
+		{ }
+		virtual GUID GetGUID() {
+			return GUID_Button;
+		}
+		virtual bool IsTypeCompatible(DWORD dwType) {
+			return dwType == DIDFT_BUTTON;
+		}
+		virtual void GetRange(LPDIPROPRANGE prop) {
+			prop->lMin = 0;
+			prop->lMax = 0x80;
+		}
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
+			*(BYTE*)dst = (state.Gamepad.wButtons & m_buttonMask) ? 0x80 : 0;
+		}
+	private:
+		WORD m_buttonMask;
+	};
+
+	class LTriggerControl : public Control
+	{
+		virtual GUID GetGUID() {
+			return GUID_Button;
+		}
+		virtual bool IsTypeCompatible(DWORD dwType) {
+			return dwType == DIDFT_BUTTON;
+		}
+		virtual void GetRange(LPDIPROPRANGE prop) {
+			prop->lMin = 0;
+			prop->lMax = 0x80;
+		}
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
+			*(BYTE*)dst = (state.Gamepad.bLeftTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? 0x80 : 0;
+		}
+	};
+
+	class RTriggerControl : public Control
+	{
+		virtual GUID GetGUID() {
+			return GUID_Button;
+		}
+		virtual bool IsTypeCompatible(DWORD dwType) {
+			return dwType == DIDFT_BUTTON;
+		}
+		virtual void GetRange(LPDIPROPRANGE prop) {
+			prop->lMin = 0;
+			prop->lMax = 0x80;
+		}
+		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
+			*(BYTE*)dst = (state.Gamepad.bRightTrigger > XINPUT_GAMEPAD_TRIGGER_THRESHOLD) ? 0x80 : 0;
+		}
+	};
+
 	m_availableControls.push_back(std::shared_ptr<Control>(new ThumbLXControl));
 	m_availableControls.push_back(std::shared_ptr<Control>(new ThumbLYControl));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ThumbRXControl));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ThumbRYControl));
+	// List button controls in their numbered order
+	m_availableControls.push_back(std::shared_ptr<Control>(new ButtonControl(
+		XINPUT_GAMEPAD_A)));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ButtonControl(
+		XINPUT_GAMEPAD_B)));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ButtonControl(
+		XINPUT_GAMEPAD_X)));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ButtonControl(
+		XINPUT_GAMEPAD_Y)));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ButtonControl(
+		XINPUT_GAMEPAD_LEFT_SHOULDER)));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ButtonControl(
+		XINPUT_GAMEPAD_RIGHT_SHOULDER)));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ButtonControl(
+		XINPUT_GAMEPAD_BACK)));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ButtonControl(
+		XINPUT_GAMEPAD_START)));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ButtonControl(
+		XINPUT_GAMEPAD_LEFT_THUMB)));
+	m_availableControls.push_back(std::shared_ptr<Control>(new ButtonControl(
+		XINPUT_GAMEPAD_RIGHT_THUMB)));
+	m_availableControls.push_back(std::shared_ptr<Control>(new LTriggerControl));
+	m_availableControls.push_back(std::shared_ptr<Control>(new RTriggerControl));
 }
 
 void Rayman3XInput_DirectInputDevice8A::AssignZeroControl(DWORD offset, DWORD dwType)
