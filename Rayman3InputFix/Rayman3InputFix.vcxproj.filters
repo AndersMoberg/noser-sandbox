@@ -15,6 +15,12 @@
     <ClCompile Include="Rayman3XInput_DirectInputDevice8A.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Rayman3Vibration_DirectInputEffect.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowsUtils.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="dinput8.def">
@@ -26,6 +32,12 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Rayman3XInput_DirectInputDevice8A.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Rayman3Vibration_DirectInputEffect.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsUtils.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

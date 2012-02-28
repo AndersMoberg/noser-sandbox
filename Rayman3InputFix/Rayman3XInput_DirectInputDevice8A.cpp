@@ -4,6 +4,9 @@
 
 #include "Rayman3XInput_DirectInputDevice8A.hpp"
 
+#include "Rayman3Vibration_DirectInputEffect.hpp"
+#include "WindowsUtils.hpp"
+
 #include <Xinput.h>
 
 HRESULT Rayman3XInput_DirectInputDevice8A::Create(Rayman3XInput_DirectInputDevice8A** ppvOut, int controller)
@@ -110,22 +113,6 @@ HRESULT Rayman3XInput_DirectInputDevice8A::EnumObjects(LPDIENUMDEVICEOBJECTSCALL
 	return E_NOTIMPL;
 }
 
-static void Debug(const char* msg, ...)
-{
-	va_list args = NULL;
-	va_start(args, msg);
-
-	int len = _vscprintf(msg, args) + 1;
-
-	char* buf = new char[len];
-	vsprintf_s(buf, len, msg, args);
-
-	va_end(args);
-
-	OutputDebugStringA(buf);
-	delete[] buf;
-}
-
 HRESULT Rayman3XInput_DirectInputDevice8A::GetProperty(REFGUID rguidProp, LPDIPROPHEADER pdiph)
 {
 	OutputDebugStringA("R3XI: GetProperty called\n");
@@ -199,7 +186,7 @@ HRESULT Rayman3XInput_DirectInputDevice8A::Unacquire()
 
 HRESULT Rayman3XInput_DirectInputDevice8A::GetDeviceState(DWORD cbData, LPVOID lpvData)
 {
-	OutputDebugStringA("R3XI: GetDeviceState called\n");
+	//OutputDebugStringA("R3XI: GetDeviceState called\n");
 
 	BYTE* data = (BYTE*)lpvData;
 	for (AssignedControlMap::const_iterator it = m_assignedControls.begin();
@@ -288,14 +275,14 @@ HRESULT Rayman3XInput_DirectInputDevice8A::SetDataFormat(LPCDIDATAFORMAT lpdf)
 
 			if (it != m_availableControls.end())
 			{
-				Debug("Control assigned");
+				Debug("Control assigned\n");
 				// Assign the control to the offset
 				m_assignedControls[odf->dwOfs] = *it;
 				m_availableControls.erase(it);
 			}
 			else
 			{
-				Debug("No control assigned; assigning zero control");
+				Debug("No control assigned; assigning zero control\n");
 				// No matching control found. Assign a "zero" control.
 				AssignZeroControl(odf->dwOfs, DIDFT_GETTYPE(odf->dwType));
 			}
@@ -337,10 +324,27 @@ HRESULT Rayman3XInput_DirectInputDevice8A::Initialize(THIS_ HINSTANCE,DWORD,REFG
 	OutputDebugStringA("R3XI: Initialize called\n");
 	return E_NOTIMPL;
 }
-HRESULT Rayman3XInput_DirectInputDevice8A::CreateEffect(THIS_ REFGUID,LPCDIEFFECT,LPDIRECTINPUTEFFECT *,LPUNKNOWN)
+HRESULT Rayman3XInput_DirectInputDevice8A::CreateEffect(REFGUID rguid, LPCDIEFFECT lpeff, LPDIRECTINPUTEFFECT* ppdeff, LPUNKNOWN punkOuter)
 {
 	OutputDebugStringA("R3XI: CreateEffect called\n");
-	return E_NOTIMPL;
+
+	OLECHAR* guidStr;
+	StringFromCLSID(rguid, &guidStr);
+	Debug("Effect GUID: %S\n", guidStr);
+	CoTaskMemFree(guidStr);
+
+	if (rguid == GUID_ConstantForce)
+	{
+		Rayman3Vibration_DirectInputEffect* effect = NULL;
+		HRESULT hr = Rayman3Vibration_DirectInputEffect::Create(&effect, lpeff, m_controller);
+		*ppdeff = effect;
+		return hr;
+	}
+	else
+	{
+		Debug("Unknown effect GUID\n");
+		return DIERR_INVALIDPARAM;
+	}
 }
 
 HRESULT Rayman3XInput_DirectInputDevice8A::EnumEffects(LPDIENUMEFFECTSCALLBACKA lpCallback, LPVOID pvRef, DWORD dwEffType)
@@ -353,8 +357,8 @@ HRESULT Rayman3XInput_DirectInputDevice8A::EnumEffects(LPDIENUMEFFECTSCALLBACKA 
 		ei.dwSize = sizeof(DIEFFECTINFOA);
 		ei.guid = GUID_ConstantForce;
 		ei.dwEffType = DIEFT_CONSTANTFORCE;
-		ei.dwStaticParams = 0;
-		ei.dwDynamicParams = 0;
+		ei.dwStaticParams = DIEP_GAIN;
+		ei.dwDynamicParams = DIEP_GAIN;
 		strcpy_s(ei.tszName, "Vibration");
 		lpCallback(&ei, pvRef);
 	}
@@ -409,7 +413,7 @@ HRESULT Rayman3XInput_DirectInputDevice8A::Escape(THIS_ LPDIEFFESCAPE)
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::Poll(THIS)
 {
-	OutputDebugStringA("R3XI: Poll called\n");
+	//OutputDebugStringA("R3XI: Poll called\n");
 	if (XInputGetState(m_controller, &m_controllerState) == ERROR_SUCCESS) {
 		return DI_OK;
 	} else {
