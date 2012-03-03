@@ -12,7 +12,6 @@
 #include <memory>
 #include <string>
 
-
 #include "Geometry.hpp"
 
 class GameRenderTarget;
@@ -29,10 +28,11 @@ public:
 	void SetD2DTarget(ID2D1RenderTarget* target);
 	void ReleaseD2DTarget();
 
+	IDWriteFactory* GetDWriteFactory() { return m_pDWriteFactory; }
+	IDWriteTextFormat* GetDialogTextFormat() { return m_pDialogTextFormat; }
+
 	ID2D1RenderTarget* GetD2DTarget() { return m_pD2DTarget; }
 	ID2D1SolidColorBrush* GetBlackBrush() { return m_pBlackBrush; }
-
-	IDWriteTextFormat* GetDialogTextFormat() { return m_pDialogTextFormat; }
 
 	void DrawText(const std::wstring& text,
 		IDWriteTextFormat* textFormat,
@@ -40,6 +40,10 @@ public:
 		float strokeWidth,
 		ID2D1Brush* fillBrush,
 		const Rectf& layoutBox);
+
+	void DrawTextLayout(IDWriteTextLayout* textLayout,
+		ID2D1Brush* strokeBrush, float strokeWidth,
+		ID2D1Brush* fillBrush, const Vector2f& origin);
 
 private:
 

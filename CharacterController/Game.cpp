@@ -47,7 +47,8 @@ GamePtr Game::Create()
 	p->m_npcCharacter->radius = 1.0f;
 	p->m_characters.push_back(p->m_npcCharacter);
 
-	p->m_revealingText = RevealingText::Create(L"Dialogue will go in here. This is some really long dialogue designed to test the Revealing Text object.",
+	p->m_revealingText = RevealingText::Create(p->m_renderTarget,
+		L"Dialogue will go in here. This is some really long dialogue designed to test the Revealing Text object.",
 		Rectf(0.0f, 0.0f, 640.0f, 480.0f));
 
 	p->m_buttonGroup = ButtonGroup::Create(Vector2f(200.0f, 200.0f));

@@ -4,16 +4,31 @@
 
 #include "RevealingText.hpp"
 
+#include "WindowsUtils.hpp"
+
 RevealingText::RevealingText()
+	: m_textLayout(NULL)
 { }
 
-RevealingTextPtr RevealingText::Create(const std::wstring& text,
-	const Rectf& layoutBox)
+RevealingText::~RevealingText()
+{
+	SafeRelease(m_textLayout);
+}
+
+RevealingTextPtr RevealingText::Create(GameRenderTargetPtr target,
+	const std::wstring& text, const Rectf& layoutBox)
 {
 	RevealingTextPtr p(new RevealingText);
 
 	p->m_text = text;
 	p->m_layoutBox = layoutBox;
+
+	IDWriteFactory* dwFactory = target->GetDWriteFactory();
+	CHECK_HR(dwFactory->CreateTextLayout(
+		text.c_str(), text.size(), target->GetDialogTextFormat(),
+		layoutBox.right - layoutBox.left,
+		layoutBox.bottom - layoutBox.top,
+		&p->m_textLayout));
 
 	return p;
 }
@@ -38,6 +53,6 @@ void RevealingText::Update(long long curTime)
 
 void RevealingText::Render(GameRenderTargetPtr target)
 {
-	target->DrawText(m_text.substr(0, m_progress), target->GetDialogTextFormat(),
-		target->GetBlackBrush(), 0.5f, NULL, m_layoutBox);
+	target->DrawTextLayout(m_textLayout, target->GetBlackBrush(), 0.5f, NULL,
+		m_layoutBox.UpperLeft());
 }

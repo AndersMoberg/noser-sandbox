@@ -252,3 +252,12 @@ void GameRenderTarget::DrawText(const std::wstring& text,
 
 	SafeRelease(textLayout);
 }
+
+void GameRenderTarget::DrawTextLayout(IDWriteTextLayout* textLayout,
+	ID2D1Brush* strokeBrush, float strokeWidth,
+	ID2D1Brush* fillBrush, const Vector2f& origin)
+{
+	OutlinedTextRenderer renderer(m_pD2DTarget, strokeBrush, strokeWidth, fillBrush);
+	// XXX: Code assumes that renderer is not saved by textLayout->Draw
+	CHECK_HR(textLayout->Draw(NULL, &renderer, origin.x, origin.y));
+}

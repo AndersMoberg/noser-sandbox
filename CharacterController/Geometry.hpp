@@ -81,6 +81,9 @@ struct Rectf
 	{ }
 
 	operator D2D1_RECT_F() const { return D2D1::RectF(left, top, right, bottom); }
+
+	Vector2f UpperLeft() const { return Vector2f(left, top); }
+
 };
 
 struct Matrix3x2f

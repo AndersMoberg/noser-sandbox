@@ -19,8 +19,9 @@ class RevealingText
 
 public:
 
-	static RevealingTextPtr Create(const std::wstring& text,
-		const Rectf& layoutBox);
+	~RevealingText();
+	static RevealingTextPtr Create(GameRenderTargetPtr target,
+		const std::wstring& text, const Rectf& layoutBox);
 
 	void Start(long long startTime, long long timerFreq, float charsPerSec);
 	void Update(long long curTime);
@@ -32,6 +33,7 @@ private:
 
 	std::wstring m_text;
 	Rectf m_layoutBox;
+	IDWriteTextLayout* m_textLayout;
 
 	size_t m_progress;
 	long long m_startTime;
