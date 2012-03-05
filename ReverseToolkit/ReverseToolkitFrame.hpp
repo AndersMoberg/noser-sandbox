@@ -11,10 +11,12 @@
 #include "AbsTree.hpp"
 #include "DolDocument.hpp"
 
+class GekkoLineMapNode;
 class wxNotebook;
 
-class BinaryDocument;
-class BinaryView;
+typedef AbsTree<std::shared_ptr<GekkoLineMapNode> > GekkoAddressMap;
+typedef std::map<uint32_t, std::string> LabelMap;
+//typedef AbsTree<std::string> LabelMap;
 
 class ReverseToolkitFrame : public wxFrame
 {
@@ -24,15 +26,16 @@ public:
 	ReverseToolkitFrame(const wxString& title);
 
 	void LoadDol(const wxString& path);
-	void LoadBinary(const wxString& path);
+	void AddLabel(uint32_t addr, const std::string& name);
+	bool HasLabel(uint32_t addr) const;
+	std::string GetLabel(uint32_t addr) const;
 
 private:
 
 	wxNotebook* m_notebook;
-
 	DolDocument m_dolDoc;
-	std::shared_ptr<BinaryDocument> m_binDoc;
-	std::shared_ptr<BinaryView> m_binView;
+	GekkoAddressMap m_gekkoMap;
+	LabelMap m_labelMap;
 
 };
 

@@ -37,7 +37,6 @@ public:
 	friend class AbsTree<T>;
 	public:
 		bool IsValid() const { return !!m_node; }
-		Key GetKey() const { return m_node->key; }
 		const T& Get() const { return m_node->data; }
 	private:
 		ConstNodeRef(const Node* node)
@@ -52,8 +51,6 @@ public:
 	// TODO: Insert should return a NodeRef to the newly-inserted node.
 	void Insert(Key k, const T& data);
 	ConstNodeRef FindFloor(Key k) const;
-	ConstNodeRef FindCeil(Key k) const;
-	ConstNodeRef FindMax() const;
 
 private:
 
@@ -63,8 +60,6 @@ private:
 
 	Node* InsertVisit(Node* parent, Node* node, Key k, const T& data);
 	const Node* FindFloorVisit(const Node* parent, const Node* node, Key k) const;
-	const Node* FindCeilVisit(const Node* parent, const Node* node, Key k) const;
-	const Node* FindMaxVisit(const Node* node) const;
 
 	Node* m_root;
 
@@ -233,70 +228,6 @@ AbsTree<T>::FindFloorVisit(const Node* parent, const Node* node, Key k) const
 				return rightFloor;
 		}
 	}
-}
-
-template<class T>
-typename AbsTree<T>::ConstNodeRef
-AbsTree<T>::FindCeil(Key k) const
-{
-	if (!m_root)
-		return ConstNodeRef(NULL);
-	else
-	{
-		const Node* result = FindCeilVisit(NULL, m_root, k);
-		return ConstNodeRef(result);
-	}
-}
-
-template<class T>
-typename const AbsTree<T>::Node*
-AbsTree<T>::FindCeilVisit(const Node* parent, const Node* node, Key k) const
-{
-	if (k > node->key)
-	{
-		if (!node->link[1])
-			return NULL;
-		else
-			return FindCeilVisit(node, node->link[1], k);
-	}
-	else if (k == node->key)
-		return node;
-	else // k < nodeKey
-	{
-		if (!node->link[0])
-			return node;
-		else
-		{
-			const Node* leftCeil = FindCeilVisit(node, node->link[0], k);
-			if (!leftCeil)
-				return node;
-			else
-				return leftCeil;
-		}
-	}
-}
-
-template<class T>
-typename AbsTree<T>::ConstNodeRef
-AbsTree<T>::FindMax() const
-{
-	if (!m_root)
-		return ConstNodeRef(NULL);
-	else
-	{
-		const Node* result = FindMaxVisit(m_root);
-		return ConstNodeRef(result);
-	}
-}
-
-template<class T>
-typename const AbsTree<T>::Node*
-AbsTree<T>::FindMaxVisit(const Node* node) const
-{
-	if (node->link[1])
-		return FindMaxVisit(node->link[1]);
-	else
-		return node;
 }
 
 #endif

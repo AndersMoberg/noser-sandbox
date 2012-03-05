@@ -19,7 +19,7 @@ bool ReverseToolkitApp::OnInit()
 	if (fileDlg->ShowModal() == wxID_OK)
 	{
 		ReverseToolkitFrame* frame = new ReverseToolkitFrame("Reverse Toolkit");
-		frame->LoadBinary(fileDlg->GetPath());
+		frame->LoadDol(fileDlg->GetPath());
 		frame->Show();
 		SetTopWindow(frame);
 

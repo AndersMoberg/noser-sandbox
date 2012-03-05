@@ -12,9 +12,6 @@
     <ClInclude Include="BinaryDocument.hpp">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="BinaryView.hpp">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="DolDocument.hpp">
       <Filter>Source</Filter>
     </ClInclude>
@@ -33,9 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinaryDocument.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="BinaryView.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="DolDocument.cpp">

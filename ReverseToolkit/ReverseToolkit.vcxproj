@@ -49,7 +49,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>__WXMSW__;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;__WXMSW__;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(WXWIN)\include\msvc;$(WXWIN)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -66,7 +66,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>__WXMSW__;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;__WXMSW__;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(WXWIN)\include\msvc;$(WXWIN)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -80,7 +80,6 @@
   <ItemGroup>
     <ClInclude Include="AbsTree.hpp" />
     <ClInclude Include="BinaryDocument.hpp" />
-    <ClInclude Include="BinaryView.hpp" />
     <ClInclude Include="DolDocument.hpp" />
     <ClInclude Include="GekkoDisassembly.hpp" />
     <ClInclude Include="LineViewWindow.hpp" />
@@ -89,7 +88,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinaryDocument.cpp" />
-    <ClCompile Include="BinaryView.cpp" />
     <ClCompile Include="DolDocument.cpp" />
     <ClCompile Include="GekkoDisassembly.cpp" />
     <ClCompile Include="LineViewWindow.cpp" />
