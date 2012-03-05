@@ -949,6 +949,9 @@ std::string DisassembleGekko(uint32_t instr, uint32_t cia, uint32_t& addrRef, co
 			case 727: // stfdx: Store Floating-Point Double Indexed
 				ss << "stfdx " << freg(instr_frS(instr)) << ", " << reg(instr_rA(instr)) << ", " << reg(instr_rB(instr));
 				break;
+			case 790: // lhbrx: Load Half Word Byte-Reverse Indexed
+				ss << "lhbrx " << reg(instr_rD(instr)) << ", " << reg(instr_rA(instr)) << ", " << reg(instr_rB(instr));
+				break;
 			case 792: // sraw[x]: Shift Right Algebraic Word
 				if (instr_Rc(instr) == 0)
 					ss << "sraw " << reg(instr_rA(instr)) << ", " << reg(instr_rS(instr)) << ", " << reg(instr_rB(instr));
@@ -1156,7 +1159,9 @@ std::string DisassembleGekko(uint32_t instr, uint32_t cia, uint32_t& addrRef, co
 				ss << "ERROR: Unknown fdiv[x] Rc = " << instr_Rc(instr);
 			break;
 		case 20: // fsub[x]: Floating Subtract (Double-Precision)
-			if (instr_Rc(instr) == 0)
+			if (instr_Rc(instr) == 1)
+				ss << "fsub. " << freg(instr_frD(instr)) << ", " << freg(instr_frA(instr)) << ", " << freg(instr_frB(instr));
+			else if (instr_Rc(instr) == 0)
 				ss << "fsub " << freg(instr_frD(instr)) << ", " << freg(instr_frA(instr)) << ", " << freg(instr_frB(instr));
 			else
 				ss << "ERROR: Unknown fsub[x] Rc = " << instr_Rc(instr);
