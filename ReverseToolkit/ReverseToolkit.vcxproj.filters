@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{6f848923-83d0-45cc-b090-b54af417a119}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AbsTree.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryDocument.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryView.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="DolDocument.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="GekkoDisassembly.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="LineViewWindow.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="RelTree.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="ReverseToolkitFrame.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="BinaryDocument.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryView.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="DolDocument.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GekkoDisassembly.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="LineViewWindow.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="ReverseToolkitFrame.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
