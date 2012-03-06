@@ -15,11 +15,11 @@ public:
 
 bool ReverseToolkitApp::OnInit()
 {
-	wxFileDialog* fileDlg = new wxFileDialog(NULL);
-	if (fileDlg->ShowModal() == wxID_OK)
+	wxFileDialog fileDlg(NULL);
+	if (fileDlg.ShowModal() == wxID_OK)
 	{
 		ReverseToolkitFrame* frame = new ReverseToolkitFrame("Reverse Toolkit");
-		frame->LoadDol(fileDlg->GetPath());
+		frame->LoadDol(fileDlg.GetPath());
 		frame->Show();
 		SetTopWindow(frame);
 

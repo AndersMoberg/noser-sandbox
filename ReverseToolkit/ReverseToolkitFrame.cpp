@@ -16,7 +16,7 @@ ReverseToolkitFrame::ReverseToolkitFrame(const wxString& title)
 	: wxFrame(NULL, wxID_ANY, title),
 	m_notebook(NULL)
 {
-	wxPanel* mainPanel = new wxPanel(this, 0, 0, 400, 300);
+	wxPanel* mainPanel = new wxPanel(this);
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	m_notebook = new wxNotebook(mainPanel, wxID_ANY);
 	sizer->Add(m_notebook, 1, wxEXPAND | wxALL);
