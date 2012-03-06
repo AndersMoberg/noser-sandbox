@@ -19,6 +19,11 @@ class LineMapNode
 public:
 	virtual ~LineMapNode() { }
 	virtual bool GetSubLine(std::string& line, LineNum num) const = 0;
+	virtual bool GetSubLineXRef(uint32_t& addr, LineNum num) const
+	{
+		addr = 0;
+		return false;
+	}
 	virtual uint32_t GetAddrAtLine(LineNum num) const = 0;
 };
 
@@ -39,6 +44,8 @@ public:
 		LineViewWindow* lineViewWindow, GekkoAddressMap* gekkoMap, const DolSection* section);
 	bool GetLine(std::string& line, LineNum num) const;
 	void OnKey(LineNum num, wxKeyEvent& event);
+
+	void GoToAddress(uint32_t addr);
 private:
 	ReverseToolkitFrame* m_frame;
 	const DolSection* m_section;

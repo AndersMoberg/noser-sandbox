@@ -118,6 +118,29 @@ bool GekkoLineMapNode::GetSubLine(std::string& line, LineNum num) const
 	return false;
 }
 
+bool GekkoLineMapNode::GetSubLineXRef(uint32_t& addr, LineNum num) const
+{
+	addr = 0;
+
+	long long lineAddr = m_addr + num * 4;
+	if (lineAddr < m_section->address + m_section->data.size())
+	{
+		uint32_t instr = FromBE32(*(const uint32_t*)&m_section->data[m_addr+num*4 - m_section->address]);
+
+		GekkoLabelProvider labelProv(m_frame);
+
+		std::stringstream ss;
+		ss << std::hex << std::uppercase << std::setw(8) << lineAddr << "h: "
+			<< DisassembleGekko(instr, lineAddr, addr, &labelProv);
+
+		if (addr != 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 uint32_t GekkoLineMapNode::GetAddrAtLine(LineNum num) const
 {
 	return m_addr + num * 4;

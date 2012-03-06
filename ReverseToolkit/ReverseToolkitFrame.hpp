@@ -21,7 +21,9 @@ public:
 		LineViewWindow* lineViewWindow,
 		const DolSection* section, uint32_t addr);
 	bool GetSubLine(std::string& line, LineNum num) const;
+	bool GetSubLineXRef(uint32_t& addr, LineNum num) const;
 	uint32_t GetAddrAtLine(LineNum num) const;
+
 	// TODO: CLEANUP!!!
 	const DolSection* GetSection() const { return m_section; }
 	void SetNodeRef(LineMap* lineMap, LineMap::ConstNodeRef nodeRef)
