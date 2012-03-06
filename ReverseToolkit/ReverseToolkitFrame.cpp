@@ -23,6 +23,9 @@ ReverseToolkitFrame::ReverseToolkitFrame(const wxString& title)
 	mainPanel->SetSizer(sizer);
 }
 
+class LineMapNode;
+typedef std::shared_ptr<LineMapNode> LineMapNodePtr;
+
 class LineMapNode
 {
 public:
@@ -31,7 +34,7 @@ public:
 	virtual uint32_t GetAddrAtLine(LineNum num) const = 0;
 };
 
-typedef RelTree<std::shared_ptr<LineMapNode> > LineMap;
+typedef RelTree<LineMapNodePtr> LineMap;
 
 class BytesLineMapNode : public LineMapNode
 {

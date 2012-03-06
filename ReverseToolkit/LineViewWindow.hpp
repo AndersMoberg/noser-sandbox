@@ -10,6 +10,9 @@
 
 typedef long long LineNum;
 
+class LineProvider;
+typedef std::shared_ptr<LineProvider> LineProviderPtr;
+
 class LineProvider
 {
 public:
@@ -23,7 +26,7 @@ class LineViewWindow : public wxWindow
 
 public:
 
-	LineViewWindow(wxWindow* parent, const wxString& name, std::shared_ptr<LineProvider> provider);
+	LineViewWindow(wxWindow* parent, const wxString& name, LineProviderPtr provider);
 
 	void OnPaint(wxPaintEvent& event);
 	void OnLeftClick(wxMouseEvent& event);
@@ -35,7 +38,7 @@ private:
 	wxFont m_font;
 	double m_scrollPos;
 	LineNum m_selectedLine;
-	std::shared_ptr<LineProvider> m_provider;
+	LineProviderPtr m_provider;
 
 };
 
