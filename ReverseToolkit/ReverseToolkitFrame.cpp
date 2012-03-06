@@ -256,7 +256,7 @@ void ReverseToolkitFrame::AddLabel(uint32_t addr, const std::string& name)
 				newLineNode->SetNodeRef(mapNode.Get()->GetTree(), newLineNodeRef);
 				m_gekkoMap.Insert(addr, newLineNode);
 				// Push new node right
-				mapNode.Get()->GetTree()->PushRight(lineNum-1, 3);
+				mapNode.Get()->GetTree()->PushRightInclusive(lineNum, 3);
 				// Insert new label node
 				mapNode.Get()->GetTree()->Insert(lineNum, std::shared_ptr<LabelLineMapNode>(new LabelLineMapNode(this, addr)));
 
@@ -265,7 +265,7 @@ void ReverseToolkitFrame::AddLabel(uint32_t addr, const std::string& name)
 			else
 			{
 				// Push line node right
-				mapNode.Get()->GetTree()->PushRight(lineNum-1, 3);
+				mapNode.Get()->GetTree()->PushRightInclusive(lineNum, 3);
 				// Insert new label node
 				mapNode.Get()->GetTree()->Insert(lineNum, std::shared_ptr<LabelLineMapNode>(new LabelLineMapNode(this, addr)));
 

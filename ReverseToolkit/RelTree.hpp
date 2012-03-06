@@ -74,7 +74,7 @@ public:
 
 	void Clear();
 	NodeRef Insert(Key k, const T& data);
-	void PushRight(Key k, Key s);
+	void PushRightInclusive(Key k, Key s);
 	KeyNodeRefPair FindFloor(Key k);
 	KeyConstNodeRefPair FindFloor(Key k) const;
 	bool Validate() const;
@@ -87,7 +87,7 @@ private:
 	static bool IsRed(const Node* node);
 
 	Node* InsertVisit(Key parentKey, Node* parent, Node* node, Key k, const T& data, Node*& found);
-	void PushRightVisit(Key parentKey, Node* node, Key k, Key s);
+	void PushRightInclusiveVisit(Key parentKey, Node* node, Key k, Key s);
 	std::pair<Key, Node*> FindFloorVisit(Key parentKey, Node* parent, Node* node, Key k);
 	std::pair<Key, const Node*> FindFloorVisit(Key parentKey, const Node* parent, const Node* node, Key k) const;
 	std::pair<Key, Node*> FindMinVisit(Key parentKey, Node* node);
@@ -269,9 +269,8 @@ RelTree<T>::InsertVisit(Key parentKey, Node* parent, Node* node, Key k, const T&
 	return node;
 }
 
-// NOTE: This pushes right INCLUDING k!
 template<class T>
-void RelTree<T>::PushRight(Key k, Key s)
+void RelTree<T>::PushRightInclusive(Key k, Key s)
 {
 	if (m_root)
 	{
@@ -280,7 +279,7 @@ void RelTree<T>::PushRight(Key k, Key s)
 		{
 			m_root->rel += s;
 			if (m_root->link[0])
-				PushRightVisit(rootKey, m_root->link[0], k, s);
+				PushRightInclusiveVisit(rootKey, m_root->link[0], k, s);
 		}
 		else if (k == rootKey)
 		{
@@ -293,13 +292,13 @@ void RelTree<T>::PushRight(Key k, Key s)
 		else // k > rootKey
 		{
 			if (m_root->link[1])
-				PushRightVisit(rootKey, m_root->link[1], k, s);
+				PushRightInclusiveVisit(rootKey, m_root->link[1], k, s);
 		}
 	}
 }
 
 template<class T>
-void RelTree<T>::PushRightVisit(Key parentKey, Node* node, Key k, Key s)
+void RelTree<T>::PushRightInclusiveVisit(Key parentKey, Node* node, Key k, Key s)
 {
 	// Do NOT call this on the root node
 	assert(node->parent);
@@ -311,7 +310,7 @@ void RelTree<T>::PushRightVisit(Key parentKey, Node* node, Key k, Key s)
 		if (parentKey < k)
 			node->rel += s;
 		if (node->link[0])
-			PushRightVisit(nodeKey, node->link[0], k, s);
+			PushRightInclusiveVisit(nodeKey, node->link[0], k, s);
 	}
 	else if (k == nodeKey)
 	{
@@ -327,7 +326,7 @@ void RelTree<T>::PushRightVisit(Key parentKey, Node* node, Key k, Key s)
 		if (parentKey > k)
 			node->rel -= s;
 		if (node->link[1])
-			PushRightVisit(nodeKey, node->link[1], k, s);
+			PushRightInclusiveVisit(nodeKey, node->link[1], k, s);
 	}
 }
 
