@@ -72,6 +72,7 @@ public:
 	RelTree();
 	~RelTree();
 
+	void Clear();
 	NodeRef Insert(Key k, const T& data);
 	void PushRight(Key k, Key s);
 	KeyNodeRefPair FindFloor(Key k);
@@ -158,6 +159,12 @@ RelTree<T>::RelTree()
 
 template<class T>
 RelTree<T>::~RelTree()
+{
+	Clear();
+}
+
+template<class T>
+void RelTree<T>::Clear()
 {
 	delete m_root;
 	m_root = NULL;
@@ -262,6 +269,7 @@ RelTree<T>::InsertVisit(Key parentKey, Node* parent, Node* node, Key k, const T&
 	return node;
 }
 
+// NOTE: This pushes right INCLUDING k!
 template<class T>
 void RelTree<T>::PushRight(Key k, Key s)
 {
@@ -277,9 +285,10 @@ void RelTree<T>::PushRight(Key k, Key s)
 		else if (k == rootKey)
 		{
 			// Node exists
-			// Right children will be pushed right
-			if (m_root->link[1])
-				m_root->link[1]->rel += s;
+			// Push this node away from its left children
+			m_root->rel += s;
+			if (m_root->link[0])
+				m_root->link[0]->rel -= s;
 		}
 		else // k > rootKey
 		{
@@ -307,11 +316,11 @@ void RelTree<T>::PushRightVisit(Key parentKey, Node* node, Key k, Key s)
 	else if (k == nodeKey)
 	{
 		// Node exists
-		if (parentKey > k)
-			node->rel -= s;
-		// Node's right children will be pushed right
-		if (node->link[1])
-			node->link[1]->rel += s;
+		// Push this node away from its left children
+		if (parentKey < k)
+			node->rel += s;
+		if (node->link[0])
+			node->link[0]->rel -= s;
 	}
 	else // k > nodeKey
 	{
