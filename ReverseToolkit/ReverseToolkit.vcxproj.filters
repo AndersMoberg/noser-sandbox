@@ -27,6 +27,9 @@
     <ClInclude Include="ReverseToolkitFrame.hpp">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="LineMap.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BinaryDocument.cpp">
@@ -45,6 +48,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="ReverseToolkitFrame.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="LineMap.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,6 +5,8 @@
 #ifndef _ABSTREE_HPP
 #define _ABSTREE_HPP
 
+#include <cassert>
+
 template<class T>
 class AbsTree
 {
@@ -74,17 +76,17 @@ template<class T>
 AbsTree<T>::Node::Node(Key _key, Node* _parent, const T& _data)
 	: key(_key), red(true), parent(_parent), data(_data)
 {
-	link[0] = NULL;
-	link[1] = NULL;
+	link[0] = 0;
+	link[1] = 0;
 }
 
 template<class T>
 AbsTree<T>::Node::~Node()
 {
 	delete link[0];
-	link[0] = NULL;
+	link[0] = 0;
 	delete link[1];
-	link[1] = NULL;
+	link[1] = 0;
 }
 
 template<class T>
@@ -117,9 +119,9 @@ AbsTree<T>::~AbsTree()
 template<class T>
 void AbsTree<T>::Insert(Key k, const T& data)
 {
-	m_root = InsertVisit(NULL, m_root, k, data);
+	m_root = InsertVisit(0, m_root, k, data);
 	m_root->red = false;
-	m_root->parent = NULL;
+	m_root->parent = 0;
 }
 
 template<class T>

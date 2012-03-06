@@ -10,9 +10,44 @@
 
 #include "AbsTree.hpp"
 #include "DolDocument.hpp"
+#include "LineMap.hpp"
 
-class GekkoLineMapNode;
 class wxNotebook;
+
+class GekkoLineMapNode : public LineMapNode
+{
+public:
+	GekkoLineMapNode(ReverseToolkitFrame* frame, const DolSection* section, uint32_t addr);
+	bool GetSubLine(std::string& line, LineNum num) const;
+	uint32_t GetAddrAtLine(LineNum num) const;
+	// TODO: CLEANUP!!!
+	const DolSection* GetSection() const { return m_section; }
+	void SetNodeRef(LineMap* lineMap, LineMap::ConstNodeRef nodeRef)
+	{
+		m_lineMap = lineMap;
+		m_nodeRef = nodeRef;
+	}
+	LineMap* GetTree() const { return m_lineMap; }
+	LineMap::ConstNodeRef GetNodeRef() const { return m_nodeRef; }
+	LineNum GetLineAtAddr(uint32_t addr) const;
+private:
+	ReverseToolkitFrame* m_frame;
+	const DolSection* m_section;
+	uint32_t m_addr;
+	LineMap* m_lineMap;
+	LineMap::ConstNodeRef m_nodeRef;
+};
+
+class BytesLineMapNode : public LineMapNode
+{
+public:
+	BytesLineMapNode(const DolSection* section, uint32_t addr);
+	bool GetSubLine(std::string& line, LineNum num) const;
+	uint32_t GetAddrAtLine(LineNum num) const;
+private:
+	const DolSection* m_section;
+	uint32_t m_addr;
+};
 
 typedef AbsTree<std::shared_ptr<GekkoLineMapNode> > GekkoAddressMap;
 typedef std::map<uint32_t, std::string> LabelMap;

@@ -82,6 +82,7 @@
     <ClInclude Include="BinaryDocument.hpp" />
     <ClInclude Include="DolDocument.hpp" />
     <ClInclude Include="GekkoDisassembly.hpp" />
+    <ClInclude Include="LineMap.hpp" />
     <ClInclude Include="LineViewWindow.hpp" />
     <ClInclude Include="RelTree.hpp" />
     <ClInclude Include="ReverseToolkitFrame.hpp" />
@@ -90,6 +91,7 @@
     <ClCompile Include="BinaryDocument.cpp" />
     <ClCompile Include="DolDocument.cpp" />
     <ClCompile Include="GekkoDisassembly.cpp" />
+    <ClCompile Include="LineMap.cpp" />
     <ClCompile Include="LineViewWindow.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ReverseToolkitFrame.cpp" />
