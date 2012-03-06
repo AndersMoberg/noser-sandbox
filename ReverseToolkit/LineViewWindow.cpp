@@ -7,12 +7,14 @@
 #include <sstream>
 #include <wx/dcbuffer.h>
 
-LineViewWindow::LineViewWindow(wxWindow* parent, const wxString& name, std::shared_ptr<LineProvider> provider)
+#include "ReverseToolkitFrame.hpp"
+
+LineViewWindow::LineViewWindow(wxWindow* parent, const wxString& name, size_t page)
 	: wxWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
 	wxFULL_REPAINT_ON_RESIZE | wxWANTS_CHARS, name),
+	m_page(page),
 	m_font(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Consolas"),
-	m_scrollPos(0.0), m_selectedLine(0),
-	m_provider(provider)
+	m_scrollPos(0.0), m_selectedLine(0)
 {
 	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 	SetBackgroundColour(wxColour(255, 255, 255));
@@ -72,6 +74,8 @@ void LineViewWindow::OnMouseWheel(wxMouseEvent& event)
 
 void LineViewWindow::OnKey(wxKeyEvent& event)
 {
+	bool handled = false;
+
 	switch (event.GetKeyCode())
 	{
 	case WXK_PAGEUP: // Go up a bunch of lines
@@ -81,6 +85,7 @@ void LineViewWindow::OnKey(wxKeyEvent& event)
 		else
 			m_scrollPos -= 128.0;
 		Refresh();
+		handled = true;
 		break;
 	case WXK_PAGEDOWN: // Go down a bunch of lines
 		// TODO: Scroll down one page's worth of lines
@@ -89,22 +94,40 @@ void LineViewWindow::OnKey(wxKeyEvent& event)
 		else
 			m_scrollPos += 128.0;
 		Refresh();
+		handled = true;
 		break;
 	case WXK_UP: // Move cursor up one line
 		--m_selectedLine;
 		// TODO: Adjust scrollPos intelligently
 		m_scrollPos = m_selectedLine - 8.0;
 		Refresh();
+		handled = true;
 		break;
 	case WXK_DOWN: // Move cursor down one line
 		++m_selectedLine;
 		// TODO: Adjust scrollPos intelligently
 		m_scrollPos = m_selectedLine - 8.0;
 		Refresh();
-		break;
-	default:
-		m_provider->OnKey(m_selectedLine, event);
-		Refresh();
+		handled = true;
 		break;
 	}
+
+	if (!handled)
+	{
+		m_provider->OnKey(m_selectedLine, event);
+		Refresh();
+	}
+}
+
+void LineViewWindow::SetLineProvider(LineProviderPtr provider)
+{
+	m_provider = provider;
+}
+
+void LineViewWindow::SetSelectedLine(LineNum num)
+{
+	m_selectedLine = num;
+	// TODO: Adjust scrollPos intelligently
+	m_scrollPos = m_selectedLine - 8.0;
+	Refresh();
 }

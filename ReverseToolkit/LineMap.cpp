@@ -10,12 +10,14 @@
 #include "DolDocument.hpp"
 #include "ReverseToolkitFrame.hpp"
 
-LineMapLineProvider::LineMapLineProvider(ReverseToolkitFrame* frame, GekkoAddressMap* gekkoMap, const DolSection* section)
+LineMapLineProvider::LineMapLineProvider(ReverseToolkitFrame* frame,
+	LineViewWindow* lineViewWindow, GekkoAddressMap* gekkoMap, const DolSection* section)
 	: m_frame(frame), m_gekkoMap(gekkoMap), m_section(section)
 {
 	if (section->type == DolSection::Text)
 	{
-		std::shared_ptr<GekkoLineMapNode> newNode(new GekkoLineMapNode(frame, section, section->address));
+		std::shared_ptr<GekkoLineMapNode> newNode(new GekkoLineMapNode(frame, lineViewWindow,
+			section, section->address));
 		m_gekkoMap->Insert(section->address, newNode);
 		LineMap::ConstNodeRef nodeRef = m_lineMap.Insert(0, newNode);
 		m_lineMap.Validate();
@@ -131,5 +133,39 @@ void LineMapLineProvider::OnKey(LineNum num, wxKeyEvent& event)
 		}
 		break;
 	}
+	case 'G':
+		if (event.ControlDown())
+		{
+			// Go to address
+
+			wxTextEntryDialog textEntry(m_frame, "Enter address in hex format:", wxGetTextFromUserPromptStr);
+			if (textEntry.ShowModal() == wxID_OK)
+			{
+				unsigned long addr;
+				if (!textEntry.GetValue().ToCULong(&addr, 16))
+				{
+					wxMessageBox("Invalid address.");
+				}
+				else
+				{
+					// Find the GekkoLineMapNode containing addr
+					GekkoAddressMap::ConstNodeRef mapNode = m_gekkoMap->FindFloor(addr);
+					if (mapNode.IsValid())
+					{
+						// Scroll to correct line number and open its window in the frame
+						LineMap::ConstNodeRef lineNode = mapNode.Get()->GetNodeRef();
+						LineMap::Key lineNodeKey = lineNode.GetKey();
+						LineNum lineNum = lineNodeKey + mapNode.Get()->GetLineAtAddr(addr);
+						if (lineNum >= 0)
+						{
+							LineViewWindow* lineViewWin = mapNode.Get()->GetLineViewWindow();
+							lineViewWin->SetSelectedLine(lineNum);
+							m_frame->OpenLineViewWindow(lineViewWin);
+						}
+					}
+				}
+			}
+		}
+		break;
 	}
 }

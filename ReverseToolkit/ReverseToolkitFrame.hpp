@@ -17,7 +17,9 @@ class wxNotebook;
 class GekkoLineMapNode : public LineMapNode
 {
 public:
-	GekkoLineMapNode(ReverseToolkitFrame* frame, const DolSection* section, uint32_t addr);
+	GekkoLineMapNode(ReverseToolkitFrame* frame,
+		LineViewWindow* lineViewWindow,
+		const DolSection* section, uint32_t addr);
 	bool GetSubLine(std::string& line, LineNum num) const;
 	uint32_t GetAddrAtLine(LineNum num) const;
 	// TODO: CLEANUP!!!
@@ -30,8 +32,10 @@ public:
 	LineMap* GetTree() const { return m_lineMap; }
 	LineMap::ConstNodeRef GetNodeRef() const { return m_nodeRef; }
 	LineNum GetLineAtAddr(uint32_t addr) const;
+	LineViewWindow* GetLineViewWindow() const { return m_lineViewWindow; }
 private:
 	ReverseToolkitFrame* m_frame;
+	LineViewWindow* m_lineViewWindow;
 	const DolSection* m_section;
 	uint32_t m_addr;
 	LineMap* m_lineMap;
@@ -64,6 +68,9 @@ public:
 	void AddLabel(uint32_t addr, const std::string& name);
 	bool HasLabel(uint32_t addr) const;
 	std::string GetLabel(uint32_t addr) const;
+	const GekkoAddressMap& GetGekkoMap() const { return m_gekkoMap; }
+
+	void OpenLineViewWindow(LineViewWindow* win);
 
 private:
 

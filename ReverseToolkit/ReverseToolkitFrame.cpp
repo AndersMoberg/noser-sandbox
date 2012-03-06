@@ -59,8 +59,9 @@ uint32_t BytesLineMapNode::GetAddrAtLine(LineNum num) const
 	return m_addr + num;
 }
 
-GekkoLineMapNode::GekkoLineMapNode(ReverseToolkitFrame* frame, const DolSection* section, uint32_t addr)
-	: m_frame(frame), m_section(section), m_addr(addr)
+GekkoLineMapNode::GekkoLineMapNode(ReverseToolkitFrame* frame,
+	LineViewWindow* lineViewWindow, const DolSection* section, uint32_t addr)
+	: m_frame(frame), m_lineViewWindow(lineViewWindow), m_section(section), m_addr(addr)
 { }
 
 inline uint32_t FromBE32(uint32_t v) { return _byteswap_ulong(v); }
@@ -87,7 +88,7 @@ bool GekkoLineMapNode::GetSubLine(std::string& line, LineNum num) const
 {
 	line.clear();
 	
-	uint32_t lineAddr = m_addr + num * 4;
+	long long lineAddr = m_addr + num * 4;
 	if (lineAddr < m_section->address + m_section->data.size())
 	{
 		uint32_t instr = FromBE32(*(const uint32_t*)&m_section->data[m_addr+num*4 - m_section->address]);
@@ -189,12 +190,16 @@ void ReverseToolkitFrame::LoadDol(const wxString& path)
 {
 	m_dolDoc.Load(path.c_str().AsChar());
 
+	size_t page = 0;
 	for (std::list<DolSection>::const_iterator it = m_dolDoc.GetSections().begin();
 		it != m_dolDoc.GetSections().end(); ++it)
 	{
-		LineViewWindow* newView = new LineViewWindow(m_notebook, it->title,
-			std::shared_ptr<LineMapLineProvider>(new LineMapLineProvider(this, &m_gekkoMap, &*it)));
+		LineViewWindow* newView = new LineViewWindow(m_notebook, it->title, page);
+		LineMapLineProviderPtr newProvider(new LineMapLineProvider(this, newView, &m_gekkoMap, &*it));
+		newView->SetLineProvider(newProvider);
+		
 		m_notebook->AddPage(newView, newView->GetName());
+		++page;
 	}
 }
 
@@ -222,7 +227,8 @@ void ReverseToolkitFrame::AddLabel(uint32_t addr, const std::string& name)
 			{
 				// Create new GekkoLineMapNode
 				// FIXME: Create new bytes node if we put a label in bytes.
-				std::shared_ptr<GekkoLineMapNode> newLineNode(new GekkoLineMapNode(this, mapNode.Get()->GetSection(), addr));
+				std::shared_ptr<GekkoLineMapNode> newLineNode(new GekkoLineMapNode(this,
+					mapNode.Get()->GetLineViewWindow(), mapNode.Get()->GetSection(), addr));
 				LineMap::ConstNodeRef newLineNodeRef = mapNode.Get()->GetTree()->Insert(lineNum, newLineNode);
 				newLineNode->SetNodeRef(mapNode.Get()->GetTree(), newLineNodeRef);
 				m_gekkoMap.Insert(addr, newLineNode);
@@ -259,4 +265,9 @@ std::string ReverseToolkitFrame::GetLabel(uint32_t addr) const
 		return it->second;
 	else
 		return "UNKNOWN_LABEL";
+}
+
+void ReverseToolkitFrame::OpenLineViewWindow(LineViewWindow* win)
+{
+	m_notebook->SetSelection(win->GetPage());
 }

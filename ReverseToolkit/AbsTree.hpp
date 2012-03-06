@@ -201,10 +201,12 @@ typename AbsTree<T>::ConstNodeRef
 AbsTree<T>::FindFloor(Key k) const
 {
 	if (!m_root)
-		return ConstNodeRef(NULL);
+	{
+		return ConstNodeRef(0);
+	}
 	else
 	{
-		const Node* result = FindFloorVisit(NULL, m_root, k);
+		const Node* result = FindFloorVisit(0, m_root, k);
 		return ConstNodeRef(result);
 	}
 }
@@ -216,7 +218,7 @@ AbsTree<T>::FindFloorVisit(const Node* parent, const Node* node, Key k) const
 	if (k < node->key)
 	{
 		if (!node->link[0])
-			return NULL;
+			return 0;
 		else
 			return FindFloorVisit(node, node->link[0], k);
 	}

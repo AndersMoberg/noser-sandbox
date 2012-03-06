@@ -29,10 +29,14 @@ class GekkoLineMapNode;
 typedef AbsTree<std::shared_ptr<GekkoLineMapNode> > GekkoAddressMap;
 struct DolSection;
 
+class LineMapLineProvider;
+typedef std::shared_ptr<LineMapLineProvider> LineMapLineProviderPtr;
+
 class LineMapLineProvider : public LineProvider
 {
 public:
-	LineMapLineProvider(ReverseToolkitFrame* frame, GekkoAddressMap* gekkoMap, const DolSection* section);
+	LineMapLineProvider(ReverseToolkitFrame* frame,
+		LineViewWindow* lineViewWindow, GekkoAddressMap* gekkoMap, const DolSection* section);
 	bool GetLine(std::string& line, LineNum num) const;
 	void OnKey(LineNum num, wxKeyEvent& event);
 private:
