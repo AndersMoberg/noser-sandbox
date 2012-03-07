@@ -76,6 +76,8 @@ public:
 
 	void OpenLineViewWindow(LineViewWindow* win);
 	void GoToAddress(uint32_t addr);
+	void EnterXRef(uint32_t prevAddr, uint32_t addr);
+	void BackXRef();
 
 private:
 
@@ -83,6 +85,9 @@ private:
 	DolDocument m_dolDoc;
 	GekkoAddressMap m_gekkoMap;
 	LabelMap m_labelMap;
+
+	typedef std::list<uint32_t> XRefStack;
+	XRefStack m_xrefStack;
 
 };
 

@@ -154,6 +154,7 @@ void LineMapLineProvider::OnKey(LineNum num, wxKeyEvent& event)
 		}
 		break;
 	case WXK_RETURN:
+		{
 		// Go to cross-reference
 		LineMap::KeyConstNodeRefPair block = m_lineMap.FindFloor(num);
 		if (block.second.IsValid())
@@ -161,9 +162,15 @@ void LineMapLineProvider::OnKey(LineNum num, wxKeyEvent& event)
 			uint32_t addr;
 			if (block.second.Get()->GetSubLineXRef(addr, num - block.first))
 			{
-				m_frame->GoToAddress(addr);
+				uint32_t prevAddr = block.second.Get()->GetAddrAtLine(num - block.first);
+				m_frame->EnterXRef(prevAddr, addr);
 			}
 		}
+		break;
+		}
+	case WXK_ESCAPE:
+		// Go back to previous location after entering cross-reference
+		m_frame->BackXRef();
 		break;
 	}
 }

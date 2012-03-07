@@ -316,3 +316,19 @@ void ReverseToolkitFrame::GoToAddress(uint32_t addr)
 		}
 	}
 }
+
+void ReverseToolkitFrame::EnterXRef(uint32_t prevAddr, uint32_t addr)
+{
+	m_xrefStack.push_back(prevAddr);
+	GoToAddress(addr);
+}
+
+void ReverseToolkitFrame::BackXRef()
+{
+	if (!m_xrefStack.empty())
+	{
+		uint32_t addr = m_xrefStack.back();
+		m_xrefStack.pop_back();
+		GoToAddress(addr);
+	}
+}
