@@ -14,6 +14,9 @@
 
 class wxNotebook;
 
+class GekkoLineMapNode;
+typedef std::shared_ptr<GekkoLineMapNode> GekkoLineMapNodePtr;
+
 class GekkoLineMapNode : public LineMapNode
 {
 public:
@@ -55,9 +58,8 @@ private:
 	uint32_t m_addr;
 };
 
-typedef AbsTree<std::shared_ptr<GekkoLineMapNode> > GekkoAddressMap;
+typedef AbsTree<GekkoLineMapNodePtr> GekkoAddressMap;
 typedef std::map<uint32_t, std::string> LabelMap;
-//typedef AbsTree<std::string> LabelMap;
 
 class ReverseToolkitFrame : public wxFrame
 {
@@ -73,6 +75,7 @@ public:
 	const GekkoAddressMap& GetGekkoMap() const { return m_gekkoMap; }
 
 	void OpenLineViewWindow(LineViewWindow* win);
+	void GoToAddress(uint32_t addr);
 
 private:
 

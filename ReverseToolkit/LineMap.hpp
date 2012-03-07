@@ -31,7 +31,8 @@ typedef RelTree<LineMapNodePtr> LineMap;
 
 class ReverseToolkitFrame;
 class GekkoLineMapNode;
-typedef AbsTree<std::shared_ptr<GekkoLineMapNode> > GekkoAddressMap;
+typedef std::shared_ptr<GekkoLineMapNode> GekkoLineMapNodePtr;
+typedef AbsTree<GekkoLineMapNodePtr> GekkoAddressMap;
 struct DolSection;
 
 class LineMapLineProvider;
@@ -44,8 +45,6 @@ public:
 		LineViewWindow* lineViewWindow, GekkoAddressMap* gekkoMap, const DolSection* section);
 	bool GetLine(std::string& line, LineNum num) const;
 	void OnKey(LineNum num, wxKeyEvent& event);
-
-	void GoToAddress(uint32_t addr);
 private:
 	ReverseToolkitFrame* m_frame;
 	const DolSection* m_section;

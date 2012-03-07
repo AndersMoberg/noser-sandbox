@@ -294,3 +294,25 @@ void ReverseToolkitFrame::OpenLineViewWindow(LineViewWindow* win)
 {
 	m_notebook->SetSelection(win->GetPage());
 }
+
+void ReverseToolkitFrame::GoToAddress(uint32_t addr)
+{
+	// XXX: Note that this often doesn't go to the expected line because new
+	// labels may be created when the new lines come into view.
+
+	// Find the GekkoLineMapNode containing addr
+	GekkoAddressMap::ConstNodeRef mapNode = m_gekkoMap.FindFloor(addr);
+	if (mapNode.IsValid())
+	{
+		// Scroll to correct line number and open its window in the frame
+		LineMap::ConstNodeRef lineNode = mapNode.Get()->GetNodeRef();
+		LineMap::Key lineNodeKey = lineNode.GetKey();
+		LineNum lineNum = lineNodeKey + mapNode.Get()->GetLineAtAddr(addr);
+		if (lineNum >= 0)
+		{
+			LineViewWindow* lineViewWin = mapNode.Get()->GetLineViewWindow();
+			lineViewWin->SetSelectedLine(lineNum);
+			OpenLineViewWindow(lineViewWin);
+		}
+	}
+}
