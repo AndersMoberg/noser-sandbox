@@ -136,8 +136,17 @@ HRESULT Rayman3XInput_DirectInputDevice8A::GetProperty(REFGUID rguidProp, LPDIPR
 		}
 
 		LPDIPROPRANGE prop = (LPDIPROPRANGE)pdiph;
-		it->second->GetRange(prop);
-		return DI_OK;
+		if (it->second->IsPresent())
+		{
+			it->second->GetRange(prop);
+			return DI_OK;
+		}
+		else
+		{
+			prop->lMin = 0;
+			prop->lMax = 0;
+			return DIERR_OBJECTNOTFOUND;
+		}
 	}
 	else
 	{
@@ -458,6 +467,7 @@ void Rayman3XInput_DirectInputDevice8A::ResetControls()
 
 	class ThumbLXControl : public Control
 	{
+		virtual bool IsPresent() { return true; }
 		virtual GUID GetGUID() {
 			return GUID_XAxis;
 		}
@@ -469,12 +479,13 @@ void Rayman3XInput_DirectInputDevice8A::ResetControls()
 			prop->lMax = 32767;
 		}
 		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
-			*(DWORD*)dst = state.Gamepad.sThumbLX;
+			*(LONG*)dst = state.Gamepad.sThumbLX;
 		}
 	};
 
 	class ThumbLYControl : public Control
 	{
+		virtual bool IsPresent() { return true; }
 		virtual GUID GetGUID() {
 			return GUID_YAxis;
 		}
@@ -487,12 +498,13 @@ void Rayman3XInput_DirectInputDevice8A::ResetControls()
 		}
 		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
 			// Axis is inverted from what DirectInput expects
-			*(DWORD*)dst = -state.Gamepad.sThumbLY;
+			*(LONG*)dst = -state.Gamepad.sThumbLY;
 		}
 	};
 
 	class ThumbRXControl : public Control
 	{
+		virtual bool IsPresent() { return true; }
 		virtual GUID GetGUID() {
 			return GUID_RxAxis;
 		}
@@ -504,12 +516,13 @@ void Rayman3XInput_DirectInputDevice8A::ResetControls()
 			prop->lMax = 32767;
 		}
 		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
-			*(DWORD*)dst = state.Gamepad.sThumbRX;
+			*(LONG*)dst = state.Gamepad.sThumbRX;
 		}
 	};
 
 	class ThumbRYControl : public Control
 	{
+		virtual bool IsPresent() { return true; }
 		virtual GUID GetGUID() {
 			return GUID_RyAxis;
 		}
@@ -522,13 +535,14 @@ void Rayman3XInput_DirectInputDevice8A::ResetControls()
 		}
 		virtual void GetState(LPVOID dst, const XINPUT_STATE& state) {
 			// Axis is inverted from what DirectInput expects
-			*(DWORD*)dst = -state.Gamepad.sThumbRY;
+			*(LONG*)dst = -state.Gamepad.sThumbRY;
 		}
 	};
 
 	class ButtonControl : public Control
 	{
 	public:
+		virtual bool IsPresent() { return true; }
 		ButtonControl(WORD buttonMask)
 			: m_buttonMask(buttonMask)
 		{ }
@@ -551,6 +565,7 @@ void Rayman3XInput_DirectInputDevice8A::ResetControls()
 
 	class LTriggerControl : public Control
 	{
+		virtual bool IsPresent() { return true; }
 		virtual GUID GetGUID() {
 			return GUID_Button;
 		}
@@ -568,6 +583,7 @@ void Rayman3XInput_DirectInputDevice8A::ResetControls()
 
 	class RTriggerControl : public Control
 	{
+		virtual bool IsPresent() { return true; }
 		virtual GUID GetGUID() {
 			return GUID_Button;
 		}
@@ -617,6 +633,7 @@ void Rayman3XInput_DirectInputDevice8A::AssignZeroControl(DWORD offset, DWORD dw
 	class ZeroAxisControl : public Control
 	{
 	public:
+		virtual bool IsPresent() { return false; }
 		virtual GUID GetGUID() {
 			return GUID_ZAxis;
 		}
@@ -635,6 +652,7 @@ void Rayman3XInput_DirectInputDevice8A::AssignZeroControl(DWORD offset, DWORD dw
 	class ZeroButtonControl : public Control
 	{
 	public:
+		virtual bool IsPresent() { return false; }
 		virtual GUID GetGUID() {
 			return GUID_Button;
 		}
@@ -653,6 +671,7 @@ void Rayman3XInput_DirectInputDevice8A::AssignZeroControl(DWORD offset, DWORD dw
 	class ZeroPovControl : public Control
 	{
 	public:
+		virtual bool IsPresent() { return false; }
 		virtual GUID GetGUID() {
 			return GUID_POV;
 		}

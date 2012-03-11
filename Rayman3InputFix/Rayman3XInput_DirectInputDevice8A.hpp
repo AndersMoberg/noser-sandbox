@@ -71,6 +71,7 @@ private:
 	{
 	public:
 		virtual ~Control() { }
+		virtual bool IsPresent() = 0;
 		virtual GUID GetGUID() = 0;
 		virtual bool IsTypeCompatible(DWORD dwType) = 0;
 		virtual void GetRange(LPDIPROPRANGE prop) = 0;

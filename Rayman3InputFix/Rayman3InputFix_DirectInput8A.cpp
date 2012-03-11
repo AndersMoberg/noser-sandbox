@@ -385,63 +385,60 @@ HRESULT Rayman3InputFix_DirectInput8A::EnumDevices(DWORD dwDevType, LPDIENUMDEVI
 
 	DeviceInstanceList sortedDevices;
 
-	// First, add XInput gamepads
-	for (int i = 0; i < 4; ++i)
+	if (dwDevType == DI8DEVCLASS_ALL || dwDevType == DI8DEVCLASS_GAMECTRL)
 	{
-		XINPUT_CAPABILITIES caps;
-		bool attached = XInputGetCapabilities(i, XINPUT_FLAG_GAMEPAD, &caps) == ERROR_SUCCESS;
-		if (attached)
+		// First, add XInput gamepads
+		for (int i = 0; i < 4; ++i)
 		{
-			DIDEVICEINSTANCEA didi = { 0 };
-			didi.dwSize = sizeof(DIDEVICEINSTANCEA);
-			didi.guidInstance = *RAYMAN3_XINPUT_INSTANCE_GUIDS[i];
-			didi.guidProduct = GUID_RAYMAN3_XINPUT_PRODUCT;
-			didi.dwDevType = DI8DEVTYPE_GAMEPAD | (DI8DEVTYPEGAMEPAD_STANDARD << 8);
-			strcpy_s(didi.tszInstanceName, RAYMAN3_XINPUT_INSTANCE_NAMES[i]);
-			strcpy_s(didi.tszProductName, RAYMAN3_XINPUT_PRODUCT_NAME);
-			sortedDevices.push_back(didi);
+			XINPUT_CAPABILITIES caps;
+			bool attached = XInputGetCapabilities(i, XINPUT_FLAG_GAMEPAD, &caps) == ERROR_SUCCESS;
+			if (attached)
+			{
+				DIDEVICEINSTANCEA didi = { 0 };
+				didi.dwSize = sizeof(DIDEVICEINSTANCEA);
+				didi.guidInstance = *RAYMAN3_XINPUT_INSTANCE_GUIDS[i];
+				didi.guidProduct = GUID_RAYMAN3_XINPUT_PRODUCT;
+				didi.dwDevType = DI8DEVTYPE_GAMEPAD | (DI8DEVTYPEGAMEPAD_STANDARD << 8);
+				strcpy_s(didi.tszInstanceName, RAYMAN3_XINPUT_INSTANCE_NAMES[i]);
+				strcpy_s(didi.tszProductName, RAYMAN3_XINPUT_PRODUCT_NAME);
+				sortedDevices.push_back(didi);
+			}
 		}
-	}
 
-	// Add all devices in gameDevices
-	for (DeviceInstanceList::const_iterator it = gameDevices.devices.begin();
-		it != gameDevices.devices.end(); ++it)
-	{
-		sortedDevices.push_back(*it);
-	}
-
-	// Then, add all devices in allDevices that aren't in gameDevices
-	for (DeviceInstanceList::const_iterator it = allDevices.devices.begin();
-		it != allDevices.devices.end(); ++it)
-	{
-		if (!gameDevices.Contains(it->guidInstance)) {
+		// Add all devices in gameDevices
+		for (DeviceInstanceList::const_iterator it = gameDevices.devices.begin();
+			it != gameDevices.devices.end(); ++it)
+		{
 			sortedDevices.push_back(*it);
 		}
 	}
 
 	if (dwDevType == DI8DEVCLASS_ALL)
 	{
-		for (DeviceInstanceList::const_iterator it = sortedDevices.begin();
-			it != sortedDevices.end(); ++it)
+		// Then, add all devices in allDevices that aren't in gameDevices
+		for (DeviceInstanceList::const_iterator it = allDevices.devices.begin();
+			it != allDevices.devices.end(); ++it)
 		{
-			OutputDebugStringA("Enumerating Product: ");
-			OutputDebugStringA(it->tszProductName);
-			OutputDebugStringA(" Instance: ");
-			OutputDebugStringA(it->tszInstanceName);
-			OutputDebugStringA("\n");
-			if (lpCallback(&*it, pvRef) == DIENUM_STOP) {
-				break;
+			if (!gameDevices.Contains(it->guidInstance)) {
+				sortedDevices.push_back(*it);
 			}
 		}
+	}
 
-		return DI_OK;
-	}
-	else
+	for (DeviceInstanceList::const_iterator it = sortedDevices.begin();
+		it != sortedDevices.end(); ++it)
 	{
-		// Rayman 3 never does this
-		OutputDebugStringA("EnumDevices called with dwDevType != DI8DEVCLASS_ALL!\n");
-		return DIERR_INVALIDPARAM;
+		OutputDebugStringA("Enumerating Product: ");
+		OutputDebugStringA(it->tszProductName);
+		OutputDebugStringA(" Instance: ");
+		OutputDebugStringA(it->tszInstanceName);
+		OutputDebugStringA("\n");
+		if (lpCallback(&*it, pvRef) == DIENUM_STOP) {
+			break;
+		}
 	}
+
+	return DI_OK;
 }
 
 HRESULT Rayman3InputFix_DirectInput8A::GetDeviceStatus(REFGUID rguidInstance)

@@ -117,10 +117,6 @@ HRESULT Rayman3Vibration_DirectInputEffect::SetParameters(THIS_ LPCDIEFFECT,DWOR
 	return E_NOTIMPL;
 }
 
-static inline float Lerp(float x0, float x1, float y0, float y1, float x) {
-	return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
-}
-
 HRESULT Rayman3Vibration_DirectInputEffect::Start(DWORD dwIterations, DWORD dwFlags)
 {
 	Debug("R3V: Start called\n");
