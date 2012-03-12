@@ -223,9 +223,13 @@ void MainWindow::CreateDeviceResources()
 
 		D2D1_SIZE_U size = D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top);
 
+		D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties();
+		// Override DPI because we don't want DPI scaling on our graphics.
+		rtProps.dpiX = 96.0f;
+		rtProps.dpiY = 96.0f;
+
 		CHECK_HR(m_pD2DFactory->CreateHwndRenderTarget(
-			D2D1::RenderTargetProperties(),
-			D2D1::HwndRenderTargetProperties(m_hWnd, size),
+			rtProps, D2D1::HwndRenderTargetProperties(m_hWnd, size),
 			&m_pD2DTarget));
 	}
 
