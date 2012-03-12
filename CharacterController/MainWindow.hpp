@@ -12,6 +12,7 @@
 
 #include <memory>
 
+#include "D2DManager.hpp"
 #include "Game.hpp"
 #include "GLES2Manager.hpp"
 
@@ -55,9 +56,7 @@ private:
 	HWND m_hWnd;
 
 	GLES2ManagerPtr m_gles2Manager;
-
-	ID2D1Factory* m_pD2DFactory;
-	ID2D1HwndRenderTarget* m_pD2DTarget;
+	D2DManagerPtr m_d2dManager;
 
 	GamePtr m_game;
 

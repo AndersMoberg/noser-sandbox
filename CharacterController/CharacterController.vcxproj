@@ -90,6 +90,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="ButtonGroup.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="D2DManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameRenderTarget.cpp" />
     <ClCompile Include="Geometry.cpp" />
@@ -104,6 +105,7 @@
     <ClInclude Include="Button.hpp" />
     <ClInclude Include="ButtonGroup.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="D2DManager.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameRenderTarget.hpp" />
     <ClInclude Include="Geometry.hpp" />

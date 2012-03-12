@@ -42,6 +42,9 @@
     <ClCompile Include="GLES2Manager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="D2DManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -78,6 +81,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="GLES2Manager.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DManager.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

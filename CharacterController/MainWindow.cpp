@@ -16,8 +16,6 @@ static const LPCTSTR MAINWINDOW_CLASS_NAME =
 MainWindow::MainWindow()
 	: m_exceptionThrown(false),
 	m_hWnd(NULL),
-	m_pD2DFactory(NULL),
-	m_pD2DTarget(NULL),
 	m_leftToRightKeys(0),
 	m_downToUpKeys(0),
 	m_spaceTrigger(false)
@@ -28,9 +26,6 @@ MainWindow::~MainWindow()
 	if (m_hWnd != NULL) {
 		DestroyWindow(m_hWnd);
 	}
-
-	DestroyDeviceResources();
-	SafeRelease(m_pD2DFactory);
 }
 
 MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd, GamePtr game)
@@ -38,8 +33,6 @@ MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd, GamePtr game
 	MainWindowPtr p(new MainWindow);
 
 	p->m_game = game;
-
-	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &p->m_pD2DFactory));
 
 	WNDCLASS wc = { 0 };
 	wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -141,6 +134,7 @@ LRESULT MainWindow::OnWMCreate(HWND hwnd)
 	m_hWnd = hwnd;
 
 	m_gles2Manager = GLES2Manager::Create(m_hWnd);
+	m_d2dManager = D2DManager::Create(m_hWnd);
 
 	CreateDeviceResources();
 
@@ -151,6 +145,7 @@ LRESULT MainWindow::OnWMDestroy()
 {
 	DestroyDeviceResources();
 
+	m_d2dManager.reset();
 	m_gles2Manager.reset();
 
 	PostQuitMessage(EXIT_SUCCESS);
@@ -161,11 +156,8 @@ LRESULT MainWindow::OnWMDestroy()
 
 LRESULT MainWindow::OnWMSize(LPARAM lParam)
 {
-	if (m_pD2DTarget)
-	{
-		D2D1_SIZE_U size = D2D1::SizeU(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		m_pD2DTarget->Resize(size);
-	}
+	D2D1_SIZE_U size = D2D1::SizeU(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	m_d2dManager->Resize(size);
 
 	return 0;
 }
@@ -228,30 +220,14 @@ LRESULT MainWindow::OnWMKeyUp(WPARAM wParam)
 
 void MainWindow::CreateDeviceResources()
 {
-	if (!m_pD2DTarget)
-	{
-		RECT rc;
-		GetClientRect(m_hWnd, &rc);
-
-		D2D1_SIZE_U size = D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top);
-
-		D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties();
-		// Override DPI because we don't want DPI scaling on our graphics.
-		rtProps.dpiX = 96.0f;
-		rtProps.dpiY = 96.0f;
-
-		CHECK_HR(m_pD2DFactory->CreateHwndRenderTarget(
-			rtProps, D2D1::HwndRenderTargetProperties(m_hWnd, size),
-			&m_pD2DTarget));
-	}
-
-	m_game->SetD2DTarget(m_pD2DTarget);
+	m_d2dManager->CreateDeviceResources();
+	m_game->SetD2DTarget(m_d2dManager->GetD2DTarget());
 }
 
 void MainWindow::DestroyDeviceResources()
 {
 	m_game->ReleaseD2DTarget();
-	SafeRelease(m_pD2DTarget);
+	m_d2dManager->DestroyDeviceResources();
 }
 
 static const float SQRT_1_OVER_2 = 0.70710677f;
@@ -290,11 +266,12 @@ void MainWindow::Render()
 {
 	CreateDeviceResources();
 
-	m_pD2DTarget->BeginDraw();
+	ID2D1RenderTarget* d2dTarget = m_d2dManager->GetD2DTarget();
+	d2dTarget->BeginDraw();
 
 	m_game->Render();
 
-	HRESULT hr = m_pD2DTarget->EndDraw();
+	HRESULT hr = d2dTarget->EndDraw();
 	if (hr == D2DERR_RECREATE_TARGET)
 	{
 		// Target will be recreated on the next call to Render
