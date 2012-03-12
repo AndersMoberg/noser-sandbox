@@ -129,70 +129,76 @@ public:
 		IUnknown* clientDrawingEffect)
 	{
 		HRESULT hr = S_OK;
-
-		ID2D1Factory* d2dFactory = NULL;
-		m_d2dTarget->GetFactory(&d2dFactory);
-
-		ID2D1PathGeometry* geom = NULL;
-		hr = d2dFactory->CreatePathGeometry(&geom);
-		if (FAILED(hr)) {
-			return hr;
-		}
-
-		ID2D1GeometrySink* sink = NULL;
-		hr = geom->Open(&sink);
-		if (FAILED(hr)) {
-			SafeRelease(geom);
-			return hr;
-		}
-
-		hr = glyphRun->fontFace->GetGlyphRunOutline(
-			glyphRun->fontEmSize,
-			glyphRun->glyphIndices,
-			glyphRun->glyphAdvances,
-			glyphRun->glyphOffsets,
-			glyphRun->glyphCount,
-			glyphRun->isSideways,
-			glyphRun->bidiLevel % 2,
-			sink);
-		if (FAILED(hr)) {
-			SafeRelease(sink);
-			SafeRelease(geom);
-			return hr;
-		}
-
-		hr = sink->Close();
-		if (FAILED(hr)) {
-			SafeRelease(sink);
-			SafeRelease(geom);
-			return hr;
-		}
-
-		SafeRelease(sink);
-
-		D2D1::Matrix3x2F matrix = D2D1::Matrix3x2F::Translation(
-			baselineOriginX, baselineOriginY);
-
-		ID2D1TransformedGeometry* transGeom = NULL;
-		hr = d2dFactory->CreateTransformedGeometry(geom, matrix, &transGeom);
-		if (FAILED(hr)) {
-			SafeRelease(geom);
-			return hr;
-		}
-
-		SafeRelease(geom);
-
-		if (m_fillBrush)
+		
+		// XXX: Specifying a client drawing effect causes this to not draw.
+		// Text ranges with a null drawing effect will draw.
+		// This is used to implement the revealing text object!
+		if (clientDrawingEffect == NULL)
 		{
-			m_d2dTarget->FillGeometry(transGeom, m_fillBrush);
-		}
+			ID2D1Factory* d2dFactory = NULL;
+			m_d2dTarget->GetFactory(&d2dFactory);
 
-		if (m_strokeBrush)
-		{
-			m_d2dTarget->DrawGeometry(transGeom, m_strokeBrush, m_strokeWidth);
-		}
+			ID2D1PathGeometry* geom = NULL;
+			hr = d2dFactory->CreatePathGeometry(&geom);
+			if (FAILED(hr)) {
+				return hr;
+			}
 
-		SafeRelease(transGeom);
+			ID2D1GeometrySink* sink = NULL;
+			hr = geom->Open(&sink);
+			if (FAILED(hr)) {
+				SafeRelease(geom);
+				return hr;
+			}
+
+			hr = glyphRun->fontFace->GetGlyphRunOutline(
+				glyphRun->fontEmSize,
+				glyphRun->glyphIndices,
+				glyphRun->glyphAdvances,
+				glyphRun->glyphOffsets,
+				glyphRun->glyphCount,
+				glyphRun->isSideways,
+				glyphRun->bidiLevel % 2,
+				sink);
+			if (FAILED(hr)) {
+				SafeRelease(sink);
+				SafeRelease(geom);
+				return hr;
+			}
+
+			hr = sink->Close();
+			if (FAILED(hr)) {
+				SafeRelease(sink);
+				SafeRelease(geom);
+				return hr;
+			}
+
+			SafeRelease(sink);
+
+			D2D1::Matrix3x2F matrix = D2D1::Matrix3x2F::Translation(
+				baselineOriginX, baselineOriginY);
+
+			ID2D1TransformedGeometry* transGeom = NULL;
+			hr = d2dFactory->CreateTransformedGeometry(geom, matrix, &transGeom);
+			if (FAILED(hr)) {
+				SafeRelease(geom);
+				return hr;
+			}
+
+			SafeRelease(geom);
+
+			if (m_fillBrush)
+			{
+				m_d2dTarget->FillGeometry(transGeom, m_fillBrush);
+			}
+
+			if (m_strokeBrush)
+			{
+				m_d2dTarget->DrawGeometry(transGeom, m_strokeBrush, m_strokeWidth);
+			}
+
+			SafeRelease(transGeom);
+		}
 
 		return hr;
 	}
