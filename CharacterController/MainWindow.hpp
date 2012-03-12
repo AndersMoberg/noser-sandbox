@@ -10,11 +10,10 @@
 #include <Windows.h>
 #include <d2d1.h>
 
-#include <EGL/egl.h>
-
 #include <memory>
 
 #include "Game.hpp"
+#include "GLES2Manager.hpp"
 
 class MainWindow;
 typedef std::shared_ptr<MainWindow> MainWindowPtr;
@@ -55,9 +54,7 @@ private:
 
 	HWND m_hWnd;
 
-	EGLDisplay m_eglDisplay;
-	EGLSurface m_eglSurface;
-	EGLContext m_eglContext;
+	GLES2ManagerPtr m_gles2Manager;
 
 	ID2D1Factory* m_pD2DFactory;
 	ID2D1HwndRenderTarget* m_pD2DTarget;
