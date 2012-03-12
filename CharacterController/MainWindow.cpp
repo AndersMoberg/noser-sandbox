@@ -6,6 +6,8 @@
 
 #include <WindowsX.h>
 
+#include <GLES2/gl2.h>
+
 #include "WindowsUtils.hpp"
 
 static const LPCTSTR MAINWINDOW_CLASS_NAME =
@@ -14,6 +16,7 @@ static const LPCTSTR MAINWINDOW_CLASS_NAME =
 MainWindow::MainWindow()
 	: m_exceptionThrown(false),
 	m_hWnd(NULL),
+	m_eglDisplay(0),
 	m_pD2DFactory(NULL),
 	m_pD2DTarget(NULL),
 	m_leftToRightKeys(0),
@@ -138,6 +141,46 @@ LRESULT MainWindow::OnWMCreate(HWND hwnd)
 {
 	m_hWnd = hwnd;
 
+	m_eglDisplay = eglGetDisplay(GetDC(m_hWnd));
+	if (m_eglDisplay == EGL_NO_DISPLAY) {
+		throw std::exception("Failed to get display for EGL");
+	}
+
+	if (eglInitialize(m_eglDisplay, NULL, NULL) != EGL_TRUE) {
+		throw std::exception("Failed to initialize EGL");
+	}
+
+	EGLint numConfigs;
+	if (eglGetConfigs(m_eglDisplay, NULL, 0, &numConfigs) != EGL_TRUE) {
+		throw std::exception("Failed to get number of EGL configurations");
+	}
+
+	static const EGLint chooseConfigAttribs[] = {
+		EGL_NONE
+	};
+	EGLConfig eglConfig;
+	if (eglChooseConfig(m_eglDisplay, chooseConfigAttribs, &eglConfig, 1, &numConfigs) != EGL_TRUE) {
+		throw std::exception("Failed to choose an EGL configuration");
+	}
+
+	m_eglSurface = eglCreateWindowSurface(m_eglDisplay, eglConfig, m_hWnd, NULL);
+	if (m_eglSurface == EGL_NO_SURFACE) {
+		throw std::exception("Failed to create EGL window surface");
+	}
+
+	static const EGLint createContextAttribs[] = {
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+	};
+	m_eglContext = eglCreateContext(m_eglDisplay, eglConfig, EGL_NO_CONTEXT, createContextAttribs);
+	if (m_eglContext == EGL_NO_CONTEXT) {
+		throw std::exception("Failed to create EGL context");
+	}
+
+	if (eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext) != EGL_TRUE) {
+		throw std::exception("Failed to make EGL context current");
+	}
+
 	CreateDeviceResources();
 
 	return 0;
@@ -146,6 +189,8 @@ LRESULT MainWindow::OnWMCreate(HWND hwnd)
 LRESULT MainWindow::OnWMDestroy()
 {
 	DestroyDeviceResources();
+
+	eglTerminate(m_eglDisplay);
 
 	PostQuitMessage(EXIT_SUCCESS);
 
@@ -167,6 +212,12 @@ LRESULT MainWindow::OnWMSize(LPARAM lParam)
 LRESULT MainWindow::OnWMPaint()
 {
 	Render();
+
+	//glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	//glClear(GL_COLOR_BUFFER_BIT);
+
+	//eglSwapBuffers(m_eglDisplay, m_eglSurface);
+
 	ValidateRect(m_hWnd, NULL);
 	return 0;
 }

@@ -10,6 +10,8 @@
 #include <Windows.h>
 #include <d2d1.h>
 
+#include <EGL/egl.h>
+
 #include <memory>
 
 #include "Game.hpp"
@@ -52,6 +54,10 @@ private:
 	std::exception m_exceptionProxy;
 
 	HWND m_hWnd;
+
+	EGLDisplay m_eglDisplay;
+	EGLSurface m_eglSurface;
+	EGLContext m_eglContext;
 
 	ID2D1Factory* m_pD2DFactory;
 	ID2D1HwndRenderTarget* m_pD2DTarget;
