@@ -30,22 +30,11 @@ int Application::MessageLoop()
 {
 	MSG msg;
 
-	for (;;)
+	while (GetMessage(&msg, NULL, 0, 0))
 	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT) {
-				break;
-			}
-
-			DispatchMessage(&msg);
-			if (m_window->ExceptionThrown()) {
-				throw m_window->GetExceptionProxy();
-			}
-		}
-		else
-		{
-			m_window->Update();
+		DispatchMessage(&msg);
+		if (m_window->ExceptionThrown()) {
+			throw m_window->GetExceptionProxy();
 		}
 	}
 

@@ -164,6 +164,9 @@ LRESULT MainWindow::OnWMSize(LPARAM lParam)
 
 LRESULT MainWindow::OnWMPaint()
 {
+	// FIXME: This is not the right place to call update
+	Update();
+
 	Render();
 
 	RECT clientRc;
@@ -189,7 +192,9 @@ LRESULT MainWindow::OnWMPaint()
 
 	m_gles2Manager->Present();
 
-	ValidateRect(m_hWnd, NULL);
+	// Cause animation
+	InvalidateRect(m_hWnd, NULL, FALSE);
+
 	return 0;
 }
 
