@@ -10,10 +10,96 @@ GLES2Manager::GLES2Manager()
 	m_eglContext(0)
 { }
 
+GLES2Manager::TexturedQuadProgram::TexturedQuadProgram()
+	: program(0)
+{ }
+
 GLES2Manager::~GLES2Manager()
 {
+	glDeleteProgram(m_texturedQuadProgram.program);
+	m_texturedQuadProgram.program = 0;
+
+	eglDestroyContext(m_eglDisplay, m_eglContext);
+	m_eglContext = 0;
+
+	eglDestroySurface(m_eglDisplay, m_eglSurface);
+	m_eglSurface = 0;
+
 	eglTerminate(m_eglDisplay);
 	m_eglDisplay = 0;
+}
+
+static GLuint LoadGLSLShader(GLenum type, const char* src)
+{
+	GLuint shader = glCreateShader(type);
+
+	glShaderSource(shader, 1, &src, NULL);
+	glCompileShader(shader);
+	
+	GLint len = 0;
+	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
+	if (len > 1)
+	{
+		char* log = new char[len];
+
+		glGetShaderInfoLog(shader, len, NULL, log);
+		OutputDebugStringA("Shader info log:\n");
+		OutputDebugStringA(log);
+
+		delete[] log;
+	}
+
+	GLint compiled = 0;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+	if (!compiled)
+	{
+		glDeleteShader(shader);
+		shader = 0;
+		throw std::exception("Failed to compile GLSL shader");
+	}
+
+	return shader;
+}
+
+static GLuint LoadGLSLProgram(const char* vShaderSrc, const char* fShaderSrc)
+{
+	GLuint vShader = LoadGLSLShader(GL_VERTEX_SHADER, vShaderSrc);
+	GLuint fShader = LoadGLSLShader(GL_FRAGMENT_SHADER, fShaderSrc);
+
+	GLuint program = glCreateProgram();
+
+	glAttachShader(program, vShader);
+	glAttachShader(program, fShader);
+
+	glLinkProgram(program);
+
+	// Delete shaders; they are no longer needed
+	glDeleteShader(fShader);
+	glDeleteShader(vShader);
+
+	GLint len = 0;
+	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &len);
+	if (len > 1)
+	{
+		char* log = new char[len];
+
+		glGetProgramInfoLog(program, len, NULL, log);
+		OutputDebugStringA("Program info log:\n");
+		OutputDebugStringA(log);
+
+		delete[] log;
+	}
+
+	GLint linked = 0;
+	glGetProgramiv(program, GL_LINK_STATUS, &linked);
+	if (!linked)
+	{
+		glDeleteProgram(program);
+		program = 0;
+		throw std::exception("Failed to link GLSL program");
+	}
+
+	return program;
 }
 
 GLES2ManagerPtr GLES2Manager::Create(HWND hWnd)
@@ -60,7 +146,57 @@ GLES2ManagerPtr GLES2Manager::Create(HWND hWnd)
 		throw std::exception("Failed to make EGL context current");
 	}
 
+	static const char TEXTURED_QUAD_VERTEX_SHADER[] =
+		"attribute vec2 a_pos;\n"
+		"attribute vec2 a_tex;\n"
+		"varying vec2 v_tex;\n"
+		"void main()\n"
+		"{\n"
+			"gl_Position = vec4(a_pos, 0, 1);\n"
+			"v_tex = a_tex;\n"
+		"}\n"
+		;
+	static const char TEXTURED_QUAD_FRAGMENT_SHADER[] =
+		"precision mediump float;\n"
+		"varying vec2 v_tex;\n"
+		"uniform sampler2D u_sampler;\n"
+		"void main()\n"
+		"{\n"
+			"gl_FragColor = texture2D(u_sampler, v_tex);\n"
+		"}\n"
+		;
+	p->m_texturedQuadProgram.program = LoadGLSLProgram(TEXTURED_QUAD_VERTEX_SHADER,
+		TEXTURED_QUAD_FRAGMENT_SHADER);
+	p->m_texturedQuadProgram.aposLoc = glGetAttribLocation(
+		p->m_texturedQuadProgram.program, "a_pos");
+	p->m_texturedQuadProgram.atexLoc = glGetAttribLocation(
+		p->m_texturedQuadProgram.program, "a_tex");
+	p->m_texturedQuadProgram.usamplerLoc = glGetUniformLocation(
+		p->m_texturedQuadProgram.program, "u_sampler");
+
 	return p;
+}
+
+void GLES2Manager::DrawTexturedQuad(const Rectf& rc)
+{
+	glUseProgram(m_texturedQuadProgram.program);
+
+	GLfloat verts[] = { rc.left, rc.bottom, 0.0f, 1.0f, // Lower left
+		rc.right, rc.bottom, 1.0f, 1.0f, // Lower right
+		rc.left, rc.top, 0.0f, 0.0f, // Upper left
+		rc.right, rc.top, 1.0f, 0.0f }; // Upper right
+
+	glVertexAttribPointer(m_texturedQuadProgram.aposLoc, 2, GL_FLOAT, GL_FALSE,
+		4 * sizeof(GLfloat), &verts[0]);
+	glVertexAttribPointer(m_texturedQuadProgram.atexLoc, 2, GL_FLOAT, GL_FALSE,
+		4 * sizeof(GLfloat), &verts[2]);
+
+	glEnableVertexAttribArray(m_texturedQuadProgram.aposLoc);
+	glEnableVertexAttribArray(m_texturedQuadProgram.atexLoc);
+
+	glUniform1i(m_texturedQuadProgram.usamplerLoc, 0);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
 void GLES2Manager::Present()

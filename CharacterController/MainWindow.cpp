@@ -166,10 +166,28 @@ LRESULT MainWindow::OnWMPaint()
 {
 	Render();
 
-	//glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-	//glClear(GL_COLOR_BUFFER_BIT);
+	RECT clientRc;
+	GetClientRect(m_hWnd, &clientRc);
+	glViewport(0, 0, clientRc.right - clientRc.left, clientRc.bottom - clientRc.top);
 
-	//m_gles2Manager->Present();
+	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	GLuint d2dTexture = m_d2dManager->GetGLTexture();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, d2dTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	// Premultiplied alpha blending
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquation(GL_FUNC_ADD);
+	glEnable(GL_BLEND);
+
+	m_gles2Manager->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+
+	m_gles2Manager->Present();
 
 	ValidateRect(m_hWnd, NULL);
 	return 0;

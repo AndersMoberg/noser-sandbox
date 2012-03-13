@@ -22,6 +22,7 @@ class Application
 
 public:
 
+	~Application();
 	static ApplicationPtr Create(HINSTANCE hInstance, int nShowCmd);
 
 	int MessageLoop();

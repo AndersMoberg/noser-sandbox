@@ -7,7 +7,10 @@
 
 #include <d2d1.h>
 
+#include <GLES2/gl2.h>
+
 #include <memory>
+#include <vector>
 
 class D2DManager;
 typedef std::shared_ptr<D2DManager> D2DManagerPtr;
@@ -24,6 +27,8 @@ public:
 	void DestroyDeviceResources();
 	void Resize(D2D1_SIZE_U size);
 
+	GLuint GetGLTexture();
+
 	ID2D1RenderTarget* GetD2DTarget() { return m_d2dTarget; }
 
 private:
@@ -32,7 +37,10 @@ private:
 
 	HWND m_hWnd;
 	ID2D1Factory* m_d2dFactory;
-	ID2D1HwndRenderTarget* m_d2dTarget;
+	ID2D1RenderTarget* m_d2dTarget;
+	IWICBitmap* m_wicBitmap;
+	std::vector<BYTE> m_imageBuffer;
+	GLuint m_glTexture;
 
 };
 

@@ -4,12 +4,21 @@
 
 #include "Application.hpp"
 
+#include "WindowsUtils.hpp"
+
 Application::Application()
 { }
+
+Application::~Application()
+{
+	CoUninitialize();
+}
 
 ApplicationPtr Application::Create(HINSTANCE hInstance, int nShowCmd)
 {
 	ApplicationPtr p(new Application);
+
+	CHECK_HR(CoInitialize(NULL));
 
 	p->m_game = Game::Create();
 	p->m_window = MainWindow::Create(hInstance, nShowCmd, p->m_game);

@@ -266,7 +266,8 @@ void Game::Render()
 	Rectf vp(0.0f, 0.0f, targetSize.width, targetSize.height);
 	Matrix3x2f worldToViewport = m_camera->GetWorldToViewport(vp);
 
-	d2dTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
+	// Clear to transparent black
+	d2dTarget->Clear();
 
 	ID2D1PathGeometry* geom;
 	factory->CreatePathGeometry(&geom);

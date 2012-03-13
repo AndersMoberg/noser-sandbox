@@ -8,6 +8,9 @@
 #include <memory>
 
 #include <EGL/egl.h>
+#include <GLES2/gl2.h>
+
+#include "Geometry.hpp"
 
 class GLES2Manager;
 typedef std::shared_ptr<GLES2Manager> GLES2ManagerPtr;
@@ -20,6 +23,7 @@ public:
 	~GLES2Manager();
 	static GLES2ManagerPtr Create(HWND hWnd);
 
+	void DrawTexturedQuad(const Rectf& rc);
 	void Present();
 
 private:
@@ -29,6 +33,16 @@ private:
 	EGLDisplay m_eglDisplay;
 	EGLSurface m_eglSurface;
 	EGLContext m_eglContext;
+
+	struct TexturedQuadProgram
+	{
+		TexturedQuadProgram();
+
+		GLuint program;
+		GLuint aposLoc;
+		GLuint atexLoc;
+		GLuint usamplerLoc;
+	} m_texturedQuadProgram;
 
 };
 
