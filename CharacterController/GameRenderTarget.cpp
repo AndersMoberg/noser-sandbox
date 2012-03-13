@@ -10,7 +10,8 @@ GameRenderTarget::GameRenderTarget()
 	: m_pDWriteFactory(NULL),
 	m_pDialogTextFormat(NULL),
 	m_pD2DTarget(NULL),
-	m_pBlackBrush(NULL)
+	m_pBlackBrush(NULL),
+	m_pWhiteBrush(NULL)
 { }
 
 GameRenderTarget::~GameRenderTarget()
@@ -44,12 +45,15 @@ void GameRenderTarget::SetD2DTarget(ID2D1RenderTarget* target)
 
 		CHECK_HR(m_pD2DTarget->CreateSolidColorBrush(
 			D2D1::ColorF(D2D1::ColorF::Black), &m_pBlackBrush));
+		CHECK_HR(m_pD2DTarget->CreateSolidColorBrush(
+			D2D1::ColorF(D2D1::ColorF::White), &m_pWhiteBrush));
 	}
 }
 
 void GameRenderTarget::ReleaseD2DTarget()
 {
 	// Release target-specific resources
+	SafeRelease(m_pWhiteBrush);
 	SafeRelease(m_pBlackBrush);
 	m_pD2DTarget = NULL;
 }
@@ -186,7 +190,7 @@ public:
 			}
 
 			SafeRelease(geom);
-
+			
 			if (m_fillBrush)
 			{
 				m_d2dTarget->FillGeometry(transGeom, m_fillBrush);
@@ -240,9 +244,9 @@ private:
 
 void GameRenderTarget::DrawText(const std::wstring& text,
 	IDWriteTextFormat* textFormat,
+	ID2D1Brush* fillBrush,
 	ID2D1Brush* strokeBrush,
 	float strokeWidth,
-	ID2D1Brush* fillBrush,
 	const Rectf& layoutBox)
 {
 	IDWriteTextLayout* textLayout = NULL;
@@ -260,8 +264,8 @@ void GameRenderTarget::DrawText(const std::wstring& text,
 }
 
 void GameRenderTarget::DrawTextLayout(IDWriteTextLayout* textLayout,
-	ID2D1Brush* strokeBrush, float strokeWidth,
-	ID2D1Brush* fillBrush, const Vector2f& origin)
+	ID2D1Brush* fillBrush, ID2D1Brush* strokeBrush, float strokeWidth,
+	const Vector2f& origin)
 {
 	OutlinedTextRenderer renderer(m_pD2DTarget, strokeBrush, strokeWidth, fillBrush);
 	// XXX: Code assumes that renderer is not saved by textLayout->Draw

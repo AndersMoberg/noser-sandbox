@@ -322,8 +322,8 @@ void Game::Render()
 	{
 		m_renderTarget->DrawText(L"Press Space to talk",
 			m_renderTarget->GetDialogTextFormat(),
-			m_renderTarget->GetBlackBrush(), 0.5f,
-			NULL,
+			m_renderTarget->GetWhiteBrush(),
+			m_renderTarget->GetBlackBrush(), 1.0f,
 			vp);
 	}
 	else if (m_talking)

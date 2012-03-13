@@ -33,17 +33,18 @@ public:
 
 	ID2D1RenderTarget* GetD2DTarget() { return m_pD2DTarget; }
 	ID2D1SolidColorBrush* GetBlackBrush() { return m_pBlackBrush; }
+	ID2D1SolidColorBrush* GetWhiteBrush() { return m_pWhiteBrush; }
 
 	void DrawText(const std::wstring& text,
 		IDWriteTextFormat* textFormat,
+		ID2D1Brush* fillBrush,
 		ID2D1Brush* strokeBrush,
 		float strokeWidth,
-		ID2D1Brush* fillBrush,
 		const Rectf& layoutBox);
 
 	void DrawTextLayout(IDWriteTextLayout* textLayout,
-		ID2D1Brush* strokeBrush, float strokeWidth,
-		ID2D1Brush* fillBrush, const Vector2f& origin);
+		ID2D1Brush* fillBrush, ID2D1Brush* strokeBrush, float strokeWidth,
+		const Vector2f& origin);
 
 private:
 
@@ -56,6 +57,7 @@ private:
 	// Resources dependent on D2D target
 	ID2D1RenderTarget* m_pD2DTarget; // NOT owned
 	ID2D1SolidColorBrush* m_pBlackBrush;
+	ID2D1SolidColorBrush* m_pWhiteBrush;
 
 };
 

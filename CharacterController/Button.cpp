@@ -27,7 +27,7 @@ void Button::Render(GameRenderTargetPtr target)
 	d2dTarget->DrawRectangle(m_rect, target->GetBlackBrush(), m_selected ? 3.0f : 1.0f);
 	target->DrawText(m_label,
 		target->GetDialogTextFormat(),
-		NULL, 0.0f,
 		target->GetBlackBrush(),
+		NULL, 0.0f,
 		m_rect);
 }

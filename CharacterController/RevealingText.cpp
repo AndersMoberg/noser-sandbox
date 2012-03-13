@@ -98,7 +98,8 @@ void RevealingText::Render(GameRenderTargetPtr target)
 	DWRITE_TEXT_RANGE hiddenRange = { m_progress, m_text.size() - m_progress };
 	DoNothingObject* nullDrawingEffect = DoNothingObject::Create();
 	m_textLayout->SetDrawingEffect(nullDrawingEffect, hiddenRange);
-	target->DrawTextLayout(m_textLayout, target->GetBlackBrush(), 0.5f, NULL,
+	target->DrawTextLayout(m_textLayout,
+		target->GetWhiteBrush(), target->GetBlackBrush(), 1.0f,
 		m_layoutBox.UpperLeft());
 	nullDrawingEffect->Release();
 }
