@@ -58,6 +58,8 @@ private:
 	GLES2ManagerPtr m_gles2Manager;
 	D2DManagerPtr m_d2dManager;
 
+	GLuint m_bgTexture;
+
 	GamePtr m_game;
 
 	// User input processing

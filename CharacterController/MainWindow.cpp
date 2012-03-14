@@ -16,6 +16,7 @@ static const LPCTSTR MAINWINDOW_CLASS_NAME =
 MainWindow::MainWindow()
 	: m_exceptionThrown(false),
 	m_hWnd(NULL),
+	m_bgTexture(0),
 	m_leftToRightKeys(0),
 	m_downToUpKeys(0),
 	m_spaceTrigger(false)
@@ -136,6 +137,8 @@ LRESULT MainWindow::OnWMCreate(HWND hwnd)
 	m_gles2Manager = GLES2Manager::Create(m_hWnd);
 	m_d2dManager = D2DManager::Create(m_hWnd);
 
+	m_bgTexture = m_gles2Manager->CreateTextureFromFile(L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
+
 	CreateDeviceResources();
 
 	return 0;
@@ -143,6 +146,9 @@ LRESULT MainWindow::OnWMCreate(HWND hwnd)
 
 LRESULT MainWindow::OnWMDestroy()
 {
+	glDeleteTextures(1, &m_bgTexture);
+	m_bgTexture = 0;
+
 	DestroyDeviceResources();
 
 	m_d2dManager.reset();
@@ -175,7 +181,21 @@ LRESULT MainWindow::OnWMPaint()
 
 	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+	
+	// Draw background image
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_bgTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	// Premultiplied alpha blending
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquation(GL_FUNC_ADD);
+	glEnable(GL_BLEND);
+
+	m_gles2Manager->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+
+	// Draw Direct2D overlay
 	GLuint d2dTexture = m_d2dManager->GetGLTexture();
 
 	glActiveTexture(GL_TEXTURE0);

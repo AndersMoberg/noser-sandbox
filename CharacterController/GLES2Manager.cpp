@@ -4,6 +4,14 @@
 
 #include "GLES2Manager.hpp"
 
+#include <wincodec.h>
+
+#include <GLES2/gl2ext.h>
+
+#include <vector>
+
+#include "WindowsUtils.hpp"
+
 GLES2Manager::GLES2Manager()
 	: m_eglDisplay(0),
 	m_eglSurface(0),
@@ -175,6 +183,53 @@ GLES2ManagerPtr GLES2Manager::Create(HWND hWnd)
 		p->m_texturedQuadProgram.program, "u_sampler");
 
 	return p;
+}
+
+GLuint GLES2Manager::CreateTextureFromFile(const std::wstring& path)
+{
+	GLuint result;
+	glGenTextures(1, &result);
+
+	IWICImagingFactory* wicFactory = NULL;
+	CHECK_HR(CoCreateInstance(CLSID_WICImagingFactory, NULL,
+		CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)&wicFactory));
+
+	IWICBitmapDecoder* bmpDecoder = NULL;
+	CHECK_HR(wicFactory->CreateDecoderFromFilename(path.c_str(), NULL,
+		GENERIC_READ, WICDecodeMetadataCacheOnDemand, &bmpDecoder));
+
+	IWICBitmapFrameDecode* frameDecode = NULL;
+	CHECK_HR(bmpDecoder->GetFrame(0, &frameDecode));
+
+	UINT width;
+	UINT height;
+	CHECK_HR(frameDecode->GetSize(&width, &height));
+
+	WICPixelFormatGUID pixelFormat;
+	CHECK_HR(frameDecode->GetPixelFormat(&pixelFormat));
+
+	IWICFormatConverter* formatConverter = NULL;
+	CHECK_HR(wicFactory->CreateFormatConverter(&formatConverter));
+
+	CHECK_HR(formatConverter->Initialize(frameDecode, 
+		GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeErrorDiffusion, NULL, 0.5,
+		WICBitmapPaletteTypeMedianCut));
+
+	std::vector<BYTE> data(4*width*height);
+	CHECK_HR(formatConverter->CopyPixels(NULL, 4*width, 4*width*height, &data[0]));
+
+	glBindTexture(GL_TEXTURE_2D, result);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &data[0]);
+
+	SafeRelease(formatConverter);
+
+	SafeRelease(frameDecode);
+
+	SafeRelease(bmpDecoder);
+
+	SafeRelease(wicFactory);
+
+	return result;
 }
 
 void GLES2Manager::DrawTexturedQuad(const Rectf& rc)

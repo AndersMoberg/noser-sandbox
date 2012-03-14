@@ -6,6 +6,7 @@
 #define _GLES2MANAGER_HPP
 
 #include <memory>
+#include <string>
 
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
@@ -22,6 +23,8 @@ public:
 
 	~GLES2Manager();
 	static GLES2ManagerPtr Create(HWND hWnd);
+
+	GLuint CreateTextureFromFile(const std::wstring& path);
 
 	void DrawTexturedQuad(const Rectf& rc);
 	void Present();
