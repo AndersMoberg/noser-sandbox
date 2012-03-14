@@ -12,6 +12,7 @@
 
 #include "Texture2D.hpp"
 #include "ShaderResourceView.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -31,7 +32,7 @@ public:
 
 	ID3D11ShaderResourceView* AcquireSRV();
 	void ReleaseSRV();
-	ID2D1RenderTarget* AcquireTarget();
+	ComPtr<ID2D1RenderTarget> AcquireTarget();
 	void ReleaseTarget();
 
 private:
@@ -41,10 +42,10 @@ private:
 	Texture2DPtr m_d2dTexture;
 	ShaderResourceViewPtr m_d2dTextureSRV;
 
-	IDXGIKeyedMutex* m_pD3D11Mutex;
-	IDXGIKeyedMutex* m_pD2DMutex;
+	ComPtr<IDXGIKeyedMutex> m_d3d11Mutex;
+	ComPtr<IDXGIKeyedMutex> m_d2dMutex;
 
-	ID2D1RenderTarget* m_pD2DTarget;
+	ComPtr<ID2D1RenderTarget> m_d2dTarget;
 
 };
 

@@ -15,17 +15,10 @@ namespace D3D11
 static const DXGI_FORMAT BACKBUFFER_FORMAT = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
 D3D11CanvasWindowGraphics::D3D11CanvasWindowGraphics()
-	: m_pSwapChain(NULL),
-	m_pBackBufferRTV(NULL),
-	m_pTextFormat(NULL)
 { }
 
 D3D11CanvasWindowGraphics::~D3D11CanvasWindowGraphics()
-{
-	SafeRelease(m_pTextFormat);
-	SafeRelease(m_pBackBufferRTV);
-	SafeRelease(m_pSwapChain);
-}
+{ }
 
 D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(
 	HWND hWnd, D3D11DriverPtr driver, CameraPtr camera)
@@ -44,7 +37,7 @@ D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(
 
 	CHECK_HR(pDWriteFactory->CreateTextFormat(
 		L"Calibri", NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL, 24.0f, L"en-US", &p->m_pTextFormat));
+		DWRITE_FONT_STRETCH_NORMAL, 24.0f, L"en-US", p->m_textFormat.Receive()));
 
 	// Create swap chain
 
@@ -55,7 +48,7 @@ D3D11CanvasWindowGraphicsPtr D3D11CanvasWindowGraphics::Create(
 	scd.BufferCount = 1;
 	scd.OutputWindow = hWnd;
 	scd.Windowed = TRUE;
-	CHECK_HR(pDXGIFactory->CreateSwapChain(pDevice, &scd, &p->m_pSwapChain));
+	CHECK_HR(pDXGIFactory->CreateSwapChain(pDevice, &scd, p->m_swapChain.Receive()));
 
 	p->CreateSwapChainResources();
 
@@ -69,12 +62,12 @@ void D3D11CanvasWindowGraphics::CreateSwapChainResources()
 	// Get back buffer RTV
 
 	ID3D11Texture2D* texture = NULL;
-	CHECK_HR(m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&texture)));
+	CHECK_HR(m_swapChain->GetBuffer(0, IID_PPV_ARGS(&texture)));
 
 	D3D11_TEXTURE2D_DESC t2dd;
 	texture->GetDesc(&t2dd);
 
-	CHECK_HR(pDevice->CreateRenderTargetView(texture, NULL, &m_pBackBufferRTV));
+	CHECK_HR(pDevice->CreateRenderTargetView(texture, NULL, m_backBufferRTV.Receive()));
 
 	SafeRelease(texture);
 
@@ -87,13 +80,13 @@ void D3D11CanvasWindowGraphics::CreateSwapChainResources()
 void D3D11CanvasWindowGraphics::DestroySwapChainResources()
 {
 	m_d2dTarget.reset();
-	SafeRelease(m_pBackBufferRTV);
+	m_backBufferRTV.Release();
 }
 
 void D3D11CanvasWindowGraphics::OnWMSize()
 {
 	DestroySwapChainResources();
-	m_pSwapChain->ResizeBuffers(1, 0, 0, BACKBUFFER_FORMAT, 0);
+	m_swapChain->ResizeBuffers(1, 0, 0, BACKBUFFER_FORMAT, 0);
 	CreateSwapChainResources();
 }
 
@@ -128,7 +121,7 @@ void D3D11CanvasWindowGraphics::Render()
 
 	// Clear to black
 	static const float BG_COLOR[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	pContext->ClearRenderTargetView(m_pBackBufferRTV, BG_COLOR);
+	pContext->ClearRenderTargetView(m_backBufferRTV, BG_COLOR);
 
 	// TODO: CLEAN UP THIS MESS!!!
 
@@ -147,7 +140,8 @@ void D3D11CanvasWindowGraphics::Render()
 		pContext->RSSetViewports(1, &vp);
 
 		// Set up output merger
-		pContext->OMSetRenderTargets(1, &m_pBackBufferRTV, NULL);
+		ID3D11RenderTargetView* rtv = m_backBufferRTV;
+		pContext->OMSetRenderTargets(1, &rtv, NULL);
 		pContext->OMSetBlendState(m_driver->GetOverBlend()->Get(), NULL, 0xFFFFFFFF);
 
 		D3D11ImagePtr d3d11Image = std::static_pointer_cast<D3D11Image, DriverImage>(
@@ -169,7 +163,7 @@ void D3D11CanvasWindowGraphics::Render()
 
 	// Render something into Direct2D target
 
-	ID2D1RenderTarget* pD2DTarget = m_d2dTarget->AcquireTarget();
+	ComPtr<ID2D1RenderTarget> pD2DTarget = m_d2dTarget->AcquireTarget();
 
 	pD2DTarget->BeginDraw();
 
@@ -214,7 +208,7 @@ void D3D11CanvasWindowGraphics::Render()
 	}
 
 	// Draw some text
-	RenderPrintf(pD2DTarget, m_pTextFormat, clientRectf, brush,
+	RenderPrintf(pD2DTarget, m_textFormat, clientRectf, brush,
 		L"Welcome to Paint Sandbox!");
 
 	brush->Release();
@@ -235,7 +229,8 @@ void D3D11CanvasWindowGraphics::Render()
 	pContext->RSSetViewports(1, &vp);
 
 	// Set up output merger
-	pContext->OMSetRenderTargets(1, &m_pBackBufferRTV, NULL);
+	ID3D11RenderTargetView* rtv = m_backBufferRTV;
+	pContext->OMSetRenderTargets(1, &rtv, NULL);
 	pContext->OMSetBlendState(m_driver->GetOverBlend()->Get(), NULL, 0xFFFFFFFF);
 
 	ID3D11ShaderResourceView* srv = m_d2dTarget->AcquireSRV();
@@ -256,11 +251,11 @@ void D3D11CanvasWindowGraphics::Render()
 
 void D3D11CanvasWindowGraphics::Present()
 {
-	m_pSwapChain->Present(0, 0);
+	m_swapChain->Present(0, 0);
 }
 
-void D3D11CanvasWindowGraphics::RenderPrintf(ID2D1RenderTarget* pD2DTarget,
-	IDWriteTextFormat* textFormat, const D2D1_RECT_F& layoutRect,
+void D3D11CanvasWindowGraphics::RenderPrintf(ComPtr<ID2D1RenderTarget> pD2DTarget,
+	ComPtr<IDWriteTextFormat> textFormat, const D2D1_RECT_F& layoutRect,
 	ID2D1Brush* defaultForegroundBrush,
 	LPCWSTR msg, ...)
 {

@@ -80,29 +80,14 @@ static const char TEXTURED_PIXEL_SHADER[] =
 ;
 
 D3D11Driver::D3D11Driver()
-	: m_pD3D11Device(NULL),
-	m_pD3D11Context(NULL),
-	m_pDXGIFactory(NULL),
-	m_pD3D10Device(NULL),
-	m_pD2DFactory(NULL),
-	m_pDWriteFactory(NULL)
 { }
 
 D3D11Driver::~D3D11Driver()
-{
-	SafeRelease(m_pDWriteFactory);
-	SafeRelease(m_pD2DFactory);
-	SafeRelease(m_pD3D10Device);
-	SafeRelease(m_pDXGIFactory);
-	SafeRelease(m_pD3D11Context);
-	SafeRelease(m_pD3D11Device);
-}
+{ }
 
 D3D11DriverPtr D3D11Driver::Create()
 {
 	D3D11DriverPtr p(new D3D11Driver);
-
-	HRESULT hr;
 
 	// Create device
 
@@ -117,17 +102,17 @@ D3D11DriverPtr D3D11Driver::Create()
 		createFlags,
 		NULL, 0,
 		D3D11_SDK_VERSION,
-		&p->m_pD3D11Device,
+		p->m_d3d11Device.Receive(),
 		NULL,
-		&p->m_pD3D11Context));
+		p->m_d3d11Context.Receive()));
 
 	// Get DXGI adapter from D3D11 device
 
-	IDXGIAdapter* dxgiAdapter = GetDXGIAdapterFromD3D11Device(p->m_pD3D11Device);
+	IDXGIAdapter* dxgiAdapter = GetDXGIAdapterFromD3D11Device(p->m_d3d11Device);
 
 	// Get DXGI factory from adapter
 
-	CHECK_HR(dxgiAdapter->GetParent(IID_PPV_ARGS(&p->m_pDXGIFactory)));
+	CHECK_HR(dxgiAdapter->GetParent(IID_PPV_ARGS(p->m_dxgiFactory.Receive())));
 
 	// Create D3D10.1 device using the same adapter chosen by D3D11CreateDevice
 
@@ -139,18 +124,18 @@ D3D11DriverPtr D3D11Driver::Create()
 	// TODO: Will feature level 10.1 work for most people? I think Direct2D can
 	// work with any feature level.
 	CHECK_HR(D3D10CreateDevice1(dxgiAdapter, D3D10_DRIVER_TYPE_HARDWARE, NULL,
-		createFlags, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, &p->m_pD3D10Device));
+		createFlags, D3D10_FEATURE_LEVEL_10_1, D3D10_1_SDK_VERSION, p->m_d3d10Device.Receive()));
 
 	SafeRelease(dxgiAdapter);
 
 	// Create Direct2D factory
 
-	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &p->m_pD2DFactory));
+	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, p->m_d2dFactory.Receive()));
 
 	// Create DirectWrite factory
 
 	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
-		__uuidof(IDWriteFactory), (IUnknown**)&p->m_pDWriteFactory));
+		__uuidof(IDWriteFactory), (IUnknown**)p->m_dwriteFactory.Receive()));
 
 	// Create blend state for Porter-Duff "over" operation
 
@@ -162,23 +147,23 @@ D3D11DriverPtr D3D11Driver::Create()
 	bld.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	bld.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
 	bld.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	p->m_overBlend = BlendState::Create(p->m_pD3D11Device, bld);
+	p->m_overBlend = BlendState::Create(p->m_d3d11Device, bld);
 
 	// Create bilinear sampler
 
 	D3D11_SAMPLER_DESC sd = CD3D11_SAMPLER_DESC(CD3D11_DEFAULT());
-	p->m_bilinearSampler = SamplerState::Create(p->m_pD3D11Device, sd);
+	p->m_bilinearSampler = SamplerState::Create(p->m_d3d11Device, sd);
 
 	// Create simple 2D quad vertex buffer
 
 	D3D11_BUFFER_DESC bd = CD3D11_BUFFER_DESC(sizeof(SIMPLE2D_QUAD),
 		D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_IMMUTABLE);
 	D3D11_SUBRESOURCE_DATA srd = { SIMPLE2D_QUAD, 0, 0 };
-	p->m_simple2DQuad = Buffer::Create(p->m_pD3D11Device, bd, srd);
+	p->m_simple2DQuad = Buffer::Create(p->m_d3d11Device, bd, srd);
 
 	// Create simple 2D quad vertex shader
 
-	p->m_simple2DQuadVShader = CreateVertexShaderFromCode(p->m_pD3D11Device,
+	p->m_simple2DQuadVShader = CreateVertexShaderFromCode(p->m_d3d11Device,
 		SIMPLE2D_QUAD_VERTEX_SHADER, "main", "vs_4_0",
 		SIMPLE2D_INPUT_LAYOUT,
 		sizeof(SIMPLE2D_INPUT_LAYOUT)/sizeof(D3D11_INPUT_ELEMENT_DESC),
@@ -186,17 +171,17 @@ D3D11DriverPtr D3D11Driver::Create()
 
 	// Create simple 2d quad vertex shader parameters buffer
 
-	p->m_simple2DQuadParams = ConstantBuffer::Create(p->m_pD3D11Device,
+	p->m_simple2DQuadParams = ConstantBuffer::Create(p->m_d3d11Device,
 		sizeof(Simple2DQuadVShaderParams));
 
 	// Create textured pixel shader
 
-	p->m_texturedPShader = CreatePixelShaderFromCode(p->m_pD3D11Device,
+	p->m_texturedPShader = CreatePixelShaderFromCode(p->m_d3d11Device,
 		TEXTURED_PIXEL_SHADER, "main", "ps_4_0");
 
 	// Create circular gradient shader
 
-	p->m_circularGradientShader = CircularGradientShader::Create(p->m_pD3D11Device);
+	p->m_circularGradientShader = CircularGradientShader::Create(p->m_d3d11Device);
 
 	return p;
 }
@@ -208,7 +193,7 @@ CanvasWindowGraphicsPtr D3D11Driver::CreateWindowGraphics(HWND hWnd, CameraPtr c
 
 DriverImagePtr D3D11Driver::CreateImage(int width, int height)
 {
-	return D3D11Image::Create(m_pD3D11Device, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height);
+	return D3D11Image::Create(m_d3d11Device, DXGI_FORMAT_R16G16B16A16_FLOAT, width, height);
 }
 
 DrawToolRendererPtr D3D11Driver::CreateDrawToolRenderer(CanvasImagePtr image)
@@ -223,23 +208,23 @@ void D3D11Driver::RenderQuad(const Matrix3x2f& mat, const RectF& rc)
 	params.mat = mat;
 	params.ul = rc.UpperLeft();
 	params.lr = rc.LowerRight();
-	m_pD3D11Context->UpdateSubresource(m_simple2DQuadParams->Get(), 0, NULL, &params, 0, 0);
+	m_d3d11Context->UpdateSubresource(m_simple2DQuadParams->Get(), 0, NULL, &params, 0, 0);
 
 	// Set up input assembler
-	m_pD3D11Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	m_pD3D11Context->IASetInputLayout(m_simple2DInputLayout->Get());
+	m_d3d11Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	m_d3d11Context->IASetInputLayout(m_simple2DInputLayout->Get());
 	UINT stride = sizeof(Vector2f);
 	UINT offset = 0;
 	ID3D11Buffer* buf = m_simple2DQuad->Get();
-	m_pD3D11Context->IASetVertexBuffers(0, 1, &buf, &stride, &offset);
+	m_d3d11Context->IASetVertexBuffers(0, 1, &buf, &stride, &offset);
 
 	// Set up vertex shader
-	m_pD3D11Context->VSSetShader(m_simple2DQuadVShader->Get(), NULL, 0);
+	m_d3d11Context->VSSetShader(m_simple2DQuadVShader->Get(), NULL, 0);
 	buf = m_simple2DQuadParams->Get();
-	m_pD3D11Context->VSSetConstantBuffers(0, 1, &buf);
+	m_d3d11Context->VSSetConstantBuffers(0, 1, &buf);
 
 	// Draw!
-	m_pD3D11Context->Draw(4, 0);
+	m_d3d11Context->Draw(4, 0);
 };
 
 void D3D11Driver::RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc)
@@ -249,7 +234,7 @@ void D3D11Driver::RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc)
 
 	// Set up output merger
 	ID3D11RenderTargetView* rtv = image->GetRTV()->Get();
-	m_pD3D11Context->OMSetRenderTargets(1, &rtv, NULL);
+	m_d3d11Context->OMSetRenderTargets(1, &rtv, NULL);
 
 	Matrix3x2f mat = Matrix3x2f::RectLerp(canvas->GetCanvasRect(),
 		RectF(-1.0f, 1.0f, 1.0f, -1.0f));

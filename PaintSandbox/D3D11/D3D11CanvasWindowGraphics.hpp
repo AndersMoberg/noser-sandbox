@@ -47,7 +47,8 @@ private:
 	void Render();
 	void Present();
 
-	void RenderPrintf(ID2D1RenderTarget* pD2DTarget, IDWriteTextFormat* textFormat,
+	void RenderPrintf(ComPtr<ID2D1RenderTarget> pD2DTarget,
+		ComPtr<IDWriteTextFormat> textFormat,
 		const D2D1_RECT_F& layoutRect, ID2D1Brush* defaultForegroundBrush,
 		LPCWSTR msg, ...);
 
@@ -55,10 +56,10 @@ private:
 	D3D11DriverPtr m_driver;
 	CameraPtr m_camera;
 	
-	IDWriteTextFormat* m_pTextFormat;
+	ComPtr<IDWriteTextFormat> m_textFormat;
 
-	IDXGISwapChain* m_pSwapChain;
-	ID3D11RenderTargetView* m_pBackBufferRTV;
+	ComPtr<IDXGISwapChain> m_swapChain;
+	ComPtr<ID3D11RenderTargetView> m_backBufferRTV;
 	D2DTargetPtr m_d2dTarget;
 
 	CanvasImagePtr m_image;

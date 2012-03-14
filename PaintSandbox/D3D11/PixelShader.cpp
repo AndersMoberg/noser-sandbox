@@ -11,13 +11,10 @@ namespace D3D11
 {
 
 PixelShader::PixelShader()
-	: m_pPixelShader(NULL)
 { }
 
 PixelShader::~PixelShader()
-{
-	SafeRelease(m_pPixelShader);
-}
+{ }
 
 PixelShaderPtr PixelShader::Create(ID3D11Device* pDevice,
 	const void* pBytecode, SIZE_T bytecodeLength)
@@ -25,7 +22,7 @@ PixelShaderPtr PixelShader::Create(ID3D11Device* pDevice,
 	PixelShaderPtr p(new PixelShader);
 
 	CHECK_HR(pDevice->CreatePixelShader(pBytecode, bytecodeLength,
-		NULL, &p->m_pPixelShader));
+		NULL, p->m_pixelShader.Receive()));
 
 	return p;
 }

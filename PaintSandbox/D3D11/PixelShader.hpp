@@ -9,12 +9,15 @@
 
 #include <memory>
 
+#include "WindowsUtils.hpp"
+
 namespace D3D11
 {
 
 class PixelShader;
 typedef std::shared_ptr<PixelShader> PixelShaderPtr;
 
+// TODO: Get rid of this class
 class PixelShader
 {
 
@@ -24,13 +27,13 @@ public:
 	static PixelShaderPtr Create(ID3D11Device* pDevice,
 		const void* pBytecode, SIZE_T bytecodeLength);
 
-	ID3D11PixelShader* Get() { return m_pPixelShader; }
+	ComPtr<ID3D11PixelShader> Get() { return m_pixelShader; }
 
 private:
 
 	PixelShader();
 
-	ID3D11PixelShader* m_pPixelShader;
+	ComPtr<ID3D11PixelShader> m_pixelShader;
 
 };
 

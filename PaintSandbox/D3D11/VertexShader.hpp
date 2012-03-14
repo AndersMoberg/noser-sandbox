@@ -9,12 +9,15 @@
 
 #include <memory>
 
+#include "WindowsUtils.hpp"
+
 namespace D3D11
 {
 
 class VertexShader;
 typedef std::shared_ptr<VertexShader> VertexShaderPtr;
 
+// TODO: Get rid of this class
 class VertexShader
 {
 
@@ -24,13 +27,13 @@ public:
 	static VertexShaderPtr Create(ID3D11Device* pDevice,
 		const void* pBytecode, SIZE_T bytecodeLength);
 
-	ID3D11VertexShader* Get() { return m_pVertexShader; }
+	ComPtr<ID3D11VertexShader> Get() { return m_vertexShader; }
 
 private:
 
 	VertexShader();
 
-	ID3D11VertexShader* m_pVertexShader;
+	ComPtr<ID3D11VertexShader> m_vertexShader;
 
 };
 

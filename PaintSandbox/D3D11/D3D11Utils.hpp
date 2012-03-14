@@ -16,16 +16,6 @@
 namespace D3D11
 {
 
-template<class Interface>
-inline void SafeRelease(Interface*& pi)
-{
-	if (pi)
-	{
-		pi->Release();
-		pi = NULL;
-	}
-}
-
 IDXGIAdapter* GetDXGIAdapterFromD3D11Device(ID3D11Device* pDevice);
 IDXGISurface* OpenD3D11TextureOnD3D10Device(ID3D11Texture2D* texture, ID3D10Device1* device);
 

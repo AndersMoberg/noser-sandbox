@@ -43,12 +43,12 @@ public:
 	void RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc);
 	void RenderD2DTarget(D2DTargetPtr d2dTarget);
 
-	ID3D11Device* GetD3D11Device() { return m_pD3D11Device; }
-	ID3D11DeviceContext* GetD3D11Context() { return m_pD3D11Context; }
-	IDXGIFactory1* GetDXGIFactory() { return m_pDXGIFactory; }
-	ID3D10Device1* GetD3D10Device() { return m_pD3D10Device; }
-	ID2D1Factory* GetD2DFactory() { return m_pD2DFactory; }
-	IDWriteFactory* GetDWriteFactory() { return m_pDWriteFactory; }
+	ComPtr<ID3D11Device> GetD3D11Device() { return m_d3d11Device; }
+	ComPtr<ID3D11DeviceContext> GetD3D11Context() { return m_d3d11Context; }
+	ComPtr<IDXGIFactory1> GetDXGIFactory() { return m_dxgiFactory; }
+	ComPtr<ID3D10Device1> GetD3D10Device() { return m_d3d10Device; }
+	ComPtr<ID2D1Factory> GetD2DFactory() { return m_d2dFactory; }
+	ComPtr<IDWriteFactory> GetDWriteFactory() { return m_dwriteFactory; }
 
 	BlendStatePtr GetOverBlend() { return m_overBlend; }
 
@@ -61,13 +61,13 @@ private:
 
 	D3D11Driver();
 
-	ID3D11Device* m_pD3D11Device;
-	ID3D11DeviceContext* m_pD3D11Context;
-	IDXGIFactory1* m_pDXGIFactory;
-	ID3D10Device1* m_pD3D10Device;
+	ComPtr<ID3D11Device> m_d3d11Device;
+	ComPtr<ID3D11DeviceContext> m_d3d11Context;
+	ComPtr<IDXGIFactory1> m_dxgiFactory;
+	ComPtr<ID3D10Device1> m_d3d10Device;
 
-	ID2D1Factory* m_pD2DFactory;
-	IDWriteFactory* m_pDWriteFactory;
+	ComPtr<ID2D1Factory> m_d2dFactory;
+	ComPtr<IDWriteFactory> m_dwriteFactory;
 
 	BlendStatePtr m_overBlend; // Porter-Duff "over" operation
 

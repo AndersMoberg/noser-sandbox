@@ -11,13 +11,10 @@ namespace D3D11
 {
 
 VertexShader::VertexShader()
-	: m_pVertexShader(NULL)
 { }
 
 VertexShader::~VertexShader()
-{
-	SafeRelease(m_pVertexShader);
-}
+{ }
 
 VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice,
 	const void* pBytecode, SIZE_T bytecodeLength)
@@ -25,7 +22,7 @@ VertexShaderPtr VertexShader::Create(ID3D11Device* pDevice,
 	VertexShaderPtr p(new VertexShader);
 	
 	CHECK_HR(pDevice->CreateVertexShader(pBytecode,
-		bytecodeLength, NULL, &p->m_pVertexShader));
+		bytecodeLength, NULL, p->m_vertexShader.Receive()));
 
 	return p;
 }
