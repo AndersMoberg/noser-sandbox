@@ -29,6 +29,8 @@ class ComPtr
 
 public:
 	
+	// This is a hack to prevent users from accidentally calling AddRef or
+	// Release on the IUnknown object.
 	class BlockIUnknownRefCounting : public Interface {
 	private:
 		STDMETHOD_(ULONG, AddRef)() = 0;
@@ -58,13 +60,16 @@ public:
 
 	ComPtr<Interface>& operator=(const ComPtr<Interface>& rhs)
 	{
-		if (rhs.m_ptr) {
-			rhs.m_ptr->AddRef();
+		if (rhs.m_ptr != m_ptr)
+		{
+			if (m_ptr) {
+				m_ptr->Release();
+			}
+			m_ptr = rhs.m_ptr;
+			if (m_ptr) {
+				m_ptr->AddRef();
+			}
 		}
-		if (m_ptr) {
-			m_ptr->Release();
-		}
-		m_ptr = rhs.m_ptr;
 		return *this;
 	}
 
