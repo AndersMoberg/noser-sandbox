@@ -12,6 +12,8 @@
 #include <memory>
 #include <vector>
 
+#include "WindowsUtils.hpp"
+
 class D2DManager;
 typedef std::shared_ptr<D2DManager> D2DManagerPtr;
 
@@ -29,16 +31,16 @@ public:
 
 	GLuint GetGLTexture();
 
-	ID2D1RenderTarget* GetD2DTarget() { return m_d2dTarget; }
+	ComPtr<ID2D1RenderTarget> GetD2DTarget() { return m_d2dTarget; }
 
 private:
 
 	D2DManager();
 
 	HWND m_hWnd;
-	ID2D1Factory* m_d2dFactory;
-	ID2D1RenderTarget* m_d2dTarget;
-	IWICBitmap* m_wicBitmap;
+	ComPtr<ID2D1Factory> m_d2dFactory;
+	ComPtr<ID2D1RenderTarget> m_d2dTarget;
+	ComPtr<IWICBitmap> m_wicBitmap;
 	std::vector<BYTE> m_imageBuffer;
 	GLuint m_glTexture;
 

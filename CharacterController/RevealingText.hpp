@@ -33,7 +33,7 @@ private:
 
 	std::wstring m_text;
 	Rectf m_layoutBox;
-	IDWriteTextLayout* m_textLayout;
+	ComPtr<IDWriteTextLayout> m_textLayout;
 
 	size_t m_progress;
 	long long m_startTime;

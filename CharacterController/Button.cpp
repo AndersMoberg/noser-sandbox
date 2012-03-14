@@ -28,6 +28,6 @@ void Button::Render(GameRenderTargetPtr target)
 	target->DrawText(m_label,
 		target->GetDialogTextFormat(),
 		target->GetBlackBrush(),
-		NULL, 0.0f,
+		ComPtr<ID2D1Brush>(), 0.0f,
 		m_rect);
 }

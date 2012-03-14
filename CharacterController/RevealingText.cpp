@@ -7,13 +7,10 @@
 #include "WindowsUtils.hpp"
 
 RevealingText::RevealingText()
-	: m_textLayout(NULL)
 { }
 
 RevealingText::~RevealingText()
-{
-	SafeRelease(m_textLayout);
-}
+{ }
 
 RevealingTextPtr RevealingText::Create(GameRenderTargetPtr target,
 	const std::wstring& text, const Rectf& layoutBox)
@@ -28,7 +25,7 @@ RevealingTextPtr RevealingText::Create(GameRenderTargetPtr target,
 		text.c_str(), text.size(), target->GetDialogTextFormat(),
 		layoutBox.right - layoutBox.left,
 		layoutBox.bottom - layoutBox.top,
-		&p->m_textLayout));
+		p->m_textLayout.Receive()));
 
 	return p;
 }

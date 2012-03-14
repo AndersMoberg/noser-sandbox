@@ -7,55 +7,46 @@
 #include "WindowsUtils.hpp"
 
 GameRenderTarget::GameRenderTarget()
-	: m_pDWriteFactory(NULL),
-	m_pDialogTextFormat(NULL),
-	m_pD2DTarget(NULL),
-	m_pBlackBrush(NULL),
-	m_pWhiteBrush(NULL)
 { }
 
 GameRenderTarget::~GameRenderTarget()
-{
-	ReleaseD2DTarget();
-	SafeRelease(m_pDialogTextFormat);
-	SafeRelease(m_pDWriteFactory);
-}
+{ }
 
 GameRenderTargetPtr GameRenderTarget::Create()
 {
 	GameRenderTargetPtr p(new GameRenderTarget);
 	
 	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
-		__uuidof(IDWriteFactory), (IUnknown**)&p->m_pDWriteFactory));
+		__uuidof(IDWriteFactory), (IUnknown**)p->m_dwriteFactory.Receive()));
 
-	CHECK_HR(p->m_pDWriteFactory->CreateTextFormat(L"Kootenay", NULL,
+	CHECK_HR(p->m_dwriteFactory->CreateTextFormat(L"Kootenay", NULL,
 		DWRITE_FONT_WEIGHT_SEMI_BOLD, DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL, 32.0f, L"en-US", &p->m_pDialogTextFormat));
+		DWRITE_FONT_STRETCH_NORMAL, 32.0f, L"en-US", p->m_dialogTextFormat.Receive()));
 
 	return p;
 }
 
-void GameRenderTarget::SetD2DTarget(ID2D1RenderTarget* target)
+void GameRenderTarget::SetD2DTarget(ComPtr<ID2D1RenderTarget> target)
 {
-	if (m_pD2DTarget != target)
+	if (m_d2dTarget != target)
 	{
-		m_pD2DTarget = target;
+		m_d2dTarget = target;
 
 		// Create target-specific resources
 
-		CHECK_HR(m_pD2DTarget->CreateSolidColorBrush(
-			D2D1::ColorF(D2D1::ColorF::Black), &m_pBlackBrush));
-		CHECK_HR(m_pD2DTarget->CreateSolidColorBrush(
-			D2D1::ColorF(D2D1::ColorF::White), &m_pWhiteBrush));
+		CHECK_HR(m_d2dTarget->CreateSolidColorBrush(
+			D2D1::ColorF(D2D1::ColorF::Black), m_blackBrush.Receive()));
+		CHECK_HR(m_d2dTarget->CreateSolidColorBrush(
+			D2D1::ColorF(D2D1::ColorF::White), m_whiteBrush.Receive()));
 	}
 }
 
 void GameRenderTarget::ReleaseD2DTarget()
 {
 	// Release target-specific resources
-	SafeRelease(m_pWhiteBrush);
-	SafeRelease(m_pBlackBrush);
-	m_pD2DTarget = NULL;
+	m_whiteBrush.Release();
+	m_blackBrush.Release();
+	m_d2dTarget.Release();
 }
 
 class OutlinedTextRenderer : public IDWriteTextRenderer
@@ -243,31 +234,31 @@ private:
 };
 
 void GameRenderTarget::DrawText(const std::wstring& text,
-	IDWriteTextFormat* textFormat,
-	ID2D1Brush* fillBrush,
-	ID2D1Brush* strokeBrush,
+	ComPtr<IDWriteTextFormat> textFormat,
+	ComPtr<ID2D1Brush> fillBrush,
+	ComPtr<ID2D1Brush> strokeBrush,
 	float strokeWidth,
 	const Rectf& layoutBox)
 {
 	IDWriteTextLayout* textLayout = NULL;
-	CHECK_HR(m_pDWriteFactory->CreateTextLayout(
+	CHECK_HR(m_dwriteFactory->CreateTextLayout(
 		text.c_str(), text.size(), textFormat,
 		layoutBox.right - layoutBox.left,
 		layoutBox.bottom - layoutBox.top,
 		&textLayout));
 
-	OutlinedTextRenderer renderer(m_pD2DTarget, strokeBrush, strokeWidth, fillBrush);
+	OutlinedTextRenderer renderer(m_d2dTarget, strokeBrush, strokeWidth, fillBrush);
 	// XXX: Code assumes that renderer is not saved by textLayout->Draw
 	CHECK_HR(textLayout->Draw(NULL, &renderer, layoutBox.left, layoutBox.top));
 
 	SafeRelease(textLayout);
 }
 
-void GameRenderTarget::DrawTextLayout(IDWriteTextLayout* textLayout,
-	ID2D1Brush* fillBrush, ID2D1Brush* strokeBrush, float strokeWidth,
+void GameRenderTarget::DrawTextLayout(ComPtr<IDWriteTextLayout> textLayout,
+	ComPtr<ID2D1Brush> fillBrush, ComPtr<ID2D1Brush> strokeBrush, float strokeWidth,
 	const Vector2f& origin)
 {
-	OutlinedTextRenderer renderer(m_pD2DTarget, strokeBrush, strokeWidth, fillBrush);
+	OutlinedTextRenderer renderer(m_d2dTarget, strokeBrush, strokeWidth, fillBrush);
 	// XXX: Code assumes that renderer is not saved by textLayout->Draw
 	CHECK_HR(textLayout->Draw(NULL, &renderer, origin.x, origin.y));
 }

@@ -11,17 +11,10 @@
 #include "WindowsUtils.hpp"
 
 D2DManager::D2DManager()
-	: m_d2dFactory(NULL),
-	m_d2dTarget(NULL),
-	m_wicBitmap(NULL)
 { }
 
 D2DManager::~D2DManager()
-{
-	SafeRelease(m_d2dTarget);
-	SafeRelease(m_wicBitmap);
-	SafeRelease(m_d2dFactory);
-}
+{ }
 
 D2DManagerPtr D2DManager::Create(HWND hWnd)
 {
@@ -30,7 +23,7 @@ D2DManagerPtr D2DManager::Create(HWND hWnd)
 	glGenTextures(1, &p->m_glTexture);
 	
 	p->m_hWnd = hWnd;
-	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &p->m_d2dFactory));
+	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, p->m_d2dFactory.Receive()));
 
 	p->CreateDeviceResources();
 
@@ -55,7 +48,7 @@ void D2DManager::CreateDeviceResources()
 		CHECK_HR(wicFactory->CreateBitmapFromMemory(
 			size.width, size.height, GUID_WICPixelFormat32bppPBGRA,
 			4*size.width, 4*size.width*size.height, &m_imageBuffer[0],
-			&m_wicBitmap));
+			m_wicBitmap.Receive()));
 
 		D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties();
 		// Override DPI because we don't want DPI scaling on our graphics.
@@ -63,7 +56,7 @@ void D2DManager::CreateDeviceResources()
 		rtProps.dpiY = 96.0f;
 
 		CHECK_HR(m_d2dFactory->CreateWicBitmapRenderTarget(
-			m_wicBitmap, rtProps, &m_d2dTarget));
+			m_wicBitmap, rtProps, m_d2dTarget.Receive()));
 
 		SafeRelease(wicFactory);
 	}
@@ -71,8 +64,8 @@ void D2DManager::CreateDeviceResources()
 
 void D2DManager::DestroyDeviceResources()
 {
-	SafeRelease(m_d2dTarget);
-	SafeRelease(m_wicBitmap);
+	m_d2dTarget.Release();
+	m_wicBitmap.Release();
 }
 
 void D2DManager::Resize(D2D1_SIZE_U size)

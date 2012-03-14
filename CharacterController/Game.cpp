@@ -58,7 +58,7 @@ GamePtr Game::Create()
 	return p;
 }
 
-void Game::SetD2DTarget(ID2D1RenderTarget* target)
+void Game::SetD2DTarget(ComPtr<ID2D1RenderTarget> target)
 {
 	m_renderTarget->SetD2DTarget(target);
 }
@@ -320,7 +320,7 @@ void Game::Render()
 	// Render text overlay
 	if (CanPlayerTalk() && !m_talking)
 	{
-		m_renderTarget->DrawText(L"Press Space to talk",
+		m_renderTarget->DrawText(L"Lots of text will cause significant slowdown. How much slowdown does this text cause? Press Space to talk",
 			m_renderTarget->GetDialogTextFormat(),
 			m_renderTarget->GetWhiteBrush(),
 			m_renderTarget->GetBlackBrush(), 1.0f,

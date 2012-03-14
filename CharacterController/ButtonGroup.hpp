@@ -36,7 +36,7 @@ private:
 
 	bool m_selectTriggered;
 	Vector2f m_anchor;
-	int m_selected;
+	size_t m_selected;
 
 };
 

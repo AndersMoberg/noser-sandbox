@@ -13,6 +13,7 @@
 #include <string>
 
 #include "Geometry.hpp"
+#include "WindowsUtils.hpp"
 
 class GameRenderTarget;
 typedef std::shared_ptr<GameRenderTarget> GameRenderTargetPtr;
@@ -25,25 +26,25 @@ public:
 	~GameRenderTarget();
 	static GameRenderTargetPtr Create();
 
-	void SetD2DTarget(ID2D1RenderTarget* target);
+	void SetD2DTarget(ComPtr<ID2D1RenderTarget> target);
 	void ReleaseD2DTarget();
 
-	IDWriteFactory* GetDWriteFactory() { return m_pDWriteFactory; }
-	IDWriteTextFormat* GetDialogTextFormat() { return m_pDialogTextFormat; }
+	ComPtr<IDWriteFactory> GetDWriteFactory() { return m_dwriteFactory; }
+	ComPtr<IDWriteTextFormat> GetDialogTextFormat() { return m_dialogTextFormat; }
 
-	ID2D1RenderTarget* GetD2DTarget() { return m_pD2DTarget; }
-	ID2D1SolidColorBrush* GetBlackBrush() { return m_pBlackBrush; }
-	ID2D1SolidColorBrush* GetWhiteBrush() { return m_pWhiteBrush; }
+	ComPtr<ID2D1RenderTarget> GetD2DTarget() { return m_d2dTarget; }
+	ComPtr<ID2D1SolidColorBrush> GetBlackBrush() { return m_blackBrush; }
+	ComPtr<ID2D1SolidColorBrush> GetWhiteBrush() { return m_whiteBrush; }
 
 	void DrawText(const std::wstring& text,
-		IDWriteTextFormat* textFormat,
-		ID2D1Brush* fillBrush,
-		ID2D1Brush* strokeBrush,
+		ComPtr<IDWriteTextFormat> textFormat,
+		ComPtr<ID2D1Brush> fillBrush,
+		ComPtr<ID2D1Brush> strokeBrush,
 		float strokeWidth,
 		const Rectf& layoutBox);
 
-	void DrawTextLayout(IDWriteTextLayout* textLayout,
-		ID2D1Brush* fillBrush, ID2D1Brush* strokeBrush, float strokeWidth,
+	void DrawTextLayout(ComPtr<IDWriteTextLayout> textLayout,
+		ComPtr<ID2D1Brush> fillBrush, ComPtr<ID2D1Brush> strokeBrush, float strokeWidth,
 		const Vector2f& origin);
 
 private:
@@ -51,13 +52,13 @@ private:
 	GameRenderTarget();
 
 	// Resources independent of D2D target
-	IDWriteFactory* m_pDWriteFactory;
-	IDWriteTextFormat* m_pDialogTextFormat;
+	ComPtr<IDWriteFactory> m_dwriteFactory;
+	ComPtr<IDWriteTextFormat> m_dialogTextFormat;
 
 	// Resources dependent on D2D target
-	ID2D1RenderTarget* m_pD2DTarget; // NOT owned
-	ID2D1SolidColorBrush* m_pBlackBrush;
-	ID2D1SolidColorBrush* m_pWhiteBrush;
+	ComPtr<ID2D1RenderTarget> m_d2dTarget;
+	ComPtr<ID2D1SolidColorBrush> m_blackBrush;
+	ComPtr<ID2D1SolidColorBrush> m_whiteBrush;
 
 };
 
