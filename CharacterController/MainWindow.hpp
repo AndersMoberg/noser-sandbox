@@ -25,7 +25,7 @@ class MainWindow
 public:
 
 	~MainWindow();
-	static MainWindowPtr Create(HINSTANCE hInstance, int nShowCmd, GamePtr game);
+	static MainWindowPtr Create(HINSTANCE hInstance, int nShowCmd);
 
 	void Update();
 	void Render();
@@ -55,12 +55,12 @@ private:
 
 	HWND m_hWnd;
 
+	GamePtr m_game;
+
 	GLES2ManagerPtr m_gles2Manager;
 	D2DLayerPtr m_d2dLayer;
 
 	GLES2TexturePtr m_bgTexture;
-
-	GamePtr m_game;
 
 	// User input processing
 	int m_leftToRightKeys; // -1: left; 0: none; 1: right

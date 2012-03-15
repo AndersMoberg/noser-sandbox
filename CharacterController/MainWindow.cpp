@@ -29,11 +29,11 @@ MainWindow::~MainWindow()
 	}
 }
 
-MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd, GamePtr game)
+MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd)
 {
 	MainWindowPtr p(new MainWindow);
 
-	p->m_game = game;
+	p->m_game = Game::Create();
 
 	WNDCLASS wc = { 0 };
 	wc.style = CS_HREDRAW | CS_VREDRAW;

@@ -20,8 +20,7 @@ ApplicationPtr Application::Create(HINSTANCE hInstance, int nShowCmd)
 
 	CHECK_HR(CoInitialize(NULL));
 
-	p->m_game = Game::Create();
-	p->m_window = MainWindow::Create(hInstance, nShowCmd, p->m_game);
+	p->m_window = MainWindow::Create(hInstance, nShowCmd);
 
 	return p;
 }
