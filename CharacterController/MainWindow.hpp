@@ -58,7 +58,7 @@ private:
 	GLES2ManagerPtr m_gles2Manager;
 	D2DManagerPtr m_d2dManager;
 
-	GLuint m_bgTexture;
+	GLES2TexturePtr m_bgTexture;
 
 	GamePtr m_game;
 

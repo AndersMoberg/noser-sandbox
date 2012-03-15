@@ -45,6 +45,9 @@
     <ClCompile Include="D2DManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="GLES2Texture.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -84,6 +87,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="D2DManager.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="GLES2Texture.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

@@ -95,6 +95,7 @@
     <ClCompile Include="GameRenderTarget.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GLES2Manager.cpp" />
+    <ClCompile Include="GLES2Texture.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="RevealingText.cpp" />
@@ -110,6 +111,7 @@
     <ClInclude Include="GameRenderTarget.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="GLES2Manager.hpp" />
+    <ClInclude Include="GLES2Texture.hpp" />
     <ClInclude Include="MainWindow.hpp" />
     <ClInclude Include="RevealingText.hpp" />
     <ClInclude Include="WindowsUtils.hpp" />

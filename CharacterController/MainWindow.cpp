@@ -146,11 +146,8 @@ LRESULT MainWindow::OnWMCreate(HWND hwnd)
 
 LRESULT MainWindow::OnWMDestroy()
 {
-	glDeleteTextures(1, &m_bgTexture);
-	m_bgTexture = 0;
-
+	m_bgTexture.reset();
 	DestroyDeviceResources();
-
 	m_d2dManager.reset();
 	m_gles2Manager.reset();
 
@@ -184,7 +181,7 @@ LRESULT MainWindow::OnWMPaint()
 	
 	// Draw background image
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_bgTexture);
+	glBindTexture(GL_TEXTURE_2D, m_bgTexture->Get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

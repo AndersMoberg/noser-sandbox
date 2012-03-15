@@ -15,10 +15,6 @@ Game::Game()
 	m_talking(false)
 { }
 
-Game::~Game()
-{
-}
-
 GamePtr Game::Create()
 {
 	GamePtr p(new Game);

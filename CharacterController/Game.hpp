@@ -36,7 +36,6 @@ class Game
 
 public:
 
-	~Game();
 	static GamePtr Create();
 
 	void SetD2DTarget(ComPtr<ID2D1RenderTarget> target);

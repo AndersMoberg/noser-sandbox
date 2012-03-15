@@ -185,10 +185,9 @@ GLES2ManagerPtr GLES2Manager::Create(HWND hWnd)
 	return p;
 }
 
-GLuint GLES2Manager::CreateTextureFromFile(const std::wstring& path)
+GLES2TexturePtr GLES2Manager::CreateTextureFromFile(const std::wstring& path)
 {
-	GLuint result;
-	glGenTextures(1, &result);
+	GLES2TexturePtr result = GLES2Texture::Create();
 
 	IWICImagingFactory* wicFactory = NULL;
 	CHECK_HR(CoCreateInstance(CLSID_WICImagingFactory, NULL,
@@ -218,7 +217,7 @@ GLuint GLES2Manager::CreateTextureFromFile(const std::wstring& path)
 	std::vector<BYTE> data(4*width*height);
 	CHECK_HR(formatConverter->CopyPixels(NULL, 4*width, 4*width*height, &data[0]));
 
-	glBindTexture(GL_TEXTURE_2D, result);
+	glBindTexture(GL_TEXTURE_2D, result->Get());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &data[0]);
 
 	SafeRelease(formatConverter);
