@@ -1,8 +1,8 @@
-// D2DManager.cpp
+// D2DLayer.cpp
 // Nolan Check
 // Created 3/12/2012
 
-#include "D2DManager.hpp"
+#include "D2DLayer.hpp"
 
 #include <wincodec.h>
 
@@ -10,15 +10,15 @@
 
 #include "WindowsUtils.hpp"
 
-D2DManager::D2DManager()
+D2DLayer::D2DLayer()
 { }
 
-D2DManager::~D2DManager()
+D2DLayer::~D2DLayer()
 { }
 
-D2DManagerPtr D2DManager::Create(HWND hWnd)
+D2DLayerPtr D2DLayer::Create(HWND hWnd)
 {
-	D2DManagerPtr p(new D2DManager);
+	D2DLayerPtr p(new D2DLayer);
 
 	glGenTextures(1, &p->m_glTexture);
 	
@@ -30,7 +30,7 @@ D2DManagerPtr D2DManager::Create(HWND hWnd)
 	return p;
 }
 
-void D2DManager::CreateDeviceResources()
+void D2DLayer::CreateDeviceResources()
 {
 	if (!m_d2dTarget)
 	{
@@ -62,13 +62,13 @@ void D2DManager::CreateDeviceResources()
 	}
 }
 
-void D2DManager::DestroyDeviceResources()
+void D2DLayer::DestroyDeviceResources()
 {
 	m_d2dTarget.Release();
 	m_wicBitmap.Release();
 }
 
-void D2DManager::Resize(D2D1_SIZE_U size)
+void D2DLayer::Resize(D2D1_SIZE_U size)
 {
 	if (m_d2dTarget) {
 		// FIXME: More than this must be recreated.
@@ -77,7 +77,7 @@ void D2DManager::Resize(D2D1_SIZE_U size)
 	}
 }
 
-GLuint D2DManager::GetGLTexture()
+GLuint D2DLayer::GetGLTexture()
 {
 	IWICBitmapLock* lock = NULL;
 	CHECK_HR(m_wicBitmap->Lock(NULL, WICBitmapLockRead, &lock));

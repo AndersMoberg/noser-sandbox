@@ -1,9 +1,9 @@
-// D2DManager.hpp
+// D2DLayer.hpp
 // Nolan Check
 // Created 3/12/2012
 
-#ifndef _D2DMANAGER_HPP
-#define _D2DMANAGER_HPP
+#ifndef _D2DLAYER_HPP
+#define _D2DLAYER_HPP
 
 #include <d2d1.h>
 
@@ -14,16 +14,16 @@
 
 #include "WindowsUtils.hpp"
 
-class D2DManager;
-typedef std::shared_ptr<D2DManager> D2DManagerPtr;
+class D2DLayer;
+typedef std::shared_ptr<D2DLayer> D2DLayerPtr;
 
-class D2DManager
+class D2DLayer
 {
 
 public:
 
-	~D2DManager();
-	static D2DManagerPtr Create(HWND hWnd);
+	~D2DLayer();
+	static D2DLayerPtr Create(HWND hWnd);
 
 	void CreateDeviceResources();
 	void DestroyDeviceResources();
@@ -35,7 +35,7 @@ public:
 
 private:
 
-	D2DManager();
+	D2DLayer();
 
 	HWND m_hWnd;
 	ComPtr<ID2D1Factory> m_d2dFactory;

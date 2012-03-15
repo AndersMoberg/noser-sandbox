@@ -12,7 +12,7 @@
 
 #include <memory>
 
-#include "D2DManager.hpp"
+#include "D2DLayer.hpp"
 #include "Game.hpp"
 #include "GLES2Manager.hpp"
 
@@ -56,7 +56,7 @@ private:
 	HWND m_hWnd;
 
 	GLES2ManagerPtr m_gles2Manager;
-	D2DManagerPtr m_d2dManager;
+	D2DLayerPtr m_d2dLayer;
 
 	GLES2TexturePtr m_bgTexture;
 

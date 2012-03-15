@@ -135,7 +135,7 @@ LRESULT MainWindow::OnWMCreate(HWND hwnd)
 	m_hWnd = hwnd;
 
 	m_gles2Manager = GLES2Manager::Create(m_hWnd);
-	m_d2dManager = D2DManager::Create(m_hWnd);
+	m_d2dLayer = D2DLayer::Create(m_hWnd);
 
 	m_bgTexture = m_gles2Manager->CreateTextureFromFile(L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
 
@@ -148,7 +148,7 @@ LRESULT MainWindow::OnWMDestroy()
 {
 	m_bgTexture.reset();
 	DestroyDeviceResources();
-	m_d2dManager.reset();
+	m_d2dLayer.reset();
 	m_gles2Manager.reset();
 
 	PostQuitMessage(EXIT_SUCCESS);
@@ -160,7 +160,7 @@ LRESULT MainWindow::OnWMDestroy()
 LRESULT MainWindow::OnWMSize(LPARAM lParam)
 {
 	D2D1_SIZE_U size = D2D1::SizeU(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-	m_d2dManager->Resize(size);
+	m_d2dLayer->Resize(size);
 
 	return 0;
 }
@@ -193,7 +193,7 @@ LRESULT MainWindow::OnWMPaint()
 	m_gles2Manager->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 
 	// Draw Direct2D overlay
-	GLuint d2dTexture = m_d2dManager->GetGLTexture();
+	GLuint d2dTexture = m_d2dLayer->GetGLTexture();
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, d2dTexture);
@@ -260,14 +260,14 @@ LRESULT MainWindow::OnWMKeyUp(WPARAM wParam)
 
 void MainWindow::CreateDeviceResources()
 {
-	m_d2dManager->CreateDeviceResources();
-	m_game->SetD2DTarget(m_d2dManager->GetD2DTarget());
+	m_d2dLayer->CreateDeviceResources();
+	m_game->SetD2DTarget(m_d2dLayer->GetD2DTarget());
 }
 
 void MainWindow::DestroyDeviceResources()
 {
 	m_game->ReleaseD2DTarget();
-	m_d2dManager->DestroyDeviceResources();
+	m_d2dLayer->DestroyDeviceResources();
 }
 
 static const float SQRT_1_OVER_2 = 0.70710677f;
@@ -306,7 +306,7 @@ void MainWindow::Render()
 {
 	CreateDeviceResources();
 
-	ID2D1RenderTarget* d2dTarget = m_d2dManager->GetD2DTarget();
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer->GetD2DTarget();
 	d2dTarget->BeginDraw();
 
 	m_game->Render();
