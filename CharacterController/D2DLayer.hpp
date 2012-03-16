@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 
+#include "GLES2Texture.hpp"
 #include "WindowsUtils.hpp"
 
 class D2DLayer;
@@ -22,14 +23,13 @@ class D2DLayer
 
 public:
 
-	~D2DLayer();
 	static D2DLayerPtr Create(HWND hWnd);
 
 	void CreateDeviceResources();
 	void DestroyDeviceResources();
 	void Resize(D2D1_SIZE_U size);
 
-	GLuint GetGLTexture();
+	GLES2TexturePtr GetGLTexture();
 
 	ComPtr<ID2D1RenderTarget> GetD2DTarget() { return m_d2dTarget; }
 
@@ -42,7 +42,7 @@ private:
 	ComPtr<ID2D1RenderTarget> m_d2dTarget;
 	ComPtr<IWICBitmap> m_wicBitmap;
 	std::vector<BYTE> m_imageBuffer;
-	GLuint m_glTexture;
+	GLES2TexturePtr m_glTexture;
 
 };
 

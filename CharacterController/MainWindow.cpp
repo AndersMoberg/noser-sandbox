@@ -193,10 +193,10 @@ LRESULT MainWindow::OnWMPaint()
 	m_gles2Manager->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 
 	// Draw Direct2D overlay
-	GLuint d2dTexture = m_d2dLayer->GetGLTexture();
+	GLES2TexturePtr d2dTexture = m_d2dLayer->GetGLTexture();
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, d2dTexture);
+	glBindTexture(GL_TEXTURE_2D, d2dTexture->Get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 

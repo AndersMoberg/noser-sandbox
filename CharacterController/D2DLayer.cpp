@@ -13,14 +13,11 @@
 D2DLayer::D2DLayer()
 { }
 
-D2DLayer::~D2DLayer()
-{ }
-
 D2DLayerPtr D2DLayer::Create(HWND hWnd)
 {
 	D2DLayerPtr p(new D2DLayer);
 
-	glGenTextures(1, &p->m_glTexture);
+	p->m_glTexture = GLES2Texture::Create();
 	
 	p->m_hWnd = hWnd;
 	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, p->m_d2dFactory.Receive()));
@@ -77,7 +74,7 @@ void D2DLayer::Resize(D2D1_SIZE_U size)
 	}
 }
 
-GLuint D2DLayer::GetGLTexture()
+GLES2TexturePtr D2DLayer::GetGLTexture()
 {
 	IWICBitmapLock* lock = NULL;
 	CHECK_HR(m_wicBitmap->Lock(NULL, WICBitmapLockRead, &lock));
@@ -88,7 +85,7 @@ GLuint D2DLayer::GetGLTexture()
 
 	D2D1_SIZE_U size = m_d2dTarget->GetPixelSize();
 
-	glBindTexture(GL_TEXTURE_2D, m_glTexture);
+	glBindTexture(GL_TEXTURE_2D, m_glTexture->Get());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, size.width, size.height, 0,
 		GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
 
