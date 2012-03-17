@@ -16,6 +16,8 @@
 #include <Windows.h>
 #include <tchar.h>
 
+#include "Application.hpp"
+
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPTSTR lpCmdLine, int nShowCmd)
 {
@@ -28,6 +30,8 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	try
 	{
+		ApplicationPtr app = Application::Create(hInstance, nShowCmd);
+		exitCode = app->MessagePump();
 	}
 	catch (const std::exception& e)
 	{
