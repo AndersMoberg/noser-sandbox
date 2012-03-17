@@ -51,24 +51,6 @@
     <ClInclude Include="D3D11\D3D11DrawToolRenderer.hpp">
       <Filter>Source\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="D3D11\BlendState.hpp">
-      <Filter>Source\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11\SamplerState.hpp">
-      <Filter>Source\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11\Buffer.hpp">
-      <Filter>Source\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11\InputLayout.hpp">
-      <Filter>Source\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11\PixelShader.hpp">
-      <Filter>Source\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11\VertexShader.hpp">
-      <Filter>Source\D3D11</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.hpp">
       <Filter>Source</Filter>
     </ClInclude>
@@ -79,15 +61,6 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="D3D11\D2DTarget.hpp">
-      <Filter>Source\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11\Texture2D.hpp">
-      <Filter>Source\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11\ShaderResourceView.hpp">
-      <Filter>Source\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="D3D11\RenderTargetView.hpp">
       <Filter>Source\D3D11</Filter>
     </ClInclude>
   </ItemGroup>
@@ -131,24 +104,6 @@
     <ClCompile Include="D3D11\D3D11DrawToolRenderer.cpp">
       <Filter>Source\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="D3D11\BlendState.cpp">
-      <Filter>Source\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11\SamplerState.cpp">
-      <Filter>Source\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11\Buffer.cpp">
-      <Filter>Source\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11\InputLayout.cpp">
-      <Filter>Source\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11\PixelShader.cpp">
-      <Filter>Source\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11\VertexShader.cpp">
-      <Filter>Source\D3D11</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -159,15 +114,6 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="D3D11\D2DTarget.cpp">
-      <Filter>Source\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11\Texture2D.cpp">
-      <Filter>Source\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11\ShaderResourceView.cpp">
-      <Filter>Source\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="D3D11\RenderTargetView.cpp">
       <Filter>Source\D3D11</Filter>
     </ClCompile>
   </ItemGroup>

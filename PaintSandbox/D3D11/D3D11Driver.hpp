@@ -10,14 +10,11 @@
 
 #include <memory>
 
-#include "BlendState.hpp"
-#include "Buffer.hpp"
 #include "CircularGradientShader.hpp"
 #include "Driver.hpp"
 #include "D3D11CanvasWindowGraphics.hpp"
 #include "D3D11Utils.hpp"
 #include "Geometry.hpp"
-#include "SamplerState.hpp"
 
 namespace D3D11
 {
@@ -50,11 +47,11 @@ public:
 	ComPtr<ID2D1Factory> GetD2DFactory() { return m_d2dFactory; }
 	ComPtr<IDWriteFactory> GetDWriteFactory() { return m_dwriteFactory; }
 
-	BlendStatePtr GetOverBlend() { return m_overBlend; }
+	ComPtr<ID3D11BlendState> GetOverBlend() { return m_overBlend; }
 
-	SamplerStatePtr GetBilinearSampler() { return m_bilinearSampler; }
+	ComPtr<ID3D11SamplerState> GetBilinearSampler() { return m_bilinearSampler; }
 
-	PixelShaderPtr GetTexturedPixelShader() { return m_texturedPShader; }
+	ComPtr<ID3D11PixelShader> GetTexturedPixelShader() { return m_texturedPShader; }
 	CircularGradientShaderPtr GetCircularGradientShader() { return m_circularGradientShader; }
 
 private:
@@ -69,17 +66,17 @@ private:
 	ComPtr<ID2D1Factory> m_d2dFactory;
 	ComPtr<IDWriteFactory> m_dwriteFactory;
 
-	BlendStatePtr m_overBlend; // Porter-Duff "over" operation
+	ComPtr<ID3D11BlendState> m_overBlend; // Porter-Duff "over" operation
 
-	SamplerStatePtr m_bilinearSampler;
+	ComPtr<ID3D11SamplerState> m_bilinearSampler;
 
-	BufferPtr m_simple2DQuad;
+	ComPtr<ID3D11Buffer> m_simple2DQuad;
 
-	VertexShaderPtr m_simple2DQuadVShader;
-	InputLayoutPtr m_simple2DInputLayout;
+	ComPtr<ID3D11VertexShader> m_simple2DQuadVShader;
+	ComPtr<ID3D11InputLayout> m_simple2DInputLayout;
 	ConstantBufferPtr m_simple2DQuadParams;
 
-	PixelShaderPtr m_texturedPShader;
+	ComPtr<ID3D11PixelShader> m_texturedPShader;
 	CircularGradientShaderPtr m_circularGradientShader;
 
 };

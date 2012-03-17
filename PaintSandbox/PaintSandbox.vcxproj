@@ -92,8 +92,6 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CanvasImage.cpp" />
     <ClCompile Include="CanvasWindow.cpp" />
-    <ClCompile Include="D3D11\BlendState.cpp" />
-    <ClCompile Include="D3D11\Buffer.cpp" />
     <ClCompile Include="D3D11\CircularGradientShader.cpp" />
     <ClCompile Include="D3D11\ConstantBuffer.cpp" />
     <ClCompile Include="D3D11\D2DTarget.cpp" />
@@ -102,13 +100,6 @@
     <ClCompile Include="D3D11\D3D11Driver.cpp" />
     <ClCompile Include="D3D11\D3D11Image.cpp" />
     <ClCompile Include="D3D11\D3D11Utils.cpp" />
-    <ClCompile Include="D3D11\InputLayout.cpp" />
-    <ClCompile Include="D3D11\PixelShader.cpp" />
-    <ClCompile Include="D3D11\RenderTargetView.cpp" />
-    <ClCompile Include="D3D11\SamplerState.cpp" />
-    <ClCompile Include="D3D11\ShaderResourceView.cpp" />
-    <ClCompile Include="D3D11\Texture2D.cpp" />
-    <ClCompile Include="D3D11\VertexShader.cpp" />
     <ClCompile Include="DrawTool.cpp" />
     <ClCompile Include="ExtensibleImage.cpp" />
     <ClCompile Include="Geometry.cpp" />
@@ -121,8 +112,6 @@
     <ClInclude Include="CanvasImage.hpp" />
     <ClInclude Include="CanvasWindow.hpp" />
     <ClInclude Include="CanvasWindowGraphics.hpp" />
-    <ClInclude Include="D3D11\BlendState.hpp" />
-    <ClInclude Include="D3D11\Buffer.hpp" />
     <ClInclude Include="D3D11\CircularGradientShader.hpp" />
     <ClInclude Include="D3D11\ConstantBuffer.hpp" />
     <ClInclude Include="D3D11\D2DTarget.hpp" />
@@ -131,13 +120,6 @@
     <ClInclude Include="D3D11\D3D11Driver.hpp" />
     <ClInclude Include="D3D11\D3D11Image.hpp" />
     <ClInclude Include="D3D11\D3D11Utils.hpp" />
-    <ClInclude Include="D3D11\InputLayout.hpp" />
-    <ClInclude Include="D3D11\PixelShader.hpp" />
-    <ClInclude Include="D3D11\RenderTargetView.hpp" />
-    <ClInclude Include="D3D11\SamplerState.hpp" />
-    <ClInclude Include="D3D11\ShaderResourceView.hpp" />
-    <ClInclude Include="D3D11\Texture2D.hpp" />
-    <ClInclude Include="D3D11\VertexShader.hpp" />
     <ClInclude Include="DrawTool.hpp" />
     <ClInclude Include="Driver.hpp" />
     <ClInclude Include="ExtensibleImage.hpp" />

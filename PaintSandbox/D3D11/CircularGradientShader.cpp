@@ -59,7 +59,7 @@ void CircularGradientShader::Setup(ID3D11DeviceContext* pCtx, float weight)
 
 	ID3D11Buffer* buf = m_params->Get();
 
-	pCtx->PSSetShader(m_shader->Get(), NULL, 0);
+	pCtx->PSSetShader(m_shader, NULL, 0);
 	pCtx->PSSetConstantBuffers(0, 1, &buf);
 }
 

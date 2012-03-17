@@ -10,8 +10,6 @@
 
 #include <memory>
 
-#include "Texture2D.hpp"
-#include "ShaderResourceView.hpp"
 #include "WindowsUtils.hpp"
 
 namespace D3D11
@@ -30,7 +28,7 @@ public:
 		ID3D11Device* pD3D11Device, ID3D10Device1* pD3D10Device,
 		UINT width, UINT height);
 
-	ID3D11ShaderResourceView* AcquireSRV();
+	ComPtr<ID3D11ShaderResourceView> AcquireSRV();
 	void ReleaseSRV();
 	ComPtr<ID2D1RenderTarget> AcquireTarget();
 	void ReleaseTarget();
@@ -39,8 +37,8 @@ private:
 
 	D2DTarget();
 
-	Texture2DPtr m_d2dTexture;
-	ShaderResourceViewPtr m_d2dTextureSRV;
+	ComPtr<ID3D11Texture2D> m_d2dTexture;
+	ComPtr<ID3D11ShaderResourceView> m_d2dTextureSRV;
 
 	ComPtr<IDXGIKeyedMutex> m_d3d11Mutex;
 	ComPtr<IDXGIKeyedMutex> m_d2dMutex;

@@ -70,33 +70,36 @@ IDXGISurface* OpenD3D11TextureOnD3D10Device(ID3D11Texture2D* texture, ID3D10Devi
 	return dxgiSurface;
 }
 
-VertexShaderPtr CreateVertexShaderFromCode(ID3D11Device* pDevice,
+ComPtr<ID3D11VertexShader> CreateVertexShaderFromCode(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target,
 	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs, UINT numElements,
-	InputLayoutPtr* ppInputLayout)
+	ComPtr<ID3D11InputLayout>* ppInputLayout)
 {
 	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
 
-	VertexShaderPtr shader = VertexShader::Create(pDevice,
-		pCode->GetBufferPointer(), pCode->GetBufferSize());
+	ComPtr<ID3D11VertexShader> shader;
+	CHECK_HR(pDevice->CreateVertexShader(pCode->GetBufferPointer(),
+		pCode->GetBufferSize(), NULL, shader.Receive()));
 
 	if (ppInputLayout)
 	{
-		*ppInputLayout = InputLayout::Create(pDevice, pInputElementDescs,
-			numElements, pCode->GetBufferPointer(), pCode->GetBufferSize());
+		CHECK_HR(pDevice->CreateInputLayout(pInputElementDescs,
+			numElements, pCode->GetBufferPointer(), pCode->GetBufferSize(),
+			ppInputLayout->Receive()));
 	}
 
 	SafeRelease(pCode);
 	return shader;
 }
 
-PixelShaderPtr CreatePixelShaderFromCode(ID3D11Device* pDevice,
+ComPtr<ID3D11PixelShader> CreatePixelShaderFromCode(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target)
 {
 	ID3DBlob* pCode = CompileShader(src, entryPoint, target);
 
-	PixelShaderPtr shader = PixelShader::Create(pDevice,
-		pCode->GetBufferPointer(), pCode->GetBufferSize());
+	ComPtr<ID3D11PixelShader> shader;
+	CHECK_HR(pDevice->CreatePixelShader(pCode->GetBufferPointer(),
+		pCode->GetBufferSize(), NULL, shader.Receive()));
 
 	SafeRelease(pCode);
 	return shader;

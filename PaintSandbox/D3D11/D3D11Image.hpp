@@ -10,9 +10,7 @@
 #include <memory>
 
 #include "Driver.hpp"
-#include "Texture2D.hpp"
-#include "ShaderResourceView.hpp"
-#include "RenderTargetView.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -27,17 +25,17 @@ public:
 
 	static D3D11ImagePtr Create(ID3D11Device* pDevice, DXGI_FORMAT format, UINT width, UINT height);
 
-	Texture2DPtr GetTex() { return m_texture; }
-	ShaderResourceViewPtr GetSRV() { return m_srv; }
-	RenderTargetViewPtr GetRTV() { return m_rtv; }
+	ComPtr<ID3D11Texture2D> GetTex() { return m_texture; }
+	ComPtr<ID3D11ShaderResourceView> GetSRV() { return m_srv; }
+	ComPtr<ID3D11RenderTargetView> GetRTV() { return m_rtv; }
 
 private:
 
 	D3D11Image();
 
-	Texture2DPtr m_texture;
-	ShaderResourceViewPtr m_srv;
-	RenderTargetViewPtr m_rtv;
+	ComPtr<ID3D11Texture2D> m_texture;
+	ComPtr<ID3D11ShaderResourceView> m_srv;
+	ComPtr<ID3D11RenderTargetView> m_rtv;
 
 };
 

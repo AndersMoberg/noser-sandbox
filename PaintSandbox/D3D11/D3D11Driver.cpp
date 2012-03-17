@@ -147,19 +147,19 @@ D3D11DriverPtr D3D11Driver::Create()
 	bld.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
 	bld.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
 	bld.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	p->m_overBlend = BlendState::Create(p->m_d3d11Device, bld);
+	CHECK_HR(p->m_d3d11Device->CreateBlendState(&bld, p->m_overBlend.Receive()));
 
 	// Create bilinear sampler
 
 	D3D11_SAMPLER_DESC sd = CD3D11_SAMPLER_DESC(CD3D11_DEFAULT());
-	p->m_bilinearSampler = SamplerState::Create(p->m_d3d11Device, sd);
+	CHECK_HR(p->m_d3d11Device->CreateSamplerState(&sd, p->m_bilinearSampler.Receive()));
 
 	// Create simple 2D quad vertex buffer
 
 	D3D11_BUFFER_DESC bd = CD3D11_BUFFER_DESC(sizeof(SIMPLE2D_QUAD),
 		D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_IMMUTABLE);
 	D3D11_SUBRESOURCE_DATA srd = { SIMPLE2D_QUAD, 0, 0 };
-	p->m_simple2DQuad = Buffer::Create(p->m_d3d11Device, bd, srd);
+	CHECK_HR(p->m_d3d11Device->CreateBuffer(&bd, &srd, p->m_simple2DQuad.Receive()));
 
 	// Create simple 2D quad vertex shader
 
@@ -212,14 +212,14 @@ void D3D11Driver::RenderQuad(const Matrix3x2f& mat, const RectF& rc)
 
 	// Set up input assembler
 	m_d3d11Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	m_d3d11Context->IASetInputLayout(m_simple2DInputLayout->Get());
+	m_d3d11Context->IASetInputLayout(m_simple2DInputLayout);
 	UINT stride = sizeof(Vector2f);
 	UINT offset = 0;
-	ID3D11Buffer* buf = m_simple2DQuad->Get();
+	ID3D11Buffer* buf = m_simple2DQuad;
 	m_d3d11Context->IASetVertexBuffers(0, 1, &buf, &stride, &offset);
 
 	// Set up vertex shader
-	m_d3d11Context->VSSetShader(m_simple2DQuadVShader->Get(), NULL, 0);
+	m_d3d11Context->VSSetShader(m_simple2DQuadVShader, NULL, 0);
 	buf = m_simple2DQuadParams->Get();
 	m_d3d11Context->VSSetConstantBuffers(0, 1, &buf);
 
@@ -233,7 +233,7 @@ void D3D11Driver::RenderQuadToCanvas(CanvasImagePtr canvas, const RectF& rc)
 		canvas->GetDriverImage());
 
 	// Set up output merger
-	ID3D11RenderTargetView* rtv = image->GetRTV()->Get();
+	ID3D11RenderTargetView* rtv = image->GetRTV();
 	m_d3d11Context->OMSetRenderTargets(1, &rtv, NULL);
 
 	Matrix3x2f mat = Matrix3x2f::RectLerp(canvas->GetCanvasRect(),

@@ -29,7 +29,7 @@ private:
 
 	CircularGradientShader();
 
-	PixelShaderPtr m_shader;
+	ComPtr<ID3D11PixelShader> m_shader;
 	ConstantBufferPtr m_params;
 
 };

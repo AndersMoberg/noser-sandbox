@@ -29,19 +29,19 @@ D2DTargetPtr D2DTarget::Create(ID2D1Factory* pD2DFactory,
 	D3D11_TEXTURE2D_DESC t2dd = CD3D11_TEXTURE2D_DESC(D2DTEXTURE_FORMAT,
 		width, height, 1, 1, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
 		D3D11_USAGE_DEFAULT, 0, 1, 0, D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX);
-	p->m_d2dTexture = Texture2D::Create(pD3D11Device, t2dd);
+	CHECK_HR(pD3D11Device->CreateTexture2D(&t2dd, NULL, p->m_d2dTexture.Receive()));
 
 	// Create SRV for texture
 
-	p->m_d2dTextureSRV = ShaderResourceView::Create(pD3D11Device, p->m_d2dTexture);
+	CHECK_HR(pD3D11Device->CreateShaderResourceView(p->m_d2dTexture, NULL, p->m_d2dTextureSRV.Receive()));
 
 	// Obtain mutex for D3D11
 
-	CHECK_HR(p->m_d2dTexture->Get()->QueryInterface(IID_PPV_ARGS(p->m_d3d11Mutex.Receive())));
+	CHECK_HR(p->m_d2dTexture->QueryInterface(IID_PPV_ARGS(p->m_d3d11Mutex.Receive())));
 
 	// Open texture on D3D10 device
 
-	IDXGISurface* dxgiSurface = OpenD3D11TextureOnD3D10Device(p->m_d2dTexture->Get(), pD3D10Device);
+	IDXGISurface* dxgiSurface = OpenD3D11TextureOnD3D10Device(p->m_d2dTexture, pD3D10Device);
 
 	// Obtain mutex for Direct2D
 
@@ -59,10 +59,10 @@ D2DTargetPtr D2DTarget::Create(ID2D1Factory* pD2DFactory,
 	return p;
 }
 
-ID3D11ShaderResourceView* D2DTarget::AcquireSRV()
+ComPtr<ID3D11ShaderResourceView> D2DTarget::AcquireSRV()
 {
 	CHECK_HR(m_d3d11Mutex->AcquireSync(0, INFINITE));
-	return m_d2dTextureSRV->Get();
+	return m_d2dTextureSRV;
 }
 
 void D2DTarget::ReleaseSRV()

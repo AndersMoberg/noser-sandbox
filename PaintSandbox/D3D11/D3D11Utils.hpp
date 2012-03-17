@@ -9,9 +9,7 @@
 
 #include <memory>
 
-#include "InputLayout.hpp"
-#include "VertexShader.hpp"
-#include "PixelShader.hpp"
+#include "WindowsUtils.hpp"
 
 namespace D3D11
 {
@@ -19,12 +17,12 @@ namespace D3D11
 IDXGIAdapter* GetDXGIAdapterFromD3D11Device(ID3D11Device* pDevice);
 IDXGISurface* OpenD3D11TextureOnD3D10Device(ID3D11Texture2D* texture, ID3D10Device1* device);
 
-VertexShaderPtr CreateVertexShaderFromCode(ID3D11Device* pDevice,
+ComPtr<ID3D11VertexShader> CreateVertexShaderFromCode(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target,
 	const D3D11_INPUT_ELEMENT_DESC* pInputElementDescs = NULL, UINT numElements = 0,
-	InputLayoutPtr* ppInputLayout = NULL);
+	ComPtr<ID3D11InputLayout>* ppInputLayout = NULL);
 
-PixelShaderPtr CreatePixelShaderFromCode(ID3D11Device* pDevice,
+ComPtr<ID3D11PixelShader> CreatePixelShaderFromCode(ID3D11Device* pDevice,
 	const char* src, const char* entryPoint, const char* target);
 
 }
