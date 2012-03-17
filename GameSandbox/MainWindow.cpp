@@ -87,6 +87,9 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 			case WM_DESTROY:
 				result = self->OnWMDestroy();
 				break;
+			case WM_PAINT:
+				result = self->OnWMPaint();
+				break;
 			default:
 				result = DefWindowProc(hwnd, uMsg, wParam, lParam);
 				break;
@@ -107,13 +110,25 @@ LRESULT MainWindow::OnWMCreate(HWND hWnd)
 {
 	m_hWnd = hWnd;
 
+	m_gles2Manager = GLES2Manager::Create(m_hWnd);
+
 	return 0;
 }
 
 LRESULT MainWindow::OnWMDestroy()
 {
+	m_gles2Manager.reset();
+
 	PostQuitMessage(EXIT_SUCCESS);
 
 	m_hWnd = NULL;
+	return 0;
+}
+
+LRESULT MainWindow::OnWMPaint()
+{
+	m_gles2Manager->Present();
+
+	ValidateRect(m_hWnd, NULL);
 	return 0;
 }

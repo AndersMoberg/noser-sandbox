@@ -15,12 +15,21 @@
     <ClCompile Include="MainWindow.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="GLES2Manager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="MainWindow.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="GLES2Manager.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Geometry.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

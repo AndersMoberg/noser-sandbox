@@ -35,7 +35,8 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	}
 	catch (const std::exception& e)
 	{
-		MessageBoxA(NULL, e.what(), "Error", MB_ICONERROR | MB_OK);
+		OutputDebugStringA(e.what());
+		OutputDebugStringA("\n");
 		exitCode = EXIT_FAILURE;
 	}
 

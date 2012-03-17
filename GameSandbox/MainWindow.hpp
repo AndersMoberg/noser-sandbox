@@ -11,6 +11,8 @@
 #define NOMINMAX
 #include <Windows.h>
 
+#include "GLES2Manager.hpp"
+
 class MainWindow;
 typedef std::shared_ptr<MainWindow> MainWindowPtr;
 
@@ -32,11 +34,14 @@ private:
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnWMCreate(HWND hWnd);
 	LRESULT OnWMDestroy();
+	LRESULT OnWMPaint();
 
 	HWND m_hWnd;
 
 	bool m_exceptionThrown;
 	std::exception m_exceptionProxy;
+
+	GLES2ManagerPtr m_gles2Manager;
 
 };
 
