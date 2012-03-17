@@ -4,12 +4,34 @@
 
 #include "Application.hpp"
 
+#include <ObjBase.h>
+#include <MMSystem.h>
+
+#include "WindowsUtils.hpp"
+
 Application::Application()
+	: m_coInited(false)
 { }
+
+Application::~Application()
+{
+	if (m_coInited)
+	{
+		CoUninitialize();
+		m_coInited = false;
+	}
+
+	timeEndPeriod(1);
+}
 
 ApplicationPtr Application::Create(HINSTANCE hInstance, int nShowCmd)
 {
 	ApplicationPtr p(new Application);
+
+	timeBeginPeriod(1);
+
+	CHECK_HR(CoInitialize(NULL));
+	p->m_coInited = true;
 
 	p->m_window = MainWindow::Create(hInstance, nShowCmd);
 

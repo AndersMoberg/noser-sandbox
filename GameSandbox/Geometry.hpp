@@ -11,6 +11,10 @@ struct Rectf
 	float top;
 	float right;
 	float bottom;
+
+	Rectf(float l, float t, float r, float b)
+		: left(l), top(t), right(r), bottom(b)
+	{ }
 };
 
 #endif

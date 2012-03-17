@@ -18,6 +18,9 @@
     <ClCompile Include="GLES2Manager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="GLES2Texture.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -30,6 +33,12 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Geometry.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="GLES2Texture.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsUtils.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

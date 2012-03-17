@@ -43,6 +43,8 @@ private:
 
 	GLES2ManagerPtr m_gles2Manager;
 
+	GLES2TexturePtr m_bgTexture;
+
 };
 
 #endif

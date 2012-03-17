@@ -111,12 +111,15 @@ LRESULT MainWindow::OnWMCreate(HWND hWnd)
 	m_hWnd = hWnd;
 
 	m_gles2Manager = GLES2Manager::Create(m_hWnd);
+	
+	m_bgTexture = m_gles2Manager->CreateTextureFromFile(L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
 
 	return 0;
 }
 
 LRESULT MainWindow::OnWMDestroy()
 {
+	m_bgTexture.reset();
 	m_gles2Manager.reset();
 
 	PostQuitMessage(EXIT_SUCCESS);
@@ -127,6 +130,26 @@ LRESULT MainWindow::OnWMDestroy()
 
 LRESULT MainWindow::OnWMPaint()
 {
+	RECT clientRc;
+	GetClientRect(m_hWnd, &clientRc);
+	glViewport(0, 0, clientRc.right - clientRc.left, clientRc.bottom - clientRc.top);
+
+	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	
+	// Draw background image
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_bgTexture->Get());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Premultiplied alpha blending
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquation(GL_FUNC_ADD);
+	glEnable(GL_BLEND);
+
+	m_gles2Manager->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+
 	m_gles2Manager->Present();
 
 	ValidateRect(m_hWnd, NULL);

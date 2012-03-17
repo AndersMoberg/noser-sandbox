@@ -21,6 +21,7 @@ class Application
 
 public:
 
+	~Application();
 	static ApplicationPtr Create(HINSTANCE hInstance, int nShowCmd);
 
 	int MessagePump();
@@ -29,6 +30,7 @@ private:
 
 	Application();
 
+	bool m_coInited;
 	MainWindowPtr m_window;
 
 };

@@ -6,11 +6,13 @@
 #define _GLES2MANAGER_HPP
 
 #include <memory>
+#include <string>
 
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 
 #include "Geometry.hpp"
+#include "GLES2Texture.hpp"
 
 class GLES2Manager;
 typedef std::shared_ptr<GLES2Manager> GLES2ManagerPtr;
@@ -22,10 +24,11 @@ public:
 
 	~GLES2Manager();
 	static GLES2ManagerPtr Create(HWND hWnd);
-
-	void Present();
-
+	
+	GLES2TexturePtr CreateTextureFromFile(const std::wstring& path);
 	void DrawTexturedQuad(const Rectf& rc);
+	
+	void Present();
 
 private:
 
