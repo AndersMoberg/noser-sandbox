@@ -165,9 +165,11 @@ GLES2ManagerPtr GLES2Manager::Create(HWND hWnd)
 		"attribute vec2 a_pos;\n"
 		"attribute vec2 a_tex;\n"
 		"varying vec2 v_tex;\n"
+		"uniform mat2 u_mat;\n"
+		"uniform vec2 u_add;\n"
 		"void main()\n"
 		"{\n"
-			"gl_Position = vec4(a_pos, 0, 1);\n"
+			"gl_Position = vec4((u_mat * a_pos) + u_add, 0, 1);\n"
 			"v_tex = a_tex;\n"
 		"}\n"
 		;
@@ -186,8 +188,13 @@ GLES2ManagerPtr GLES2Manager::Create(HWND hWnd)
 		p->m_texturedQuadProgram.program, "a_pos");
 	p->m_texturedQuadProgram.atexLoc = glGetAttribLocation(
 		p->m_texturedQuadProgram.program, "a_tex");
+	p->m_texturedQuadProgram.umatLoc = glGetUniformLocation(
+		p->m_texturedQuadProgram.program, "u_mat");
+	p->m_texturedQuadProgram.uaddLoc = glGetUniformLocation(
+		p->m_texturedQuadProgram.program, "u_add");
 	p->m_texturedQuadProgram.usamplerLoc = glGetUniformLocation(
 		p->m_texturedQuadProgram.program, "u_sampler");
+	p->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
 
 	return p;
 }
@@ -228,6 +235,17 @@ GLES2TexturePtr GLES2Manager::CreateTextureFromFile(const std::wstring& path)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &data[0]);
 
 	return result;
+}
+
+void GLES2Manager::SetTexturedQuadMatrix(const Matrix3x2f& mat)
+{
+	glUseProgram(m_texturedQuadProgram.program);
+
+	// Column-major order is required
+	float umat[4] = { mat._11, mat._21, mat._21, mat._22 };
+	glUniformMatrix2fv(m_texturedQuadProgram.umatLoc, 1, GL_FALSE, umat);
+	float uadd[2] = { mat._31, mat._32 };
+	glUniform2fv(m_texturedQuadProgram.uaddLoc, 1, uadd);
 }
 
 void GLES2Manager::DrawTexturedQuad(const Rectf& rc)

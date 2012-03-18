@@ -29,6 +29,10 @@ private:
 	
 	GLES2TexturePtr m_bgTexture;
 
+	Vector2f m_characterPos;
+	Rectf m_characterRect;
+	GLES2TexturePtr m_characterTexture;
+
 };
 
 #endif

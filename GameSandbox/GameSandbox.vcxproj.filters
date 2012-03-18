@@ -27,6 +27,12 @@
     <ClCompile Include="Game.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Geometry.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -51,6 +57,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="GameRenderer.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

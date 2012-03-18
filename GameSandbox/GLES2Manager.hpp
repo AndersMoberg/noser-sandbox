@@ -26,6 +26,8 @@ public:
 	static GLES2ManagerPtr Create(HWND hWnd);
 	
 	GLES2TexturePtr CreateTextureFromFile(const std::wstring& path);
+
+	void SetTexturedQuadMatrix(const Matrix3x2f& mat);
 	void DrawTexturedQuad(const Rectf& rc);
 	
 	void Present();
@@ -54,6 +56,8 @@ private:
 		GLuint program;
 		GLuint aposLoc;
 		GLuint atexLoc;
+		GLuint umatLoc;
+		GLuint uaddLoc;
 		GLuint usamplerLoc;
 	} m_texturedQuadProgram;
 
