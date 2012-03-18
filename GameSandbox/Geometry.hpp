@@ -84,6 +84,10 @@ struct Rectf
 
 	Vector2f UpperLeft() const { return Vector2f(left, top); }
 
+	Rectf Offset(const Vector2f& v) {
+		return Rectf(left + v.x, top + v.y, right + v.x, bottom + v.y);
+	}
+
 };
 
 struct Matrix3x2f

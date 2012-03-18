@@ -38,6 +38,8 @@ private:
 	LRESULT OnWMDestroy();
 	LRESULT OnWMSize();
 	LRESULT OnWMPaint();
+	LRESULT OnWMKeyDown(WPARAM wParam);
+	LRESULT OnWMKeyUp(WPARAM wParam);
 
 	void Update();
 	void Render();
@@ -53,6 +55,11 @@ private:
 
 	GameRendererPtr m_renderer;
 	GamePtr m_game;
+
+	// User input processing
+	int m_leftToRightKeys; // -1: left; 0: none; 1: right
+	int m_downToUpKeys; // -1: down; 0: none; 1: up
+	bool m_spaceTrigger;
 
 };
 

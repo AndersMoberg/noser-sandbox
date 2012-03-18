@@ -17,11 +17,11 @@ class Game
 
 public:
 
-	static const float TICKS_PER_SEC;
+	static const unsigned long long TICKS_PER_SEC;
 
 	static GamePtr Create(GameRendererPtr renderer);
 
-	void Tick();
+	void Tick(const Vector2f& move);
 	void Render();
 
 private:
@@ -29,12 +29,11 @@ private:
 	Game();
 
 	GameRendererPtr m_renderer;
-
-	unsigned long long m_curTick;
 	
 	GLES2TexturePtr m_bgTexture;
 
 	Vector2f m_characterPos;
+	float m_characterSpeed;
 	Rectf m_characterRect;
 	GLES2TexturePtr m_characterTexture;
 

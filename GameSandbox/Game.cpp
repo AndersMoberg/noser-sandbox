@@ -4,11 +4,12 @@
 
 #include "Game.hpp"
 
-const float Game::TICKS_PER_SEC = 3600.0f;
+const unsigned long long Game::TICKS_PER_SEC = 3600;
 
 Game::Game()
 	: m_characterPos(0.0f, 0.0f),
-	m_characterRect(-1.0f, 1.0f, 1.0f, -1.0f)
+	m_characterSpeed(0.1f),
+	m_characterRect(-0.2f, 0.2f, 0.2f, -0.2f)
 { }
 
 GamePtr Game::Create(GameRendererPtr renderer)
@@ -16,8 +17,6 @@ GamePtr Game::Create(GameRendererPtr renderer)
 	GamePtr p(new Game);
 
 	p->m_renderer = renderer;
-
-	p->m_curTick = 0;
 
 	p->m_bgTexture = p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
@@ -28,8 +27,10 @@ GamePtr Game::Create(GameRendererPtr renderer)
 	return p;
 }
 
-void Game::Tick()
+void Game::Tick(const Vector2f& move)
 {
+	Vector2f velocity = move * m_characterSpeed;
+	m_characterPos += velocity / TICKS_PER_SEC;
 }
 
 void Game::Render()
@@ -64,5 +65,5 @@ void Game::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->GetGLES2Manager()->DrawTexturedQuad(m_characterRect);
+	m_renderer->GetGLES2Manager()->DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
 }

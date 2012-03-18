@@ -101,6 +101,12 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 			case WM_PAINT:
 				result = self->OnWMPaint();
 				break;
+			case WM_KEYDOWN:
+				result = self->OnWMKeyDown(wParam);
+				break;
+			case WM_KEYUP:
+				result = self->OnWMKeyUp(wParam);
+				break;
 			default:
 				result = DefWindowProc(hwnd, uMsg, wParam, lParam);
 				break;
@@ -152,21 +158,91 @@ LRESULT MainWindow::OnWMPaint()
 	Render();
 	Present();
 
-	ValidateRect(m_hWnd, NULL);
+	// Animate!
+	InvalidateRect(m_hWnd, NULL, FALSE);
+
 	return 0;
 }
 
+LRESULT MainWindow::OnWMKeyDown(WPARAM wParam)
+{
+	switch (wParam)
+	{
+	case VK_LEFT:
+		m_leftToRightKeys = -1;
+		break;
+	case VK_UP:
+		m_downToUpKeys = 1;
+		break;
+	case VK_RIGHT:
+		m_leftToRightKeys = 1;
+		break;
+	case VK_DOWN:
+		m_downToUpKeys = -1;
+		break;
+	case VK_SPACE:
+		m_spaceTrigger = true;
+		break;
+	}
+	return 0;
+}
+
+LRESULT MainWindow::OnWMKeyUp(WPARAM wParam)
+{
+	switch (wParam)
+	{
+	case VK_LEFT:
+		m_leftToRightKeys = (GetKeyState(VK_RIGHT) & 0x8000) ? 1 : 0;
+		break;
+	case VK_UP:
+		m_downToUpKeys = (GetKeyState(VK_DOWN) & 0x8000) ? -1 : 0;
+		break;
+	case VK_RIGHT:
+		m_leftToRightKeys = (GetKeyState(VK_LEFT) & 0x8000) ? -1 : 0;
+		break;
+	case VK_DOWN:
+		m_downToUpKeys = (GetKeyState(VK_UP) & 0x8000) ? 1 : 0;
+		break;
+	}
+	return 0;
+}
+
+static const float SQRT_1_OVER_2 = 0.70710677f;
+
 void MainWindow::Update()
 {
+	// Gather input
+	Vector2f move(0.0f, 0.0f);
+	if (m_leftToRightKeys == -1 && m_downToUpKeys == -1) {
+		move = Vector2f(-SQRT_1_OVER_2, -SQRT_1_OVER_2); // Southwest
+	} else if (m_leftToRightKeys == -1 && m_downToUpKeys == 0) {
+		move = Vector2f(-1.0f, 0.0f); // West
+	} else if (m_leftToRightKeys == -1 && m_downToUpKeys == 1) {
+		move = Vector2f(-SQRT_1_OVER_2, SQRT_1_OVER_2); // Northwest
+	} else if (m_leftToRightKeys == 0 && m_downToUpKeys == -1) {
+		move = Vector2f(0.0f, -1.0f); // South
+	} else if (m_leftToRightKeys == 0 && m_downToUpKeys == 0) {
+		move = Vector2f(0.0f, 0.0f); // Center
+	} else if (m_leftToRightKeys == 0 && m_downToUpKeys == 1) {
+		move = Vector2f(0.0f, 1.0f); // North
+	} else if (m_leftToRightKeys == 1 && m_downToUpKeys == -1) {
+		move = Vector2f(SQRT_1_OVER_2, -SQRT_1_OVER_2); // Southeast
+	} else if (m_leftToRightKeys == 1 && m_downToUpKeys == 0) {
+		move = Vector2f(1.0f, 0.0f); // East
+	} else if (m_leftToRightKeys == 1 && m_downToUpKeys == 1) {
+		move = Vector2f(SQRT_1_OVER_2, SQRT_1_OVER_2); // Northeast
+	}
+
 	LARGE_INTEGER liCurTime;
 	QueryPerformanceCounter(&liCurTime);
 
-	long long tickTime = m_frequency / Game::TICKS_PER_SEC;
+	long long tickTime = m_frequency / (long long)Game::TICKS_PER_SEC;
 
 	long long t;
 	for (t = m_curTime; t < liCurTime.QuadPart; t += tickTime)
 	{
-		m_game->Tick();
+		m_game->Tick(move);
+		m_spaceTrigger = false;
 	}
 
 	m_curTime = t;
