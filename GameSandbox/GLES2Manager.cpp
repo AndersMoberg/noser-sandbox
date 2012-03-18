@@ -154,6 +154,11 @@ GLES2ManagerPtr GLES2Manager::Create(HWND hWnd)
 		throw std::exception("Failed to make EGL context current");
 	}
 
+	RECT clientRc;
+	GetClientRect(hWnd, &clientRc);
+	p->m_width = clientRc.right - clientRc.left;
+	p->m_height = clientRc.bottom - clientRc.top;
+
 	static const char TEXTURED_QUAD_VERTEX_SHADER[] =
 		"attribute vec2 a_pos;\n"
 		"attribute vec2 a_tex;\n"

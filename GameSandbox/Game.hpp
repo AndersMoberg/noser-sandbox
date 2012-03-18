@@ -19,11 +19,15 @@ public:
 
 	static GamePtr Create(GameRendererPtr renderer);
 
+	void Render();
+
 private:
 
 	Game();
 
 	GameRendererPtr m_renderer;
+	
+	GLES2TexturePtr m_bgTexture;
 
 };
 

@@ -46,8 +46,6 @@ private:
 	GameRendererPtr m_renderer;
 	GamePtr m_game;
 
-	GLES2TexturePtr m_bgTexture;
-
 };
 
 #endif
