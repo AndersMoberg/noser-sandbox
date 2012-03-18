@@ -110,22 +110,19 @@ LRESULT MainWindow::OnWMCreate(HWND hWnd)
 {
 	m_hWnd = hWnd;
 
-	m_gles2Manager = GLES2Manager::Create(m_hWnd);
-	
-	m_bgTexture = m_gles2Manager->CreateTextureFromFile(L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
-
-	m_renderer = GameRenderer::Create();
+	m_renderer = GameRenderer::Create(m_hWnd);
 	m_game = Game::Create(m_renderer);
+
+	m_bgTexture = m_renderer->GetGLES2Manager()->CreateTextureFromFile(L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
 
 	return 0;
 }
 
 LRESULT MainWindow::OnWMDestroy()
 {
+	m_bgTexture.reset();
 	m_game.reset();
 	m_renderer.reset();
-	m_bgTexture.reset();
-	m_gles2Manager.reset();
 
 	PostQuitMessage(EXIT_SUCCESS);
 
@@ -153,9 +150,9 @@ LRESULT MainWindow::OnWMPaint()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_gles2Manager->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+	m_renderer->GetGLES2Manager()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 
-	m_gles2Manager->Present();
+	m_renderer->GetGLES2Manager()->Present();
 
 	ValidateRect(m_hWnd, NULL);
 	return 0;
