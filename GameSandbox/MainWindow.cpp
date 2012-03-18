@@ -114,11 +114,16 @@ LRESULT MainWindow::OnWMCreate(HWND hWnd)
 	
 	m_bgTexture = m_gles2Manager->CreateTextureFromFile(L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
 
+	m_renderer = GameRenderer::Create();
+	m_game = Game::Create(m_renderer);
+
 	return 0;
 }
 
 LRESULT MainWindow::OnWMDestroy()
 {
+	m_game.reset();
+	m_renderer.reset();
 	m_bgTexture.reset();
 	m_gles2Manager.reset();
 

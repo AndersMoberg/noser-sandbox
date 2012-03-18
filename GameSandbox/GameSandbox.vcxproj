@@ -85,6 +85,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameRenderer.cpp" />
     <ClCompile Include="GLES2Manager.cpp" />
     <ClCompile Include="GLES2Texture.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -92,6 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp" />
+    <ClInclude Include="Game.hpp" />
+    <ClInclude Include="GameRenderer.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="GLES2Manager.hpp" />
     <ClInclude Include="GLES2Texture.hpp" />

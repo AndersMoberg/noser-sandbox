@@ -11,6 +11,8 @@
 #define NOMINMAX
 #include <Windows.h>
 
+#include "Game.hpp"
+#include "GameRenderer.hpp"
 #include "GLES2Manager.hpp"
 
 class MainWindow;
@@ -40,6 +42,9 @@ private:
 
 	bool m_exceptionThrown;
 	std::exception m_exceptionProxy;
+
+	GameRendererPtr m_renderer;
+	GamePtr m_game;
 
 	GLES2ManagerPtr m_gles2Manager;
 
