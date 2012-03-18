@@ -36,6 +36,7 @@ private:
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnWMCreate(HWND hWnd);
 	LRESULT OnWMDestroy();
+	LRESULT OnWMSize();
 	LRESULT OnWMPaint();
 
 	HWND m_hWnd;

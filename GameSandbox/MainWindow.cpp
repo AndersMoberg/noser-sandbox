@@ -87,6 +87,9 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 			case WM_DESTROY:
 				result = self->OnWMDestroy();
 				break;
+			case WM_SIZE:
+				result = self->OnWMSize();
+				break;
 			case WM_PAINT:
 				result = self->OnWMPaint();
 				break;
@@ -124,6 +127,12 @@ LRESULT MainWindow::OnWMDestroy()
 	PostQuitMessage(EXIT_SUCCESS);
 
 	m_hWnd = NULL;
+	return 0;
+}
+
+LRESULT MainWindow::OnWMSize()
+{
+	m_renderer->GetGLES2Manager()->Resize();
 	return 0;
 }
 

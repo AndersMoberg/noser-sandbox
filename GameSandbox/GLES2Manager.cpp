@@ -114,6 +114,8 @@ GLES2ManagerPtr GLES2Manager::Create(HWND hWnd)
 {
 	GLES2ManagerPtr p(new GLES2Manager);
 
+	p->m_hWnd = hWnd;
+
 	p->m_eglDisplay = eglGetDisplay(GetDC(hWnd));
 	if (p->m_eglDisplay == EGL_NO_DISPLAY) {
 		throw std::exception("Failed to get display for EGL");
@@ -253,4 +255,12 @@ void GLES2Manager::DrawTexturedQuad(const Rectf& rc)
 void GLES2Manager::Present()
 {
 	eglSwapBuffers(m_eglDisplay, m_eglSurface);
+}
+
+void GLES2Manager::Resize()
+{
+	RECT clientRc;
+	GetClientRect(m_hWnd, &clientRc);
+	m_width = clientRc.right - clientRc.left;
+	m_height = clientRc.bottom - clientRc.top;
 }

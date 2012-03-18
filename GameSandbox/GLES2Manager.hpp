@@ -29,6 +29,7 @@ public:
 	void DrawTexturedQuad(const Rectf& rc);
 	
 	void Present();
+	void Resize();
 
 	unsigned int GetWidth() const { return m_width; }
 	unsigned int GetHeight() const { return m_height; }
@@ -36,6 +37,8 @@ public:
 private:
 
 	GLES2Manager();
+
+	HWND m_hWnd;
 
 	EGLDisplay m_eglDisplay;
 	EGLSurface m_eglSurface;
