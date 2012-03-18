@@ -22,6 +22,14 @@ MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd)
 {
 	MainWindowPtr p(new MainWindow);
 
+	LARGE_INTEGER frequency;
+	QueryPerformanceFrequency(&frequency);
+	p->m_frequency = frequency.QuadPart;
+
+	LARGE_INTEGER curTime;
+	QueryPerformanceCounter(&curTime);
+	p->m_curTime = curTime.QuadPart;
+
 	WNDCLASS wc = { 0 };
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WindowProc;
@@ -138,10 +146,38 @@ LRESULT MainWindow::OnWMSize()
 
 LRESULT MainWindow::OnWMPaint()
 {
-	m_game->Render();
+	// FIXME: WM_PAINT is not the ideal place to call Update.
+	Update();
 
-	m_renderer->GetGLES2Manager()->Present();
+	Render();
+	Present();
 
 	ValidateRect(m_hWnd, NULL);
 	return 0;
+}
+
+void MainWindow::Update()
+{
+	LARGE_INTEGER liCurTime;
+	QueryPerformanceCounter(&liCurTime);
+
+	long long tickTime = m_frequency / Game::TICKS_PER_SEC;
+
+	long long t;
+	for (t = m_curTime; t < liCurTime.QuadPart; t += tickTime)
+	{
+		m_game->Tick();
+	}
+
+	m_curTime = t;
+}
+
+void MainWindow::Render()
+{
+	m_game->Render();
+}
+
+void MainWindow::Present()
+{
+	m_renderer->GetGLES2Manager()->Present();
 }

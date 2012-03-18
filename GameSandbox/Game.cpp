@@ -4,6 +4,8 @@
 
 #include "Game.hpp"
 
+const float Game::TICKS_PER_SEC = 3600.0f;
+
 Game::Game()
 	: m_characterPos(0.0f, 0.0f),
 	m_characterRect(-1.0f, 1.0f, 1.0f, -1.0f)
@@ -15,6 +17,8 @@ GamePtr Game::Create(GameRendererPtr renderer)
 
 	p->m_renderer = renderer;
 
+	p->m_curTick = 0;
+
 	p->m_bgTexture = p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
 
@@ -22,6 +26,10 @@ GamePtr Game::Create(GameRendererPtr renderer)
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg");
 
 	return p;
+}
+
+void Game::Tick()
+{
 }
 
 void Game::Render()

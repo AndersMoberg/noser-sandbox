@@ -39,10 +39,17 @@ private:
 	LRESULT OnWMSize();
 	LRESULT OnWMPaint();
 
+	void Update();
+	void Render();
+	void Present();
+
 	HWND m_hWnd;
 
 	bool m_exceptionThrown;
 	std::exception m_exceptionProxy;
+
+	long long m_curTime;
+	long long m_frequency;
 
 	GameRendererPtr m_renderer;
 	GamePtr m_game;

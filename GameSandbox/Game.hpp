@@ -17,8 +17,11 @@ class Game
 
 public:
 
+	static const float TICKS_PER_SEC;
+
 	static GamePtr Create(GameRendererPtr renderer);
 
+	void Tick();
 	void Render();
 
 private:
@@ -26,6 +29,8 @@ private:
 	Game();
 
 	GameRendererPtr m_renderer;
+
+	unsigned long long m_curTick;
 	
 	GLES2TexturePtr m_bgTexture;
 
