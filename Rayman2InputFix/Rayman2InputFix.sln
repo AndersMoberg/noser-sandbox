@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Rayman2InputFix", "Rayman2InputFix.vcxproj", "{A89B3299-242A-4115-A1AC-3EF8B6A8358D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A89B3299-242A-4115-A1AC-3EF8B6A8358D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A89B3299-242A-4115-A1AC-3EF8B6A8358D}.Debug|Win32.Build.0 = Debug|Win32
+		{A89B3299-242A-4115-A1AC-3EF8B6A8358D}.Release|Win32.ActiveCfg = Release|Win32
+		{A89B3299-242A-4115-A1AC-3EF8B6A8358D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
