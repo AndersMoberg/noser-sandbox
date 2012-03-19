@@ -86,7 +86,7 @@ ULONG Rayman3XInput_DirectInputDevice8A::Release()
 
 HRESULT Rayman3XInput_DirectInputDevice8A::GetCapabilities(LPDIDEVCAPS lpDIDevCaps)
 {
-	OutputDebugStringA("R3XI: GetCapabilities called\n");
+	Debug("R3XI: GetCapabilities called\n");
 
 	if (lpDIDevCaps->dwSize != sizeof(DIDEVCAPS)) {
 		return DIERR_NOTINITIALIZED;
@@ -109,13 +109,13 @@ HRESULT Rayman3XInput_DirectInputDevice8A::GetCapabilities(LPDIDEVCAPS lpDIDevCa
 
 HRESULT Rayman3XInput_DirectInputDevice8A::EnumObjects(LPDIENUMDEVICEOBJECTSCALLBACKA lpCallback, LPVOID pvRef, DWORD dwFlags)
 {
-	OutputDebugStringA("R3XI: EnumObjects called\n");
+	Debug("R3XI: EnumObjects called\n");
 	return E_NOTIMPL;
 }
 
 HRESULT Rayman3XInput_DirectInputDevice8A::GetProperty(REFGUID rguidProp, LPDIPROPHEADER pdiph)
 {
-	OutputDebugStringA("R3XI: GetProperty called\n");
+	Debug("R3XI: GetProperty called\n");
 	if (&rguidProp == &DIPROP_RANGE)
 	{
 		if (pdiph->dwSize != sizeof(DIPROPRANGE) ||
@@ -157,7 +157,7 @@ HRESULT Rayman3XInput_DirectInputDevice8A::GetProperty(REFGUID rguidProp, LPDIPR
 
 HRESULT Rayman3XInput_DirectInputDevice8A::SetProperty(REFGUID rguidProp, LPCDIPROPHEADER pdiph)
 {
-	OutputDebugStringA("R3XI: SetProperty called\n");
+	Debug("R3XI: SetProperty called\n");
 	if (&rguidProp == &DIPROP_DEADZONE)
 	{
 		if (pdiph->dwSize != sizeof(DIPROPDWORD) ||
@@ -182,20 +182,20 @@ HRESULT Rayman3XInput_DirectInputDevice8A::SetProperty(REFGUID rguidProp, LPCDIP
 
 HRESULT Rayman3XInput_DirectInputDevice8A::Acquire()
 {
-	OutputDebugStringA("R3XI: Acquire called\n");
+	Debug("R3XI: Acquire called\n");
 	XInputGetState(m_controller, &m_controllerState);
 	return DI_OK;
 }
 
 HRESULT Rayman3XInput_DirectInputDevice8A::Unacquire()
 {
-	OutputDebugStringA("R3XI: Unacquire called\n");
+	Debug("R3XI: Unacquire called\n");
 	return DI_OK;
 }
 
 HRESULT Rayman3XInput_DirectInputDevice8A::GetDeviceState(DWORD cbData, LPVOID lpvData)
 {
-	//OutputDebugStringA("R3XI: GetDeviceState called\n");
+	//Debug("R3XI: GetDeviceState called\n");
 
 	BYTE* data = (BYTE*)lpvData;
 	for (AssignedControlMap::const_iterator it = m_assignedControls.begin();
@@ -209,13 +209,13 @@ HRESULT Rayman3XInput_DirectInputDevice8A::GetDeviceState(DWORD cbData, LPVOID l
 
 HRESULT Rayman3XInput_DirectInputDevice8A::GetDeviceData(THIS_ DWORD,LPDIDEVICEOBJECTDATA,LPDWORD,DWORD)
 {
-	OutputDebugStringA("R3XI: GetDeviceData called\n");
+	Debug("R3XI: GetDeviceData called\n");
 	return E_NOTIMPL;
 }
 
 HRESULT Rayman3XInput_DirectInputDevice8A::SetDataFormat(LPCDIDATAFORMAT lpdf)
 {
-	OutputDebugStringA("R3XI: SetDataFormat called\n");
+	Debug("R3XI: SetDataFormat called\n");
 
 	ResetControls();
 
@@ -303,39 +303,39 @@ HRESULT Rayman3XInput_DirectInputDevice8A::SetDataFormat(LPCDIDATAFORMAT lpdf)
 
 HRESULT Rayman3XInput_DirectInputDevice8A::SetEventNotification(THIS_ HANDLE)
 {
-	OutputDebugStringA("R3XI: SetEventNotification called\n");
+	Debug("R3XI: SetEventNotification called\n");
 	return E_NOTIMPL;
 }
 
 HRESULT Rayman3XInput_DirectInputDevice8A::SetCooperativeLevel(HWND hwnd, DWORD dwFlags)
 {
-	OutputDebugStringA("R3XI: SetCooperativeLevel called\n");
+	Debug("R3XI: SetCooperativeLevel called\n");
 	return DI_OK;
 }
 
 HRESULT Rayman3XInput_DirectInputDevice8A::GetObjectInfo(THIS_ LPDIDEVICEOBJECTINSTANCEA,DWORD,DWORD)
 {
-	OutputDebugStringA("R3XI: GetObjectInfo called\n");
+	Debug("R3XI: GetObjectInfo called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::GetDeviceInfo(THIS_ LPDIDEVICEINSTANCEA)
 {
-	OutputDebugStringA("R3XI: GetDeviceInfo called\n");
+	Debug("R3XI: GetDeviceInfo called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::RunControlPanel(THIS_ HWND,DWORD)
 {
-	OutputDebugStringA("R3XI: RunControlPanel called\n");
+	Debug("R3XI: RunControlPanel called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::Initialize(THIS_ HINSTANCE,DWORD,REFGUID)
 {
-	OutputDebugStringA("R3XI: Initialize called\n");
+	Debug("R3XI: Initialize called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::CreateEffect(REFGUID rguid, LPCDIEFFECT lpeff, LPDIRECTINPUTEFFECT* ppdeff, LPUNKNOWN punkOuter)
 {
-	OutputDebugStringA("R3XI: CreateEffect called\n");
+	Debug("R3XI: CreateEffect called\n");
 
 	OLECHAR* guidStr;
 	StringFromCLSID(rguid, &guidStr);
@@ -358,7 +358,7 @@ HRESULT Rayman3XInput_DirectInputDevice8A::CreateEffect(REFGUID rguid, LPCDIEFFE
 
 HRESULT Rayman3XInput_DirectInputDevice8A::EnumEffects(LPDIENUMEFFECTSCALLBACKA lpCallback, LPVOID pvRef, DWORD dwEffType)
 {
-	OutputDebugStringA("R3XI: EnumEffects called\n");
+	Debug("R3XI: EnumEffects called\n");
 	if (dwEffType == DIEFT_ALL || dwEffType == DIEFT_CONSTANTFORCE)
 	{
 		Debug("Enumerated constant force effect\n");
@@ -376,18 +376,18 @@ HRESULT Rayman3XInput_DirectInputDevice8A::EnumEffects(LPDIENUMEFFECTSCALLBACKA 
 
 HRESULT Rayman3XInput_DirectInputDevice8A::GetEffectInfo(THIS_ LPDIEFFECTINFOA,REFGUID)
 {
-	OutputDebugStringA("R3XI: GetEffectInfo called\n");
+	Debug("R3XI: GetEffectInfo called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::GetForceFeedbackState(THIS_ LPDWORD)
 {
-	OutputDebugStringA("R3XI: GetForceFeedbackState called\n");
+	Debug("R3XI: GetForceFeedbackState called\n");
 	return E_NOTIMPL;
 }
 
 HRESULT Rayman3XInput_DirectInputDevice8A::SendForceFeedbackCommand(DWORD dwFlags)
 {
-	OutputDebugStringA("R3XI: SendForceFeedbackCommand called\n");
+	Debug("R3XI: SendForceFeedbackCommand called\n");
 	if (dwFlags == DISFFC_PAUSE)
 	{
 		XINPUT_VIBRATION xv;
@@ -397,13 +397,7 @@ HRESULT Rayman3XInput_DirectInputDevice8A::SendForceFeedbackCommand(DWORD dwFlag
 	}
 	else if (dwFlags == DISFFC_CONTINUE)
 	{
-		// I THINK what this does is just trigger some vibration for a small
-		// amount of time.
-		// XXX: This code is disabled until I figure out a way to support it.
-		//XINPUT_VIBRATION xv;
-		//xv.wLeftMotorSpeed = 65535;
-		//xv.wRightMotorSpeed = 0;
-		//XInputSetState(m_controller, &xv);
+		// TODO: Implement
 	} else {
 		Debug("Unknown force feedback command 0x%X\n", dwFlags);
 	}
@@ -412,17 +406,17 @@ HRESULT Rayman3XInput_DirectInputDevice8A::SendForceFeedbackCommand(DWORD dwFlag
 
 HRESULT Rayman3XInput_DirectInputDevice8A::EnumCreatedEffectObjects(THIS_ LPDIENUMCREATEDEFFECTOBJECTSCALLBACK,LPVOID,DWORD)
 {
-	OutputDebugStringA("R3XI: EnumCreatedEffectObjects called\n");
+	Debug("R3XI: EnumCreatedEffectObjects called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::Escape(THIS_ LPDIEFFESCAPE)
 {
-	OutputDebugStringA("R3XI: Escape called\n");
+	Debug("R3XI: Escape called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::Poll(THIS)
 {
-	//OutputDebugStringA("R3XI: Poll called\n");
+	//Debug("R3XI: Poll called\n");
 	if (XInputGetState(m_controller, &m_controllerState) == ERROR_SUCCESS) {
 		return DI_OK;
 	} else {
@@ -431,32 +425,32 @@ HRESULT Rayman3XInput_DirectInputDevice8A::Poll(THIS)
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::SendDeviceData(THIS_ DWORD,LPCDIDEVICEOBJECTDATA,LPDWORD,DWORD)
 {
-	OutputDebugStringA("R3XI: SendDeviceData called\n");
+	Debug("R3XI: SendDeviceData called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::EnumEffectsInFile(THIS_ LPCSTR,LPDIENUMEFFECTSINFILECALLBACK,LPVOID,DWORD)
 {
-	OutputDebugStringA("R3XI: EnumEffectsInFile called\n");
+	Debug("R3XI: EnumEffectsInFile called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::WriteEffectToFile(THIS_ LPCSTR,DWORD,LPDIFILEEFFECT,DWORD)
 {
-	OutputDebugStringA("R3XI: WriteEffectToFile called\n");
+	Debug("R3XI: WriteEffectToFile called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::BuildActionMap(THIS_ LPDIACTIONFORMATA,LPCSTR,DWORD)
 {
-	OutputDebugStringA("R3XI: BuildActionMap called\n");
+	Debug("R3XI: BuildActionMap called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::SetActionMap(THIS_ LPDIACTIONFORMATA,LPCSTR,DWORD)
 {
-	OutputDebugStringA("R3XI: SetActionMap called\n");
+	Debug("R3XI: SetActionMap called\n");
 	return E_NOTIMPL;
 }
 HRESULT Rayman3XInput_DirectInputDevice8A::GetImageInfo(THIS_ LPDIDEVICEIMAGEINFOHEADERA)
 {
-	OutputDebugStringA("R3XI: GetImageInfo called\n");
+	Debug("R3XI: GetImageInfo called\n");
 	return E_NOTIMPL;
 }
 

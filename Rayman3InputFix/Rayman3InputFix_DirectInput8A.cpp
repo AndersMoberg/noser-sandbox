@@ -11,6 +11,7 @@
 #include <string>
 
 #include "Rayman3XInput_DirectInputDevice8A.hpp"
+#include "WindowsUtils.hpp"
 
 #ifdef _UNICODE
 typedef std::wstring tstring;
@@ -302,7 +303,7 @@ ULONG Rayman3InputFix_DirectInput8A::Release()
 
 HRESULT Rayman3InputFix_DirectInput8A::CreateDevice(REFGUID rguid, LPDIRECTINPUTDEVICE8A* lplpDirectInputDevice, LPUNKNOWN pUnkOuter)
 {
-	OutputDebugStringA("CreateDevice called\n");
+	Debug("CreateDevice called\n");
 
 	// See if one of the XInput devices was requested
 	int xinputDevice = -1;
@@ -317,7 +318,7 @@ HRESULT Rayman3InputFix_DirectInput8A::CreateDevice(REFGUID rguid, LPDIRECTINPUT
 
 	if (xinputDevice != -1)
 	{
-		OutputDebugStringA("XInput device created\n");
+		Debug("XInput device created\n");
 		Rayman3XInput_DirectInputDevice8A* ppv = NULL;
 		HRESULT hr = Rayman3XInput_DirectInputDevice8A::Create(&ppv, xinputDevice);
 		*lplpDirectInputDevice = ppv;
@@ -331,7 +332,7 @@ HRESULT Rayman3InputFix_DirectInput8A::CreateDevice(REFGUID rguid, LPDIRECTINPUT
 
 HRESULT Rayman3InputFix_DirectInput8A::EnumDevices(DWORD dwDevType, LPDIENUMDEVICESCALLBACKA lpCallback, LPVOID pvRef, DWORD dwFlags)
 {
-	OutputDebugStringA("EnumDevices called\n");
+	Debug("EnumDevices called\n");
 		
 	HRESULT hr;
 
@@ -353,7 +354,7 @@ HRESULT Rayman3InputFix_DirectInput8A::EnumDevices(DWORD dwDevType, LPDIENUMDEVI
 			if (!IsXInputDevice(&lpddi->guidProduct)) {
 				self->devices.push_back(*lpddi);
 			} else {
-				OutputDebugStringA("XInput device filtered\n");
+				Debug("XInput device filtered\n");
 			}
 			return DIENUM_CONTINUE;
 		}
@@ -428,11 +429,11 @@ HRESULT Rayman3InputFix_DirectInput8A::EnumDevices(DWORD dwDevType, LPDIENUMDEVI
 	for (DeviceInstanceList::const_iterator it = sortedDevices.begin();
 		it != sortedDevices.end(); ++it)
 	{
-		OutputDebugStringA("Enumerating Product: ");
-		OutputDebugStringA(it->tszProductName);
-		OutputDebugStringA(" Instance: ");
-		OutputDebugStringA(it->tszInstanceName);
-		OutputDebugStringA("\n");
+		Debug("Enumerating Product: ");
+		Debug(it->tszProductName);
+		Debug(" Instance: ");
+		Debug(it->tszInstanceName);
+		Debug("\n");
 		if (lpCallback(&*it, pvRef) == DIENUM_STOP) {
 			break;
 		}
@@ -443,19 +444,19 @@ HRESULT Rayman3InputFix_DirectInput8A::EnumDevices(DWORD dwDevType, LPDIENUMDEVI
 
 HRESULT Rayman3InputFix_DirectInput8A::GetDeviceStatus(REFGUID rguidInstance)
 {
-	OutputDebugStringA("GetDeviceStatus called\n");
+	Debug("GetDeviceStatus called\n");
 	return E_NOTIMPL;
 }
 
 HRESULT Rayman3InputFix_DirectInput8A::RunControlPanel(HWND hwndOwner, DWORD dwFlags)
 {
-	OutputDebugStringA("RunControlPanel called\n");
+	Debug("RunControlPanel called\n");
 	return E_NOTIMPL;
 }
 
 HRESULT Rayman3InputFix_DirectInput8A::Initialize(HINSTANCE hinst, DWORD dwVersion)
 {
-	OutputDebugStringA("Initialize called\n");
+	Debug("Initialize called\n");
 	if (dwVersion == 0x0800) {
 		return DI_OK;
 	} else if (dwVersion > 0x0800) {
@@ -467,18 +468,18 @@ HRESULT Rayman3InputFix_DirectInput8A::Initialize(HINSTANCE hinst, DWORD dwVersi
 
 HRESULT Rayman3InputFix_DirectInput8A::FindDevice(REFGUID rguidClass, LPCSTR ptszName, LPGUID pguidInstance)
 {
-	OutputDebugStringA("FindDevice called\n");
+	Debug("FindDevice called\n");
 	return E_NOTIMPL;
 }
 
 HRESULT Rayman3InputFix_DirectInput8A::EnumDevicesBySemantics(LPCSTR ptszUserName, LPDIACTIONFORMATA lpdiActionFormat, LPDIENUMDEVICESBYSEMANTICSCBA lpCallback, LPVOID pvRef, DWORD dwFlags)
 {
-	OutputDebugStringA("EnumDevicesBySemantics called\n");
+	Debug("EnumDevicesBySemantics called\n");
 	return E_NOTIMPL;
 }
 
 HRESULT Rayman3InputFix_DirectInput8A::ConfigureDevices(LPDICONFIGUREDEVICESCALLBACK lpdiCallback, LPDICONFIGUREDEVICESPARAMSA lpdiCDParams, DWORD dwFlags, LPVOID pvRefData)
 {
-	OutputDebugStringA("ConfigureDevices called\n");
+	Debug("ConfigureDevices called\n");
 	return E_NOTIMPL;
 }
