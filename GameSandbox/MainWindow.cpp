@@ -8,7 +8,10 @@ static LPCTSTR MAINWINDOW_CLASS_NAME = TEXT("GameSandboxMainWindowClass");
 
 MainWindow::MainWindow()
 	: m_hWnd(NULL),
-	m_exceptionThrown(false)
+	m_exceptionThrown(false),
+	m_leftToRightKeys(0),
+	m_downToUpKeys(0),
+	m_spaceTrigger(false)
 { }
 
 MainWindow::~MainWindow()
