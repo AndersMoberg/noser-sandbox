@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="dinput.def" />
+    <None Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Rayman2InputFix_DirectInputA.hpp" />

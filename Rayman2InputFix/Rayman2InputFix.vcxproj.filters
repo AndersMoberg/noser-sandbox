@@ -28,5 +28,6 @@
     <None Include="dinput.def">
       <Filter>Source</Filter>
     </None>
+    <None Include="Readme.txt" />
   </ItemGroup>
 </Project>
