@@ -24,9 +24,5 @@ void Debug(const char* msg, ...)
 
 	OutputDebugStringA(buf);
 
-	FILE* debugFile = fopen("debug.txt", "a");
-	fputs(buf, debugFile);
-	fclose(debugFile);
-
 	delete[] buf;
 }
