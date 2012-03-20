@@ -9,6 +9,7 @@
 
 #include "Camera.hpp"
 #include "GameRenderer.hpp"
+#include "RevealingText.hpp"
 
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
@@ -39,6 +40,8 @@ private:
 	float m_characterSpeed;
 	Rectf m_characterRect;
 	GLES2TexturePtr m_characterTexture;
+
+	RevealingTextPtr m_revealingText;
 
 };
 

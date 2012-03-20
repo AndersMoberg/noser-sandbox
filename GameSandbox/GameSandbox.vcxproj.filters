@@ -33,6 +33,12 @@
     <ClCompile Include="Geometry.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="RevealingText.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="D2DLayer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -60,6 +66,12 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Camera.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="RevealingText.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DLayer.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

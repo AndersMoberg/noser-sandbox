@@ -26,6 +26,11 @@ GamePtr Game::Create(GameRendererPtr renderer)
 	p->m_characterTexture = p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg");
 
+	p->m_revealingText = RevealingText::Create(p->m_renderer,
+		L"This is a long set of revealing text. It is deliberately long to test line-wrapping and also to test slow-down that may result.",
+		Rectf(0, 0, (float)p->m_renderer->GetGLES2Manager()->GetWidth(),
+		(float)p->m_renderer->GetGLES2Manager()->GetHeight()));
+
 	return p;
 }
 
@@ -33,6 +38,8 @@ void Game::Tick(const Vector2f& move)
 {
 	Vector2f velocity = move * m_characterSpeed;
 	m_characterPos += velocity / TICKS_PER_SEC;
+
+	m_revealingText->Tick();
 }
 
 void Game::Render()
@@ -78,4 +85,6 @@ void Game::Render()
 	glEnable(GL_BLEND);
 
 	m_renderer->GetGLES2Manager()->DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
+
+	m_revealingText->Render();
 }
