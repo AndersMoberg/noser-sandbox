@@ -26,6 +26,7 @@
     <None Include="dinput8.def">
       <Filter>Source</Filter>
     </None>
+    <None Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Rayman3InputFix_DirectInput8A.hpp">

@@ -73,10 +73,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;RAYMAN3INPUTFIX_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <ModuleDefinitionFile>dinput8.def</ModuleDefinitionFile>
@@ -92,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="dinput8.def" />
+    <None Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Rayman3InputFix_DirectInput8A.hpp" />
