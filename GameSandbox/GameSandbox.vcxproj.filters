@@ -39,6 +39,9 @@
     <ClCompile Include="D2DLayer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="OutlinedTextRenderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">

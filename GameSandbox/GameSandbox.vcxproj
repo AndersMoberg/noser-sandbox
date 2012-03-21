@@ -94,6 +94,7 @@
     <ClCompile Include="GLES2Texture.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="OutlinedTextRenderer.cpp" />
     <ClCompile Include="RevealingText.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,8 @@
 #ifndef _WINDOWSUTILS_HPP
 #define _WINDOWSUTILS_HPP
 
+#include <ObjBase.h>
+
 #define CHECK_HR(x) \
 	do { \
 		if (FAILED(x)) { \

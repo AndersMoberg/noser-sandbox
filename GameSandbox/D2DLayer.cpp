@@ -9,6 +9,8 @@
 
 #include <GLES2/gl2ext.h>
 
+#include "OutlinedTextRenderer.hpp"
+
 D2DLayer::D2DLayer()
 { }
 
@@ -63,7 +65,9 @@ void D2DLayer::DrawOutlinedTextLayout(ComPtr<IDWriteTextLayout> textLayout,
 	ComPtr<ID2D1Brush> fillBrush, ComPtr<ID2D1Brush> strokeBrush, float strokeWidth,
 	const Vector2f& origin)
 {
-	m_d2dTarget->DrawTextLayout(origin, textLayout, fillBrush);
+	ComPtr<OutlinedTextRenderer> textRenderer = OutlinedTextRenderer::Create(
+		m_d2dTarget, fillBrush, strokeBrush, strokeWidth);
+	textLayout->Draw(NULL, textRenderer, origin.x, origin.y);
 }
 
 GLES2TexturePtr D2DLayer::GetGLTexture()
