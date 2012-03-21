@@ -14,6 +14,7 @@ RevealingTextPtr RevealingText::Create(GameRendererPtr renderer,
 
 	p->m_renderer = renderer;
 
+	p->m_text = text;
 	p->m_layoutBox = layoutBox;
 
 	ComPtr<IDWriteFactory> dwriteFactory = p->m_renderer->GetDWriteFactory();
@@ -58,9 +59,13 @@ void RevealingText::RenderD2DLayer()
 
 	d2dTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black, 0.0f));
 
-	ComPtr<ID2D1SolidColorBrush> brush;
-	d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), brush.Receive());
-	d2dTarget->DrawTextLayout(m_layoutBox.UpperLeft(), m_textLayout, brush);
+	ComPtr<ID2D1SolidColorBrush> fillBrush;
+	d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), fillBrush.Receive());
+	ComPtr<ID2D1SolidColorBrush> strokeBrush;
+	d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), strokeBrush.Receive());
+
+	m_d2dLayer->DrawOutlinedTextLayout(m_textLayout, fillBrush, strokeBrush, 1.0f,
+		m_layoutBox.UpperLeft());
 
 	HRESULT hr = d2dTarget->EndDraw();
 	if (hr == D2DERR_RECREATE_TARGET) {

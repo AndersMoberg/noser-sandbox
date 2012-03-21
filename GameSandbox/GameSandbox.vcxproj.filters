@@ -74,5 +74,8 @@
     <ClInclude Include="D2DLayer.hpp">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="OutlinedTextRenderer.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

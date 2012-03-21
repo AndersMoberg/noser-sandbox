@@ -34,6 +34,7 @@ private:
 
 	GameRendererPtr m_renderer;
 
+	std::wstring m_text;
 	Rectf m_layoutBox;
 
 	ComPtr<IDWriteTextLayout> m_textLayout;

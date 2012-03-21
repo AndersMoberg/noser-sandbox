@@ -59,6 +59,13 @@ void D2DLayer::DestroyTargetResources()
 	m_wicBitmap.Release();
 }
 
+void D2DLayer::DrawOutlinedTextLayout(ComPtr<IDWriteTextLayout> textLayout,
+	ComPtr<ID2D1Brush> fillBrush, ComPtr<ID2D1Brush> strokeBrush, float strokeWidth,
+	const Vector2f& origin)
+{
+	m_d2dTarget->DrawTextLayout(origin, textLayout, fillBrush);
+}
+
 GLES2TexturePtr D2DLayer::GetGLTexture()
 {
 	ComPtr<IWICBitmapLock> lock;

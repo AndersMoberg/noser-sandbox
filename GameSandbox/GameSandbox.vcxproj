@@ -106,6 +106,7 @@
     <ClInclude Include="GLES2Manager.hpp" />
     <ClInclude Include="GLES2Texture.hpp" />
     <ClInclude Include="MainWindow.hpp" />
+    <ClInclude Include="OutlinedTextRenderer.hpp" />
     <ClInclude Include="RevealingText.hpp" />
     <ClInclude Include="WindowsUtils.hpp" />
   </ItemGroup>

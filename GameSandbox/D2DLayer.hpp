@@ -23,6 +23,10 @@ public:
 
 	void DestroyTargetResources();
 
+	void DrawOutlinedTextLayout(ComPtr<IDWriteTextLayout> textLayout,
+		ComPtr<ID2D1Brush> fillBrush, ComPtr<ID2D1Brush> strokeBrush, float strokeWidth,
+		const Vector2f& origin);
+
 	GLES2TexturePtr GetGLTexture();
 	ComPtr<ID2D1RenderTarget> GetD2DTarget();
 
