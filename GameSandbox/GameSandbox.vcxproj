@@ -96,6 +96,7 @@
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="OutlinedTextRenderer.cpp" />
     <ClCompile Include="RevealingText.cpp" />
+    <ClCompile Include="WindowsUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp" />

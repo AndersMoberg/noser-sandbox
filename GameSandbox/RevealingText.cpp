@@ -17,6 +17,10 @@ RevealingTextPtr RevealingText::Create(GameRendererPtr renderer,
 	p->m_text = text;
 	p->m_layoutBox = layoutBox;
 
+	p->m_progress = 0;
+	p->m_ticksPerChar = 60;
+	p->m_charCurTick = 0;
+
 	ComPtr<IDWriteFactory> dwriteFactory = p->m_renderer->GetDWriteFactory();
 	CHECK_HR(dwriteFactory->CreateTextLayout(
 		text.c_str(), text.size(), p->m_renderer->GetDefaultTextFormat(),
@@ -32,6 +36,23 @@ RevealingTextPtr RevealingText::Create(GameRendererPtr renderer,
 
 void RevealingText::Tick()
 {
+	++m_charCurTick;
+	if (m_charCurTick >= m_ticksPerChar)
+	{
+		if (m_progress < m_text.size())
+		{
+			++m_progress;
+
+			DWRITE_TEXT_RANGE fullRange = { 0, m_text.size() };
+			m_textLayout->SetDrawingEffect(NULL, fullRange);
+
+			DWRITE_TEXT_RANGE hideRange = { m_progress, m_text.size() - m_progress };
+			m_textLayout->SetDrawingEffect(DoNothingObject::Create(), hideRange);
+
+			RenderD2DLayer();
+		}
+		m_charCurTick = 0;
+	}
 }
 
 void RevealingText::Render()

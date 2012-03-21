@@ -96,4 +96,24 @@ private:
 
 };
 
+class DoNothingObject : public IUnknown
+{
+
+public:
+
+	static ComPtr<DoNothingObject> Create();
+
+	STDMETHOD(QueryInterface)(REFIID riid, void** ppvObject);
+	STDMETHOD_(ULONG, AddRef)();
+	STDMETHOD_(ULONG, Release)();
+
+private:
+
+	DoNothingObject();
+	~DoNothingObject();
+
+	ULONG m_refCount;
+
+};
+
 #endif

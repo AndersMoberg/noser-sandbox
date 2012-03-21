@@ -36,6 +36,9 @@ private:
 
 	std::wstring m_text;
 	Rectf m_layoutBox;
+	size_t m_progress;
+	unsigned long m_ticksPerChar;
+	unsigned long m_charCurTick;
 
 	ComPtr<IDWriteTextLayout> m_textLayout;
 	D2DLayerPtr m_d2dLayer;

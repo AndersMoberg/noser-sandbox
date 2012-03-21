@@ -42,6 +42,9 @@
     <ClCompile Include="OutlinedTextRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="WindowsUtils.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
