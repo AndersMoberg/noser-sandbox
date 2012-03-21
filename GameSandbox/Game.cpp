@@ -4,6 +4,8 @@
 
 #include "Game.hpp"
 
+#include <sstream>
+
 const unsigned long long Game::TICKS_PER_SEC = 3600;
 
 Game::Game()
@@ -11,6 +13,71 @@ Game::Game()
 	m_characterSpeed(6.0f),
 	m_characterRect(-2.0f, 2.0f, 2.0f, -2.0f)
 { }
+
+class MyGameObject : public GameObject
+{
+public:
+	MyGameObject(GameRendererPtr renderer)
+		: m_renderer(renderer),
+		m_wait(0),
+		m_bottles(99),
+		m_state(0)
+	{ }
+	virtual void Tick()
+	{
+		if (m_wait > 0) // Wait
+		{
+			if (m_text) {
+				m_text->Tick();
+			}
+			--m_wait;
+		}
+		else if (m_state == 0) // x bottles of beer on the wall, x bottles of beer...
+		{
+			std::wstringstream ss;
+			ss << m_bottles << " bottles of beer on the wall, " << m_bottles << " bottles of beer...";
+			m_text = RevealingText::Create(m_renderer,
+				ss.str(),
+				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Manager()->GetWidth(),
+				(float)m_renderer->GetGLES2Manager()->GetHeight()));
+			m_wait = Game::TICKS_PER_SEC * 3;
+			m_state = 1;
+		}
+		else if (m_state == 1) // take one down, pass it around...
+		{
+			m_text = RevealingText::Create(m_renderer,
+				L"...take one down, pass it around...",
+				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Manager()->GetWidth(),
+				(float)m_renderer->GetGLES2Manager()->GetHeight()));
+			m_wait = Game::TICKS_PER_SEC * 3;
+			m_state = 2;
+		}
+		else if (m_state == 2) // ...x bottles of beer on the wall.
+		{
+			--m_bottles;
+			std::wstringstream ss;
+			ss << "..." << m_bottles << " bottles of beer on the wall.";
+			m_text = RevealingText::Create(m_renderer,
+				ss.str(),
+				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Manager()->GetWidth(),
+				(float)m_renderer->GetGLES2Manager()->GetHeight()));
+			m_wait = Game::TICKS_PER_SEC * 3;
+			m_state = 0;
+		}
+	}
+	virtual void Render()
+	{
+		if (m_text) {
+			m_text->Render();
+		}
+	}
+private:
+	GameRendererPtr m_renderer;
+	unsigned long m_wait;
+	RevealingTextPtr m_text;
+	int m_state;
+	long m_bottles;
+};
 
 GamePtr Game::Create(GameRendererPtr renderer)
 {
@@ -26,10 +93,7 @@ GamePtr Game::Create(GameRendererPtr renderer)
 	p->m_characterTexture = p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg");
 
-	p->m_revealingText = RevealingText::Create(p->m_renderer,
-		L"This is a long set of revealing text. It is deliberately long to test line-wrapping and also to test slow-down that may result.",
-		Rectf(0, 0, (float)p->m_renderer->GetGLES2Manager()->GetWidth(),
-		(float)p->m_renderer->GetGLES2Manager()->GetHeight()));
+	p->m_object = GameObjectPtr(new MyGameObject(p->m_renderer));
 
 	return p;
 }
@@ -39,7 +103,7 @@ void Game::Tick(const Vector2f& move)
 	Vector2f velocity = move * m_characterSpeed;
 	m_characterPos += velocity / TICKS_PER_SEC;
 
-	m_revealingText->Tick();
+	m_object->Tick();
 }
 
 void Game::Render()
@@ -86,5 +150,5 @@ void Game::Render()
 
 	m_renderer->GetGLES2Manager()->DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
 
-	m_revealingText->Render();
+	m_object->Render();
 }

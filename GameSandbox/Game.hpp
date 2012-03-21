@@ -14,6 +14,17 @@
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
 
+class GameObject;
+typedef std::shared_ptr<GameObject> GameObjectPtr;
+
+class GameObject
+{
+public:
+	virtual ~GameObject() { }
+	virtual void Tick() = 0;
+	virtual void Render() = 0;
+};
+
 class Game
 {
 
@@ -41,7 +52,7 @@ private:
 	Rectf m_characterRect;
 	GLES2TexturePtr m_characterTexture;
 
-	RevealingTextPtr m_revealingText;
+	GameObjectPtr m_object;
 
 };
 

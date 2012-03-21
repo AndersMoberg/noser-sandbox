@@ -80,13 +80,16 @@ void RevealingText::RenderD2DLayer()
 
 	d2dTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black, 0.0f));
 
-	ComPtr<ID2D1SolidColorBrush> fillBrush;
-	d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), fillBrush.Receive());
-	ComPtr<ID2D1SolidColorBrush> strokeBrush;
-	d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), strokeBrush.Receive());
+	if (m_progress > 0)
+	{
+		ComPtr<ID2D1SolidColorBrush> fillBrush;
+		d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), fillBrush.Receive());
+		ComPtr<ID2D1SolidColorBrush> strokeBrush;
+		d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), strokeBrush.Receive());
 
-	m_d2dLayer->DrawOutlinedTextLayout(m_textLayout, fillBrush, strokeBrush, 1.0f,
-		m_layoutBox.UpperLeft());
+		m_d2dLayer->DrawOutlinedTextLayout(m_textLayout, fillBrush, strokeBrush, 1.0f,
+			m_layoutBox.UpperLeft());
+	}
 
 	HRESULT hr = d2dTarget->EndDraw();
 	if (hr == D2DERR_RECREATE_TARGET) {
