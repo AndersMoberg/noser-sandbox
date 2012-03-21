@@ -60,8 +60,8 @@ void RevealingText::Render()
 	GLES2TexturePtr texture = m_d2dLayer->GetGLTexture();
 
 	glBindTexture(GL_TEXTURE_2D, texture->Get());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	// Premultiplied alpha blending
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
