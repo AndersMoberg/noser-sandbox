@@ -7,7 +7,16 @@
 class MainMenuModeImpl : public MainMenuMode
 {
 
+private:
+
+	D2DLayerPtr m_d2dLayer;
+
 public:
+
+	MainMenuModeImpl(GameRendererPtr renderer)
+	{
+		m_d2dLayer = D2DLayer::Create(renderer);
+	}
 
 	virtual void Tick(const Vector2f& move)
 	{
@@ -18,3 +27,8 @@ public:
 	}
 
 };
+
+MainMenuModePtr MainMenuMode::Create(GameRendererPtr renderer)
+{
+	return MainMenuModePtr(new MainMenuModeImpl(renderer));
+}

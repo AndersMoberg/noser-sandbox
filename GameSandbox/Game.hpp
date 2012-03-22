@@ -10,7 +10,6 @@
 #include "Camera.hpp"
 #include "GameRenderer.hpp"
 #include "RevealingText.hpp"
-#include "CharacterTestMode.hpp"
 
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
@@ -23,6 +22,17 @@ class GameObject
 public:
 	virtual ~GameObject() { }
 	virtual void Tick() = 0;
+	virtual void Render() = 0;
+};
+
+class GameMode;
+typedef std::shared_ptr<GameMode> GameModePtr;
+
+class GameMode
+{
+public:
+	virtual ~GameMode() { }
+	virtual void Tick(const Vector2f& move) = 0;
 	virtual void Render() = 0;
 };
 
@@ -44,7 +54,7 @@ private:
 
 	GameRendererPtr m_renderer;
 
-	CharacterTestModePtr m_mode;
+	GameModePtr m_mode;
 
 };
 

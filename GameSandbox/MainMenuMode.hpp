@@ -7,12 +7,13 @@
 
 #include <memory>
 
+#include "Game.hpp"
 #include "GameRenderer.hpp"
 
 class MainMenuMode;
 typedef std::shared_ptr<MainMenuMode> MainMenuModePtr;
 
-class MainMenuMode
+class MainMenuMode : public GameMode
 {
 public:
 	static MainMenuModePtr Create(GameRendererPtr renderer);

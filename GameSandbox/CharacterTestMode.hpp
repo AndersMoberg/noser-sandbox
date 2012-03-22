@@ -7,12 +7,13 @@
 
 #include <memory>
 
+#include "Game.hpp"
 #include "GameRenderer.hpp"
 
 class CharacterTestMode;
 typedef std::shared_ptr<CharacterTestMode> CharacterTestModePtr;
 
-class CharacterTestMode
+class CharacterTestMode : public GameMode
 {
 public:
 	static CharacterTestModePtr Create(GameRendererPtr renderer);

@@ -6,6 +6,9 @@
 
 #include <sstream>
 
+#include "CharacterTestMode.hpp"
+#include "MainMenuMode.hpp"
+
 const unsigned int Game::TICKS_PER_SEC = 3600;
 
 Game::Game()
@@ -18,6 +21,7 @@ GamePtr Game::Create(GameRendererPtr renderer)
 	p->m_renderer = renderer;
 
 	p->m_mode = CharacterTestMode::Create(renderer);
+	//p->m_mode = MainMenuMode::Create(renderer);
 
 	return p;
 }
