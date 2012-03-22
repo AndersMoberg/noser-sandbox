@@ -5,4 +5,19 @@
 #ifndef	_MAINMENUMODE_HPP
 #define _MAINMENUMODE_HPP
 
+#include <memory>
+
+#include "GameRenderer.hpp"
+
+class MainMenuMode;
+typedef std::shared_ptr<MainMenuMode> MainMenuModePtr;
+
+class MainMenuMode
+{
+public:
+	static MainMenuModePtr Create(GameRendererPtr renderer);
+	virtual void Tick(const Vector2f& move) = 0;
+	virtual void Render() = 0;
+};
+
 #endif

@@ -48,6 +48,9 @@
     <ClCompile Include="CharacterTestMode.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="MainMenuMode.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
