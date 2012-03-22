@@ -10,6 +10,7 @@
 #include "Camera.hpp"
 #include "GameRenderer.hpp"
 #include "RevealingText.hpp"
+#include "CharacterTestMode.hpp"
 
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
@@ -30,7 +31,7 @@ class Game
 
 public:
 
-	static const unsigned long long TICKS_PER_SEC;
+	static const unsigned int TICKS_PER_SEC;
 
 	static GamePtr Create(GameRendererPtr renderer);
 
@@ -43,16 +44,7 @@ private:
 
 	GameRendererPtr m_renderer;
 
-	CameraPtr m_camera;
-
-	GLES2TexturePtr m_bgTexture;
-
-	Vector2f m_characterPos;
-	float m_characterSpeed;
-	Rectf m_characterRect;
-	GLES2TexturePtr m_characterTexture;
-
-	GameObjectPtr m_object;
+	CharacterTestModePtr m_mode;
 
 };
 

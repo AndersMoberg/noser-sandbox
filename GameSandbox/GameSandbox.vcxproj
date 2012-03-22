@@ -86,6 +86,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CharacterTestMode.cpp" />
     <ClCompile Include="D2DLayer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
@@ -101,12 +102,14 @@
   <ItemGroup>
     <ClInclude Include="Application.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="CharacterTestMode.hpp" />
     <ClInclude Include="D2DLayer.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameRenderer.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="GLES2Manager.hpp" />
     <ClInclude Include="GLES2Texture.hpp" />
+    <ClInclude Include="MainMenuMode.hpp" />
     <ClInclude Include="MainWindow.hpp" />
     <ClInclude Include="OutlinedTextRenderer.hpp" />
     <ClInclude Include="RevealingText.hpp" />

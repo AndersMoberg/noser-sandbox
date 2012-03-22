@@ -45,6 +45,9 @@
     <ClCompile Include="WindowsUtils.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterTestMode.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -81,6 +84,12 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="OutlinedTextRenderer.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuMode.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterTestMode.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
