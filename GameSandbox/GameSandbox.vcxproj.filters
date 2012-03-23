@@ -51,6 +51,9 @@
     <ClCompile Include="MainMenuMode.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterControllerMode.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -93,6 +96,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="CharacterTestMode.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterControllerMode.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

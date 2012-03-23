@@ -8,6 +8,7 @@
 
 #include "CharacterTestMode.hpp"
 #include "MainMenuMode.hpp"
+#include "CharacterControllerMode.hpp"
 
 const unsigned int Game::TICKS_PER_SEC = 3600;
 
@@ -20,8 +21,9 @@ GamePtr Game::Create(GameRendererPtr renderer)
 
 	p->m_renderer = renderer;
 
+	p->m_mode = CharacterControllerMode::Create(renderer);
 	//p->m_mode = CharacterTestMode::Create(renderer);
-	p->m_mode = MainMenuMode::Create(renderer);
+	//p->m_mode = MainMenuMode::Create(renderer);
 
 	return p;
 }
