@@ -4,6 +4,15 @@
     <Filter Include="Source">
       <UniqueIdentifier>{c8230148-bfb2-4b23-b497-364851f1d60c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\MainMenuMode">
+      <UniqueIdentifier>{af45f9be-d512-42ec-8ae9-a5e2ba6aec1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CharacterTestMode">
+      <UniqueIdentifier>{14fc0c89-9fda-4494-9628-e13f5ad78f54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\CharacterControllerMode">
+      <UniqueIdentifier>{b8eebd9e-bfb6-47e7-9a13-c87276b839c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -45,14 +54,17 @@
     <ClCompile Include="WindowsUtils.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterTestMode.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="MainMenuMode\MainMenuMode.cpp">
+      <Filter>Source\MainMenuMode</Filter>
     </ClCompile>
-    <ClCompile Include="MainMenuMode.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="CharacterTestMode\CharacterTestMode.cpp">
+      <Filter>Source\CharacterTestMode</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterControllerMode.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="CharacterControllerMode\CharacterControllerMode.cpp">
+      <Filter>Source\CharacterControllerMode</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterControllerMode\World.cpp">
+      <Filter>Source\CharacterControllerMode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,14 +104,17 @@
     <ClInclude Include="OutlinedTextRenderer.hpp">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="MainMenuMode.hpp">
-      <Filter>Source</Filter>
+    <ClInclude Include="MainMenuMode\MainMenuMode.hpp">
+      <Filter>Source\MainMenuMode</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterTestMode.hpp">
-      <Filter>Source</Filter>
+    <ClInclude Include="CharacterTestMode\CharacterTestMode.hpp">
+      <Filter>Source\CharacterTestMode</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterControllerMode.hpp">
-      <Filter>Source</Filter>
+    <ClInclude Include="CharacterControllerMode\CharacterControllerMode.hpp">
+      <Filter>Source\CharacterControllerMode</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterControllerMode\World.hpp">
+      <Filter>Source\CharacterControllerMode</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

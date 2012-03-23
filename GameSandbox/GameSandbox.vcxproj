@@ -54,7 +54,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\External\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;.\External\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -72,7 +72,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\External\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;.\External\ANGLE\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -86,8 +86,9 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CharacterControllerMode.cpp" />
-    <ClCompile Include="CharacterTestMode.cpp" />
+    <ClCompile Include="CharacterControllerMode\CharacterControllerMode.cpp" />
+    <ClCompile Include="CharacterControllerMode\World.cpp" />
+    <ClCompile Include="CharacterTestMode\CharacterTestMode.cpp" />
     <ClCompile Include="D2DLayer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameRenderer.cpp" />
@@ -95,7 +96,7 @@
     <ClCompile Include="GLES2Manager.cpp" />
     <ClCompile Include="GLES2Texture.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MainMenuMode.cpp" />
+    <ClCompile Include="MainMenuMode\MainMenuMode.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="OutlinedTextRenderer.cpp" />
     <ClCompile Include="RevealingText.cpp" />
@@ -104,15 +105,16 @@
   <ItemGroup>
     <ClInclude Include="Application.hpp" />
     <ClInclude Include="Camera.hpp" />
-    <ClInclude Include="CharacterControllerMode.hpp" />
-    <ClInclude Include="CharacterTestMode.hpp" />
+    <ClInclude Include="CharacterControllerMode\CharacterControllerMode.hpp" />
+    <ClInclude Include="CharacterControllerMode\World.hpp" />
+    <ClInclude Include="CharacterTestMode\CharacterTestMode.hpp" />
     <ClInclude Include="D2DLayer.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameRenderer.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="GLES2Manager.hpp" />
     <ClInclude Include="GLES2Texture.hpp" />
-    <ClInclude Include="MainMenuMode.hpp" />
+    <ClInclude Include="MainMenuMode\MainMenuMode.hpp" />
     <ClInclude Include="MainWindow.hpp" />
     <ClInclude Include="OutlinedTextRenderer.hpp" />
     <ClInclude Include="RevealingText.hpp" />

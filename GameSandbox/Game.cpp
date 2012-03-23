@@ -6,9 +6,9 @@
 
 #include <sstream>
 
-#include "CharacterTestMode.hpp"
-#include "MainMenuMode.hpp"
-#include "CharacterControllerMode.hpp"
+#include "CharacterTestMode/CharacterTestMode.hpp"
+#include "MainMenuMode/MainMenuMode.hpp"
+#include "CharacterControllerMode/CharacterControllerMode.hpp"
 
 const unsigned int Game::TICKS_PER_SEC = 3600;
 
