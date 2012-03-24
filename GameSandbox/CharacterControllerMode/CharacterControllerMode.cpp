@@ -13,6 +13,8 @@ class CharacterControllerModeImpl : public CharacterControllerMode
 private:
 
 	CharacterControllerModeImpl()
+		: m_intendedVel(0.0f, 0.0f),
+		m_actualVel(0.0f, 0.0f)
 	{ }
 
 	GameRendererPtr m_renderer;
@@ -21,6 +23,122 @@ private:
 
 	CameraPtr m_camera;
 	WorldPtr m_world;
+
+	Vector2f m_intendedVel;
+	Vector2f m_actualVel;
+	
+	struct Character
+	{
+		Vector2f pos;
+		float radius;
+	};
+
+	typedef std::shared_ptr<Character> CharacterPtr;
+
+	typedef std::list<CharacterPtr> CharacterList;
+	
+	CharacterList m_characters;
+
+	CharacterPtr m_playerCharacter;
+	CharacterPtr m_npcCharacter;
+
+	// ws: wall start; we: wall end; p: character position; pRadius: character radius
+	static bool TestWallPosConstraint(const Vector2f& ws, const Vector2f& we,
+		const Vector2f& p, float pRadius)
+	{
+		// Test position constraint of circular character against line segment wall
+
+		bool pastS = Vector2f::Dot(we - ws, p - ws) > 0.0f;
+		bool pastE = Vector2f::Dot(ws - we, p - we) > 0.0f;
+		if (pastS && pastE) {
+			// character is not near either end
+			return DistancePointLineSquared(p, ws, we) <= pRadius*pRadius;
+		} else if (pastS) {
+			// character is near we
+			return (p - we).LengthSquared() <= pRadius*pRadius;
+		} else if (pastE) {
+			// character is near ws
+			return (p - ws).LengthSquared() <= pRadius*pRadius;
+		} else {
+			return false;
+		}
+	}
+
+	// ws: wall start; we: wall end; p: character position; v: character velocity
+	static bool TestWallVelConstraint(const Vector2f& ws, const Vector2f& we,
+		const Vector2f& p, const Vector2f& v)
+	{
+		// Test velocity constraint of circular character against line segment wall
+		// (assuming character is already position-constrained)
+
+		bool pastS = Vector2f::Dot(we - ws, p - ws) > 0.0f;
+		bool pastE = Vector2f::Dot(ws - we, p - we) > 0.0f;
+		if (pastS && pastE) {
+			// character is not near either end
+			Vector2f wallPerp = (we - ws).Perpendicular();
+			Vector2f wallSToP = p - ws;
+			// NOTE: I did all this math on paper at one point, but I should review
+			// soon.
+			return Vector2f::Dot(wallPerp, wallSToP) * Vector2f::Dot(wallPerp, v) <= 0.0f;
+		} else if (pastS) {
+			// character is near we
+			return Vector2f::Dot(v, p - we) <= 0.0f;
+		} else if (pastE) {
+			// character is near ws
+			return Vector2f::Dot(v, p - ws) <= 0.0f;
+		} else {
+			return false;
+		}
+	}
+
+	// ws: wall start; we: wall end; p: character position; v: character velocity
+	static Vector2f CorrectVelAgainstWall(const Vector2f& ws, const Vector2f& we,
+		const Vector2f& p, const Vector2f& v)
+	{
+		// If character is constrained in position and velocity against a wall,
+		// calculate a new velocity that satisfies the constraint
+		// i.e. "push" the character against the wall but don't let it through.
+
+		bool pastS = Vector2f::Dot(we - ws, p - ws) > 0.0f;
+		bool pastE = Vector2f::Dot(ws - we, p - we) > 0.0f;
+		if (pastS && pastE) {
+			// character is not near either end
+			return Vector2f::Projection(v, we - ws);
+		} else if (pastS) {
+			// character is near we
+			return Vector2f::Projection(v, (p - we).Perpendicular());
+		} else if (pastE) {
+			// character is near ws
+			return Vector2f::Projection(v, (p - ws).Perpendicular());
+		} else {
+			return v;
+		}
+	}
+	
+	typedef std::list<const Wall*> Collisions;
+	Collisions CheckCharacterCollisions(
+		const Character& character, const Vector2f& vel)
+	{
+		Collisions result;
+
+		const World::WallList& walls = m_world->GetWalls();
+		for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
+		{
+			bool posConstrained = TestWallPosConstraint(it->start, it->end,
+				character.pos, character.radius);
+			if (posConstrained)
+			{
+				bool velConstrained = TestWallVelConstraint(it->start, it->end,
+					character.pos, vel);
+				if (velConstrained)
+				{
+					result.push_back(&*it);
+				}
+			}
+		}
+
+		return result;
+	}
 
 public:
 
@@ -36,12 +154,73 @@ public:
 
 		p->m_camera = Camera::Create();
 		p->m_world = World::Create();
+		
+		p->m_playerCharacter = CharacterPtr(new Character);
+		p->m_playerCharacter->pos = Vector2f(0.0f, 3.0f);
+		p->m_playerCharacter->radius = 1.0f;
+		p->m_characters.push_back(p->m_playerCharacter);
+		
+		p->m_npcCharacter = CharacterPtr(new Character);
+		p->m_npcCharacter->pos = Vector2f(5.0f, 4.0f);
+		p->m_npcCharacter->radius = 1.0f;
+		p->m_characters.push_back(p->m_npcCharacter);
 
 		return p;
 	}
 
 	virtual void Tick(const Vector2f& move)
 	{
+		static const float CHAR_SPEED = 8.0f; // world units per second
+
+		Vector2f intendedVel = CHAR_SPEED * move;
+
+		Vector2f actualVel = intendedVel;
+
+		Collisions collisions = CheckCharacterCollisions(*m_playerCharacter, actualVel);
+		if (collisions.size() == 1)
+		{
+			const Wall* wall = collisions.back();
+			actualVel = CorrectVelAgainstWall(wall->start, wall->end,
+				m_playerCharacter->pos, actualVel);
+		}
+		else if (collisions.size() >= 2)
+		{
+			const Wall* wall1 = collisions.front();
+			const Wall* wall2 = collisions.back();
+			// Find wall1 correction, test against wall2, then vice-versa
+			Vector2f wall1Correct = CorrectVelAgainstWall(wall1->start, wall1->end,
+				m_playerCharacter->pos, actualVel);
+			Vector2f wall2Correct = CorrectVelAgainstWall(wall2->start, wall2->end,
+				m_playerCharacter->pos, actualVel);
+			if (!TestWallVelConstraint(wall2->start, wall2->end, m_playerCharacter->pos,
+				wall1Correct))
+			{
+				actualVel = wall1Correct;
+			}
+			else if (!TestWallVelConstraint(wall1->start, wall1->end, m_playerCharacter->pos,
+				wall2Correct))
+			{
+				actualVel = wall2Correct;
+			}
+			else if (wall1Correct == wall2Correct)
+			{
+				// FIXME: Comparison is sensitive to tiny floating-point errors
+				actualVel = wall1Correct;
+			}
+			else
+			{
+				actualVel = Vector2f(0.0f, 0.0f);
+			}
+		}
+		else if (collisions.size() > 2)
+		{
+			// TODO: Generalize the algorithm above for more than 2 constraints
+			actualVel = Vector2f(0.0f, 0.0f);
+		}
+
+		m_playerCharacter->pos += actualVel / (float)Game::TICKS_PER_SEC;
+		m_intendedVel = intendedVel;
+		m_actualVel = actualVel;
 	}
 
 	virtual void Render()
@@ -90,8 +269,30 @@ public:
 		ComPtr<ID2D1TransformedGeometry> transGeom;
 		factory->CreateTransformedGeometry(geom, worldToViewport, transGeom.Receive());
 		d2dTarget->DrawGeometry(transGeom, blackBrush);
+		
+		// Render characters
+		d2dTarget->SetTransform(worldToViewport);
 
-		// TODO: Render characters, port more of CharacterController over here.
+		for (CharacterList::const_iterator it = m_characters.begin();
+			it != m_characters.end(); ++it)
+		{
+			d2dTarget->FillEllipse(
+				D2D1::Ellipse((*it)->pos, (*it)->radius, (*it)->radius),
+				blackBrush);
+		}
+
+		// Render intended velocity as a red line
+		// XXX: Black brush is used.
+		blackBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Red));
+		d2dTarget->DrawLine(m_playerCharacter->pos,
+			m_playerCharacter->pos + m_intendedVel,
+			blackBrush, m_playerCharacter->radius/8.0f);
+		// Render actualVelocity as a blue line
+		blackBrush->SetColor(D2D1::ColorF(D2D1::ColorF::Blue));
+		d2dTarget->DrawLine(m_playerCharacter->pos,
+			m_playerCharacter->pos + m_actualVel,
+			blackBrush, m_playerCharacter->radius/8.0f);
+		d2dTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 
 		d2dTarget->EndDraw();
 
