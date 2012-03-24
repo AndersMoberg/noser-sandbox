@@ -10,6 +10,9 @@
 
 #include "Geometry.hpp"
 
+namespace CharacterControllerMode
+{
+
 class World;
 typedef std::shared_ptr<World> WorldPtr;
 
@@ -37,5 +40,7 @@ private:
 	WallList m_walls;
 
 };
+
+}
 
 #endif

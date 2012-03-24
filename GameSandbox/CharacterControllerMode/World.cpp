@@ -4,6 +4,9 @@
 
 #include "World.hpp"
 
+namespace CharacterControllerMode
+{
+
 World::World()
 { }
 
@@ -31,4 +34,6 @@ WorldPtr World::Create()
 	p->m_walls.push_back(wall);
 
 	return p;
+}
+
 }

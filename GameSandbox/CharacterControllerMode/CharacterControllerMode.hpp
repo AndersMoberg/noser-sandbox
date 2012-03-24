@@ -10,6 +10,9 @@
 #include "Game.hpp"
 #include "GameRenderer.hpp"
 
+namespace CharacterControllerMode
+{
+
 class CharacterControllerMode;
 typedef std::shared_ptr<CharacterControllerMode> CharacterControllerModePtr;
 
@@ -20,5 +23,7 @@ public:
 	virtual void Tick(const Vector2f& move) = 0;
 	virtual void Render() = 0;
 };
+
+}
 
 #endif

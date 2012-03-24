@@ -8,6 +8,9 @@
 
 #include "WindowsUtils.hpp"
 
+namespace MainMenuMode
+{
+
 class MainMenuModeImpl : public MainMenuMode
 {
 
@@ -93,4 +96,6 @@ public:
 MainMenuModePtr MainMenuMode::Create(GameRendererPtr renderer)
 {
 	return MainMenuModePtr(new MainMenuModeImpl(renderer));
+}
+
 }

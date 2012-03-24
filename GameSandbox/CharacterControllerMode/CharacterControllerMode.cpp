@@ -7,6 +7,9 @@
 #include "GameRenderer.hpp"
 #include "World.hpp"
 
+namespace CharacterControllerMode
+{
+
 class CharacterControllerModeImpl : public CharacterControllerMode
 {
 
@@ -318,4 +321,6 @@ CharacterControllerModePtr CharacterControllerMode::Create(
 	GameRendererPtr renderer)
 {
 	return CharacterControllerModeImpl::Create(renderer);
+}
+
 }

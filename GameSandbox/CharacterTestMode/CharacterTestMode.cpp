@@ -11,6 +11,9 @@
 #include "Geometry.hpp"
 #include "Game.hpp"
 
+namespace CharacterTestMode
+{
+
 class MyGameObject : public GameObject
 {
 public:
@@ -184,4 +187,6 @@ private:
 CharacterTestModePtr CharacterTestMode::Create(GameRendererPtr renderer)
 {
 	return CharacterTestModeImpl::Create(renderer);
+}
+
 }
