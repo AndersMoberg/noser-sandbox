@@ -21,7 +21,7 @@ GamePtr Game::Create(GameRendererPtr renderer)
 
 	p->m_renderer = renderer;
 
-	p->m_mode = CharacterControllerMode::CharacterControllerMode::Create(renderer);
+	p->m_mode = CharacterControllerMode::CharacterControllerModeImpl::Create(renderer);
 	//p->m_mode = CharacterTestMode::Create(renderer);
 	//p->m_mode = MainMenuMode::Create(renderer);
 
