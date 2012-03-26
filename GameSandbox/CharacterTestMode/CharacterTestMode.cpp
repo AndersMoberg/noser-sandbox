@@ -17,7 +17,7 @@ namespace CharacterTestMode
 class MyGameObject : public GameObject
 {
 public:
-	MyGameObject(GameRendererPtr renderer)
+	MyGameObject(GameRenderer* renderer)
 		: m_renderer(renderer),
 		m_wait(0),
 		m_bottles(99),
@@ -72,7 +72,7 @@ public:
 		}
 	}
 private:
-	GameRendererPtr m_renderer;
+	GameRenderer* m_renderer;
 	unsigned long m_wait;
 	RevealingTextPtr m_text;
 	int m_state;
@@ -87,7 +87,7 @@ class CharacterTestModeImpl : public CharacterTestMode
 
 public:
 
-	static CharacterTestModeImplPtr Create(GameRendererPtr renderer)
+	static CharacterTestModeImplPtr Create(GameRenderer* renderer)
 	{
 		CharacterTestModeImplPtr p(new CharacterTestModeImpl);
 
@@ -169,7 +169,7 @@ private:
 		m_characterRect(-2.0f, 2.0f, 2.0f, -2.0f)
 	{ }
 
-	GameRendererPtr m_renderer;
+	GameRenderer* m_renderer;
 
 	CameraPtr m_camera;
 
@@ -184,7 +184,7 @@ private:
 
 };
 
-CharacterTestModePtr CharacterTestMode::Create(GameRendererPtr renderer)
+CharacterTestModePtr CharacterTestMode::Create(GameRenderer* renderer)
 {
 	return CharacterTestModeImpl::Create(renderer);
 }

@@ -23,7 +23,7 @@ class CharacterControllerModeImpl : public GameMode
 
 public:
 
-	static CharacterControllerMode Create(GameRendererPtr renderer);
+	static CharacterControllerMode Create(GameRenderer* renderer);
 
 	void Tick(const Vector2f& move);
 	void Render();
@@ -46,7 +46,7 @@ private:
 	Collisions CheckCharacterCollisions(
 		const Character& character, const Vector2f& vel);
 
-	GameRendererPtr m_renderer;
+	GameRenderer* m_renderer;
 
 	D2DLayerPtr m_d2dLayer;
 

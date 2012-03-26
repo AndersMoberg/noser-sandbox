@@ -16,7 +16,7 @@ class MainMenuModeImpl : public MainMenuMode
 
 private:
 
-	GameRendererPtr m_renderer;
+	GameRenderer* m_renderer;
 
 	D2DLayerPtr m_d2dLayer;
 
@@ -41,7 +41,7 @@ private:
 
 public:
 
-	MainMenuModeImpl(GameRendererPtr renderer)
+	MainMenuModeImpl(GameRenderer* renderer)
 	{
 		m_renderer = renderer;
 		m_d2dLayer = D2DLayer::Create(renderer);
@@ -93,7 +93,7 @@ public:
 
 };
 
-MainMenuModePtr MainMenuMode::Create(GameRendererPtr renderer)
+MainMenuModePtr MainMenuMode::Create(GameRenderer* renderer)
 {
 	return MainMenuModePtr(new MainMenuModeImpl(renderer));
 }

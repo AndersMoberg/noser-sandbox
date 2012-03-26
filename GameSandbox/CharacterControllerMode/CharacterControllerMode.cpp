@@ -15,7 +15,7 @@ CharacterControllerModeImpl::CharacterControllerModeImpl()
 	m_actualVel(0.0f, 0.0f)
 { }
 
-CharacterControllerMode CharacterControllerModeImpl::Create(GameRendererPtr renderer)
+CharacterControllerMode CharacterControllerModeImpl::Create(GameRenderer* renderer)
 {
 	CharacterControllerMode p(new CharacterControllerModeImpl);
 

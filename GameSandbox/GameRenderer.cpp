@@ -7,9 +7,9 @@
 GameRenderer::GameRenderer()
 { }
 
-GameRendererPtr GameRenderer::Create(HWND hWnd)
+GameRenderer* GameRenderer::Create(HWND hWnd)
 {
-	GameRendererPtr p(new GameRenderer);
+	GameRenderer* p(new GameRenderer);
 
 	p->m_gles2Manager = GLES2Manager::Create(hWnd);
 

@@ -43,7 +43,7 @@ public:
 
 	static const unsigned int TICKS_PER_SEC;
 
-	static GamePtr Create(GameRendererPtr renderer);
+	static GamePtr Create(GameRenderer* renderer);
 
 	void Tick(const Vector2f& move);
 	void Render();
@@ -52,7 +52,7 @@ private:
 
 	Game();
 
-	GameRendererPtr m_renderer;
+	GameRenderer* m_renderer;
 
 	GameModePtr m_mode;
 

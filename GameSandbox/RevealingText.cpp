@@ -7,7 +7,7 @@
 RevealingText::RevealingText()
 { }
 
-RevealingTextPtr RevealingText::Create(GameRendererPtr renderer,
+RevealingTextPtr RevealingText::Create(GameRenderer* renderer,
 	const std::wstring& text, const Rectf& layoutBox)
 {
 	RevealingTextPtr p(new RevealingText);

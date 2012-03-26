@@ -19,7 +19,7 @@ class D2DLayer
 
 public:
 
-	static D2DLayerPtr Create(GameRendererPtr renderer);
+	static D2DLayerPtr Create(GameRenderer* renderer);
 
 	void DestroyTargetResources();
 
@@ -36,7 +36,7 @@ private:
 
 	D2DLayer();
 
-	GameRendererPtr m_renderer;
+	GameRenderer* m_renderer;
 
 	std::unique_ptr<GLES2Texture> m_glTexture;
 

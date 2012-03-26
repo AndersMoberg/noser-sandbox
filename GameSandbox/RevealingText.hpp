@@ -20,7 +20,7 @@ class RevealingText
 
 public:
 
-	static RevealingTextPtr Create(GameRendererPtr renderer,
+	static RevealingTextPtr Create(GameRenderer* renderer,
 		const std::wstring& text, const Rectf& layoutBox);
 
 	void Tick();
@@ -32,7 +32,7 @@ private:
 
 	void RenderD2DLayer();
 
-	GameRendererPtr m_renderer;
+	GameRenderer* m_renderer;
 
 	std::wstring m_text;
 	Rectf m_layoutBox;

@@ -15,7 +15,7 @@ const unsigned int Game::TICKS_PER_SEC = 3600;
 Game::Game()
 { }
 
-GamePtr Game::Create(GameRendererPtr renderer)
+GamePtr Game::Create(GameRenderer* renderer)
 {
 	GamePtr p(new Game);
 
