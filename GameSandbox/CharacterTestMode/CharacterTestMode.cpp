@@ -79,17 +79,14 @@ private:
 	long m_bottles;
 };
 
-class CharacterTestModeImpl;
-typedef std::shared_ptr<CharacterTestModeImpl> CharacterTestModeImplPtr;
-
 class CharacterTestModeImpl : public CharacterTestMode
 {
 
 public:
 
-	static CharacterTestModeImplPtr Create(GameRenderer* renderer)
+	static CharacterTestModeImpl* Create(GameRenderer* renderer)
 	{
-		CharacterTestModeImplPtr p(new CharacterTestModeImpl);
+		CharacterTestModeImpl* p(new CharacterTestModeImpl);
 
 		p->m_renderer = renderer;
 
@@ -101,7 +98,7 @@ public:
 		p->m_characterTexture.reset(p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
 			L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg"));
 
-		p->m_object = GameObjectPtr(new MyGameObject(p->m_renderer));
+		p->m_object.reset(new MyGameObject(p->m_renderer));
 
 		return p;
 	}
@@ -180,11 +177,11 @@ private:
 	Rectf m_characterRect;
 	std::unique_ptr<GLES2Texture> m_characterTexture;
 
-	GameObjectPtr m_object;
+	std::unique_ptr<GameObject> m_object;
 
 };
 
-CharacterTestModePtr CharacterTestMode::Create(GameRenderer* renderer)
+CharacterTestMode* CharacterTestMode::Create(GameRenderer* renderer)
 {
 	return CharacterTestModeImpl::Create(renderer);
 }

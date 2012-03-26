@@ -14,9 +14,6 @@
 class Game;
 typedef std::shared_ptr<Game> GamePtr;
 
-class GameObject;
-typedef std::shared_ptr<GameObject> GameObjectPtr;
-
 class GameObject
 {
 public:

@@ -13,13 +13,10 @@
 namespace CharacterTestMode
 {
 
-class CharacterTestMode;
-typedef std::shared_ptr<CharacterTestMode> CharacterTestModePtr;
-
 class CharacterTestMode : public GameMode
 {
 public:
-	static CharacterTestModePtr Create(GameRenderer* renderer);
+	static CharacterTestMode* Create(GameRenderer* renderer);
 	virtual void Tick(const Vector2f& move) = 0;
 	virtual void Render() = 0;
 };
