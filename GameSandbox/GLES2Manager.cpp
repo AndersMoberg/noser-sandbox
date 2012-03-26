@@ -199,9 +199,9 @@ GLES2ManagerPtr GLES2Manager::Create(HWND hWnd)
 	return p;
 }
 
-GLES2TexturePtr GLES2Manager::CreateTextureFromFile(const std::wstring& path)
+GLES2Texture* GLES2Manager::CreateTextureFromFile(const std::wstring& path)
 {
-	GLES2TexturePtr result = GLES2Texture::Create();
+	GLES2Texture* result = GLES2Texture::Create();
 
 	ComPtr<IWICImagingFactory> wicFactory;
 	CHECK_HR(CoCreateInstance(CLSID_WICImagingFactory, NULL,

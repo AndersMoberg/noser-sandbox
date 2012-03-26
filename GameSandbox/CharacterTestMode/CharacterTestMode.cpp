@@ -95,11 +95,11 @@ public:
 
 		p->m_camera = Camera::Create();
 
-		p->m_bgTexture = p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
-			L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
+		p->m_bgTexture.reset(p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
+			L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg"));
 
-		p->m_characterTexture = p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
-			L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg");
+		p->m_characterTexture.reset(p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
+			L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg"));
 
 		p->m_object = GameObjectPtr(new MyGameObject(p->m_renderer));
 
@@ -173,12 +173,12 @@ private:
 
 	CameraPtr m_camera;
 
-	GLES2TexturePtr m_bgTexture;
+	std::unique_ptr<GLES2Texture> m_bgTexture;
 
 	Vector2f m_characterPos;
 	float m_characterSpeed;
 	Rectf m_characterRect;
-	GLES2TexturePtr m_characterTexture;
+	std::unique_ptr<GLES2Texture> m_characterTexture;
 
 	GameObjectPtr m_object;
 

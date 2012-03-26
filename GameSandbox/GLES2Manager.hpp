@@ -25,7 +25,7 @@ public:
 	~GLES2Manager();
 	static GLES2ManagerPtr Create(HWND hWnd);
 	
-	GLES2TexturePtr CreateTextureFromFile(const std::wstring& path);
+	GLES2Texture* CreateTextureFromFile(const std::wstring& path);
 
 	void SetTexturedQuadMatrix(const Matrix3x2f& mat);
 	void DrawTexturedQuad(const Rectf& rc);

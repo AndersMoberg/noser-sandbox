@@ -20,7 +20,7 @@ D2DLayerPtr D2DLayer::Create(GameRendererPtr renderer)
 
 	p->m_renderer = renderer;
 
-	p->m_glTexture = GLES2Texture::Create();
+	p->m_glTexture.reset(GLES2Texture::Create());
 
 	p->CreateTargetResources();
 
@@ -70,7 +70,7 @@ void D2DLayer::DrawOutlinedTextLayout(ComPtr<IDWriteTextLayout> textLayout,
 	textLayout->Draw(NULL, textRenderer, origin.x, origin.y);
 }
 
-GLES2TexturePtr D2DLayer::GetGLTexture()
+GLES2Texture* D2DLayer::GetGLTexture()
 {
 	ComPtr<IWICBitmapLock> lock;
 	CHECK_HR(m_wicBitmap->Lock(NULL, WICBitmapLockRead, lock.Receive()));
@@ -85,7 +85,7 @@ GLES2TexturePtr D2DLayer::GetGLTexture()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, size.width, size.height, 0,
 		GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
 
-	return m_glTexture;
+	return m_glTexture.get();
 }
 
 ComPtr<ID2D1RenderTarget> D2DLayer::GetD2DTarget()

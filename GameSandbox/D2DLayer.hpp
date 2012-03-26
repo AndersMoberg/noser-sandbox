@@ -27,7 +27,7 @@ public:
 		ComPtr<ID2D1Brush> fillBrush, ComPtr<ID2D1Brush> strokeBrush, float strokeWidth,
 		const Vector2f& origin);
 
-	GLES2TexturePtr GetGLTexture();
+	GLES2Texture* GetGLTexture();
 	ComPtr<ID2D1RenderTarget> GetD2DTarget();
 
 private:
@@ -38,7 +38,7 @@ private:
 
 	GameRendererPtr m_renderer;
 
-	GLES2TexturePtr m_glTexture;
+	std::unique_ptr<GLES2Texture> m_glTexture;
 
 	std::vector<BYTE> m_imageBuffer;
 	ComPtr<IWICBitmap> m_wicBitmap;

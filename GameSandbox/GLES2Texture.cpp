@@ -14,9 +14,9 @@ GLES2Texture::~GLES2Texture()
 	m_texture = 0;
 }
 
-GLES2TexturePtr GLES2Texture::Create()
+GLES2Texture* GLES2Texture::Create()
 {
-	GLES2TexturePtr p(new GLES2Texture);
+	GLES2Texture* p(new GLES2Texture);
 
 	glGenTextures(1, &p->m_texture);
 

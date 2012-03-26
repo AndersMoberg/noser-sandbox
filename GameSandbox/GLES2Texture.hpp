@@ -9,16 +9,13 @@
 
 #include <GLES2/gl2.h>
 
-class GLES2Texture;
-typedef std::shared_ptr<GLES2Texture> GLES2TexturePtr;
-
 class GLES2Texture
 {
 
 public:
 
 	~GLES2Texture();
-	static GLES2TexturePtr Create();
+	static GLES2Texture* Create();
 
 	GLuint Get() { return m_texture; }
 

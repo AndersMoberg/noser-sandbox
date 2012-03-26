@@ -76,7 +76,7 @@ public:
 
 		d2dTarget->EndDraw();
 
-		GLES2TexturePtr texture = m_d2dLayer->GetGLTexture();
+		GLES2Texture* texture = m_d2dLayer->GetGLTexture();
 
 		glBindTexture(GL_TEXTURE_2D, texture->Get());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
