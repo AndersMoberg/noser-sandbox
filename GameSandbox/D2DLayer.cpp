@@ -20,7 +20,7 @@ D2DLayer* D2DLayer::Create(GameRenderer* renderer)
 
 	p->m_renderer = renderer;
 
-	p->m_glTexture.reset(GLES2Texture::Create());
+	p->m_glTexture.reset(new GLES2Texture);
 
 	p->CreateTargetResources();
 

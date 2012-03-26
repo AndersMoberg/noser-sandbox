@@ -201,7 +201,7 @@ GLES2Manager* GLES2Manager::Create(HWND hWnd)
 
 GLES2Texture* GLES2Manager::CreateTextureFromFile(const std::wstring& path)
 {
-	GLES2Texture* result = GLES2Texture::Create();
+	GLES2Texture* result = new GLES2Texture;
 
 	ComPtr<IWICImagingFactory> wicFactory;
 	CHECK_HR(CoCreateInstance(CLSID_WICImagingFactory, NULL,

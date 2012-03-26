@@ -13,15 +13,17 @@ class GLES2Texture
 {
 
 public:
-
+	
+	GLES2Texture();
 	~GLES2Texture();
-	static GLES2Texture* Create();
 
 	GLuint Get() { return m_texture; }
 
 private:
 
-	GLES2Texture();
+	// Disallow copy and assign
+	GLES2Texture(const GLES2Texture&);
+	GLES2Texture& operator=(const GLES2Texture&);
 
 	GLuint m_texture;
 
