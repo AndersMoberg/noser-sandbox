@@ -22,9 +22,6 @@ CharacterControllerMode* CharacterControllerMode::Create(GameRenderer* renderer)
 	p->m_renderer = renderer;
 
 	p->m_d2dLayer.reset(D2DLayer::Create(p->m_renderer));
-
-	p->m_camera.reset(Camera::Create());
-	p->m_world.reset(World::Create());
 		
 	p->m_playerCharacter = CharacterPtr(new Character);
 	p->m_playerCharacter->pos = Vector2f(0.0f, 3.0f);
@@ -118,7 +115,7 @@ Collisions CharacterControllerMode::CheckCharacterCollisions(
 {
 	Collisions result;
 
-	const World::WallList& walls = m_world->GetWalls();
+	const World::WallList& walls = m_world.GetWalls();
 	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
 	{
 		bool posConstrained = TestWallPosConstraint(it->start, it->end,
@@ -211,7 +208,7 @@ void CharacterControllerMode::Render()
 
 	D2D1_SIZE_F targetSize = d2dTarget->GetSize();
 	Rectf vp(0.0f, 0.0f, targetSize.width, targetSize.height);
-	Matrix3x2f worldToViewport = m_camera->GetWorldToViewport(vp);
+	Matrix3x2f worldToViewport = m_camera.GetWorldToViewport(vp);
 
 	ComPtr<ID2D1SolidColorBrush> blackBrush;
 	d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), blackBrush.Receive());
@@ -225,7 +222,7 @@ void CharacterControllerMode::Render()
 	geom->Open(sink.Receive());
 
 	// Render walls
-	const World::WallList& walls = m_world->GetWalls();
+	const World::WallList& walls = m_world.GetWalls();
 	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
 	{
 		sink->BeginFigure(it->start, D2D1_FIGURE_BEGIN_HOLLOW);

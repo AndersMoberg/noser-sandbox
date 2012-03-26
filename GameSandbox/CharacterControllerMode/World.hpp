@@ -24,15 +24,13 @@ class World
 
 public:
 
-	static World* Create();
+	World();
 
 	typedef std::list<Wall> WallList;
 
 	const WallList& GetWalls() const { return m_walls; }
 
 private:
-
-	World();
 
 	WallList m_walls;
 

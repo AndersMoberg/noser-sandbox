@@ -46,8 +46,8 @@ private:
 
 	std::unique_ptr<D2DLayer> m_d2dLayer;
 
-	std::unique_ptr<Camera> m_camera;
-	std::unique_ptr<World> m_world;
+	Camera m_camera;
+	World m_world;
 
 	Vector2f m_intendedVel;
 	Vector2f m_actualVel;

@@ -90,8 +90,6 @@ public:
 
 		p->m_renderer = renderer;
 
-		p->m_camera.reset(Camera::Create());
-
 		p->m_bgTexture.reset(p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
 			L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg"));
 
@@ -122,7 +120,7 @@ public:
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		Rectf vp(0.0f, 0.0f, (float)width, (float)height);
-		Matrix3x2f worldToViewport = m_camera->GetWorldToViewport(vp);
+		Matrix3x2f worldToViewport = m_camera.GetWorldToViewport(vp);
 		Matrix3x2f viewportToClip = Matrix3x2f::RectLerp(vp,
 			Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 		Matrix3x2f worldToClip = worldToViewport * viewportToClip;
@@ -168,7 +166,7 @@ private:
 
 	GameRenderer* m_renderer;
 
-	std::unique_ptr<Camera> m_camera;
+	Camera m_camera;
 
 	std::unique_ptr<GLES2Texture> m_bgTexture;
 

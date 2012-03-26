@@ -14,13 +14,11 @@ class Camera
 
 public:
 
-	static Camera* Create();
+	Camera();
 
 	Matrix3x2f GetWorldToViewport(const Rectf& vp) const;
 
 private:
-
-	Camera();
 
 	Vector2f m_center;
 	float m_zoom; // Number of world units visible on shortest axis
