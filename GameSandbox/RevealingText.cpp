@@ -7,10 +7,10 @@
 RevealingText::RevealingText()
 { }
 
-RevealingTextPtr RevealingText::Create(GameRenderer* renderer,
+RevealingText* RevealingText::Create(GameRenderer* renderer,
 	const std::wstring& text, const Rectf& layoutBox)
 {
-	RevealingTextPtr p(new RevealingText);
+	RevealingText* p(new RevealingText);
 
 	p->m_renderer = renderer;
 
@@ -27,7 +27,7 @@ RevealingTextPtr RevealingText::Create(GameRenderer* renderer,
 		layoutBox.right - layoutBox.left, layoutBox.bottom - layoutBox.top,
 		p->m_textLayout.Receive()));
 
-	p->m_d2dLayer = D2DLayer::Create(p->m_renderer);
+	p->m_d2dLayer.reset(D2DLayer::Create(p->m_renderer));
 
 	p->RenderD2DLayer();
 

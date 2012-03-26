@@ -9,15 +9,12 @@
 
 #include "Geometry.hpp"
 
-class Camera;
-typedef std::shared_ptr<Camera> CameraPtr;
-
 class Camera
 {
 
 public:
 
-	static CameraPtr Create();
+	static Camera* Create();
 
 	Matrix3x2f GetWorldToViewport(const Rectf& vp) const;
 

@@ -12,15 +12,12 @@
 #include "GameRenderer.hpp"
 #include "Geometry.hpp"
 
-class RevealingText;
-typedef std::shared_ptr<RevealingText> RevealingTextPtr;
-
 class RevealingText
 {
 
 public:
 
-	static RevealingTextPtr Create(GameRenderer* renderer,
+	static RevealingText* Create(GameRenderer* renderer,
 		const std::wstring& text, const Rectf& layoutBox);
 
 	void Tick();
@@ -41,7 +38,7 @@ private:
 	unsigned long m_charCurTick;
 
 	ComPtr<IDWriteTextLayout> m_textLayout;
-	D2DLayerPtr m_d2dLayer;
+	std::unique_ptr<D2DLayer> m_d2dLayer;
 
 };
 

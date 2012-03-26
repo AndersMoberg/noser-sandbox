@@ -10,9 +10,9 @@ namespace CharacterControllerMode
 World::World()
 { }
 
-WorldPtr World::Create()
+World* World::Create()
 {
-	WorldPtr p(new World);
+	World* p(new World);
 
 	// Assemble a few walls for testing
 	Wall wall;

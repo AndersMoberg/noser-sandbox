@@ -44,10 +44,10 @@ private:
 
 	GameRenderer* m_renderer;
 
-	D2DLayerPtr m_d2dLayer;
+	std::unique_ptr<D2DLayer> m_d2dLayer;
 
-	CameraPtr m_camera;
-	WorldPtr m_world;
+	std::unique_ptr<Camera> m_camera;
+	std::unique_ptr<World> m_world;
 
 	Vector2f m_intendedVel;
 	Vector2f m_actualVel;

@@ -110,9 +110,9 @@ static GLuint LoadGLSLProgram(const char* vShaderSrc, const char* fShaderSrc)
 	return program;
 }
 
-GLES2ManagerPtr GLES2Manager::Create(HWND hWnd)
+GLES2Manager* GLES2Manager::Create(HWND hWnd)
 {
-	GLES2ManagerPtr p(new GLES2Manager);
+	GLES2Manager* p(new GLES2Manager);
 
 	p->m_hWnd = hWnd;
 

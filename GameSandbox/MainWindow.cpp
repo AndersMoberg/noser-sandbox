@@ -21,9 +21,9 @@ MainWindow::~MainWindow()
 	}
 }
 
-MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd)
+MainWindow* MainWindow::Create(HINSTANCE hInstance, int nShowCmd)
 {
-	MainWindowPtr p(new MainWindow);
+	MainWindow* p(new MainWindow);
 
 	LARGE_INTEGER frequency;
 	QueryPerformanceFrequency(&frequency);
@@ -51,7 +51,7 @@ MainWindowPtr MainWindow::Create(HINSTANCE hInstance, int nShowCmd)
 		NULL,
 		NULL,
 		hInstance,
-		p.get());
+		p);
 	// The WM_CREATE handler sets m_hWnd
 	if (!hWnd)
 	{
@@ -131,7 +131,7 @@ LRESULT MainWindow::OnWMCreate(HWND hWnd)
 	m_hWnd = hWnd;
 
 	m_renderer.reset(GameRenderer::Create(m_hWnd));
-	m_game = Game::Create(m_renderer.get());
+	m_game.reset(Game::Create(m_renderer.get()));
 
 	return 0;
 }

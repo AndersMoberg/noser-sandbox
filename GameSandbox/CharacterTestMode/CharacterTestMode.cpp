@@ -36,19 +36,19 @@ public:
 		{
 			std::wstringstream ss;
 			ss << m_bottles << " bottles of beer on the wall, " << m_bottles << " bottles of beer...";
-			m_text = RevealingText::Create(m_renderer,
+			m_text.reset(RevealingText::Create(m_renderer,
 				ss.str(),
 				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Manager()->GetWidth(),
-				(float)m_renderer->GetGLES2Manager()->GetHeight()));
+				(float)m_renderer->GetGLES2Manager()->GetHeight())));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 1;
 		}
 		else if (m_state == 1) // take one down, pass it around...
 		{
-			m_text = RevealingText::Create(m_renderer,
+			m_text.reset(RevealingText::Create(m_renderer,
 				L"...take one down, pass it around...",
 				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Manager()->GetWidth(),
-				(float)m_renderer->GetGLES2Manager()->GetHeight()));
+				(float)m_renderer->GetGLES2Manager()->GetHeight())));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 2;
 		}
@@ -57,10 +57,10 @@ public:
 			--m_bottles;
 			std::wstringstream ss;
 			ss << "..." << m_bottles << " bottles of beer on the wall.";
-			m_text = RevealingText::Create(m_renderer,
+			m_text.reset(RevealingText::Create(m_renderer,
 				ss.str(),
 				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Manager()->GetWidth(),
-				(float)m_renderer->GetGLES2Manager()->GetHeight()));
+				(float)m_renderer->GetGLES2Manager()->GetHeight())));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 0;
 		}
@@ -74,7 +74,7 @@ public:
 private:
 	GameRenderer* m_renderer;
 	unsigned long m_wait;
-	RevealingTextPtr m_text;
+	std::unique_ptr<RevealingText> m_text;
 	int m_state;
 	long m_bottles;
 };
@@ -90,7 +90,7 @@ public:
 
 		p->m_renderer = renderer;
 
-		p->m_camera = Camera::Create();
+		p->m_camera.reset(Camera::Create());
 
 		p->m_bgTexture.reset(p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
 			L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg"));
@@ -168,7 +168,7 @@ private:
 
 	GameRenderer* m_renderer;
 
-	CameraPtr m_camera;
+	std::unique_ptr<Camera> m_camera;
 
 	std::unique_ptr<GLES2Texture> m_bgTexture;
 

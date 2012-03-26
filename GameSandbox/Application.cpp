@@ -24,16 +24,16 @@ Application::~Application()
 	timeEndPeriod(1);
 }
 
-ApplicationPtr Application::Create(HINSTANCE hInstance, int nShowCmd)
+Application* Application::Create(HINSTANCE hInstance, int nShowCmd)
 {
-	ApplicationPtr p(new Application);
+	Application* p(new Application);
 
 	timeBeginPeriod(1);
 
 	CHECK_HR(CoInitialize(NULL));
 	p->m_coInited = true;
 
-	p->m_window = MainWindow::Create(hInstance, nShowCmd);
+	p->m_window.reset(MainWindow::Create(hInstance, nShowCmd));
 
 	return p;
 }

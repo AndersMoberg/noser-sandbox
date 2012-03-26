@@ -14,9 +14,9 @@
 D2DLayer::D2DLayer()
 { }
 
-D2DLayerPtr D2DLayer::Create(GameRenderer* renderer)
+D2DLayer* D2DLayer::Create(GameRenderer* renderer)
 {
-	D2DLayerPtr p(new D2DLayer);
+	D2DLayer* p(new D2DLayer);
 
 	p->m_renderer = renderer;
 

@@ -13,9 +13,6 @@
 namespace CharacterControllerMode
 {
 
-class World;
-typedef std::shared_ptr<World> WorldPtr;
-
 struct Wall
 {
 	Vector2f start;
@@ -27,7 +24,7 @@ class World
 
 public:
 
-	static WorldPtr Create();
+	static World* Create();
 
 	typedef std::list<Wall> WallList;
 

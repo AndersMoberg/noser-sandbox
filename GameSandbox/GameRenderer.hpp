@@ -19,7 +19,7 @@ public:
 
 	static GameRenderer* Create(HWND hWnd);
 
-	GLES2ManagerPtr GetGLES2Manager() { return m_gles2Manager; }
+	GLES2Manager* GetGLES2Manager() { return m_gles2Manager.get(); }
 
 	ComPtr<ID2D1Factory> GetD2DFactory() { return m_d2dFactory; }
 	ComPtr<IDWriteFactory> GetDWriteFactory() { return m_dwriteFactory; }
@@ -30,7 +30,7 @@ private:
 
 	GameRenderer();
 
-	GLES2ManagerPtr m_gles2Manager;
+	std::unique_ptr<GLES2Manager> m_gles2Manager;
 
 	ComPtr<ID2D1Factory> m_d2dFactory;
 	ComPtr<IDWriteFactory> m_dwriteFactory;

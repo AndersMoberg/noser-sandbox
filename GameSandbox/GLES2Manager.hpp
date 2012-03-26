@@ -14,16 +14,13 @@
 #include "Geometry.hpp"
 #include "GLES2Texture.hpp"
 
-class GLES2Manager;
-typedef std::shared_ptr<GLES2Manager> GLES2ManagerPtr;
-
 class GLES2Manager
 {
 
 public:
 
 	~GLES2Manager();
-	static GLES2ManagerPtr Create(HWND hWnd);
+	static GLES2Manager* Create(HWND hWnd);
 	
 	GLES2Texture* CreateTextureFromFile(const std::wstring& path);
 

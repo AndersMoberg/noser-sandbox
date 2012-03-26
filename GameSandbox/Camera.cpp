@@ -12,9 +12,9 @@ static const float ISOMETRIC_ELEVATION_DEG = 35.264389682754654315377000330019f;
 Camera::Camera()
 { }
 
-CameraPtr Camera::Create()
+Camera* Camera::Create()
 {
-	CameraPtr p(new Camera);
+	Camera* p(new Camera);
 
 	p->m_center = Vector2f(0.0f, 0.0f);
 	p->m_zoom = 8.0f;

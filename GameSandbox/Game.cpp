@@ -15,15 +15,15 @@ const unsigned int Game::TICKS_PER_SEC = 3600;
 Game::Game()
 { }
 
-GamePtr Game::Create(GameRenderer* renderer)
+Game* Game::Create(GameRenderer* renderer)
 {
-	GamePtr p(new Game);
+	Game* p(new Game);
 
 	p->m_renderer = renderer;
 
 	//p->m_mode.reset(CharacterControllerMode::CharacterControllerMode::Create(renderer));
-	//p->m_mode.reset(CharacterTestMode::CharacterTestMode::Create(renderer));
-	p->m_mode.reset(MainMenuMode::MainMenuMode::Create(renderer));
+	p->m_mode.reset(CharacterTestMode::CharacterTestMode::Create(renderer));
+	//p->m_mode.reset(MainMenuMode::MainMenuMode::Create(renderer));
 
 	return p;
 }

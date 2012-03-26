@@ -18,7 +18,7 @@ private:
 
 	GameRenderer* m_renderer;
 
-	D2DLayerPtr m_d2dLayer;
+	std::unique_ptr<D2DLayer> m_d2dLayer;
 
 	struct Option
 	{
@@ -44,7 +44,7 @@ public:
 	MainMenuModeImpl(GameRenderer* renderer)
 	{
 		m_renderer = renderer;
-		m_d2dLayer = D2DLayer::Create(renderer);
+		m_d2dLayer.reset(D2DLayer::Create(renderer));
 
 		AddOption(L"Character Test");
 		AddOption(L"Exit");

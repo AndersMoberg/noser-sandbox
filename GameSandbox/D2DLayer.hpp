@@ -8,18 +8,17 @@
 #include <memory>
 #include <vector>
 
+#include <wincodec.h>
+
 #include "GameRenderer.hpp"
 #include "GLES2Texture.hpp"
-
-class D2DLayer;
-typedef std::shared_ptr<D2DLayer> D2DLayerPtr;
 
 class D2DLayer
 {
 
 public:
 
-	static D2DLayerPtr Create(GameRenderer* renderer);
+	static D2DLayer* Create(GameRenderer* renderer);
 
 	void DestroyTargetResources();
 

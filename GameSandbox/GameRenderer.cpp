@@ -11,7 +11,7 @@ GameRenderer* GameRenderer::Create(HWND hWnd)
 {
 	GameRenderer* p(new GameRenderer);
 
-	p->m_gles2Manager = GLES2Manager::Create(hWnd);
+	p->m_gles2Manager.reset(GLES2Manager::Create(hWnd));
 
 	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, p->m_d2dFactory.Receive()));
 

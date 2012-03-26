@@ -15,16 +15,13 @@
 #include "GameRenderer.hpp"
 #include "GLES2Manager.hpp"
 
-class MainWindow;
-typedef std::shared_ptr<MainWindow> MainWindowPtr;
-
 class MainWindow
 {
 
 public:
 
 	~MainWindow();
-	static MainWindowPtr Create(HINSTANCE hInstance, int nShowCmd);
+	static MainWindow* Create(HINSTANCE hInstance, int nShowCmd);
 
 	bool IsExceptionThrown() const { return m_exceptionThrown; }
 	const std::exception& GetExceptionProxy() const { return m_exceptionProxy; }
@@ -54,7 +51,7 @@ private:
 	long long m_frequency;
 
 	std::unique_ptr<GameRenderer> m_renderer;
-	GamePtr m_game;
+	std::unique_ptr<Game> m_game;
 
 	// User input processing
 	int m_leftToRightKeys; // -1: left; 0: none; 1: right

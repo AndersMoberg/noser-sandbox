@@ -21,10 +21,10 @@ CharacterControllerMode* CharacterControllerMode::Create(GameRenderer* renderer)
 
 	p->m_renderer = renderer;
 
-	p->m_d2dLayer = D2DLayer::Create(p->m_renderer);
+	p->m_d2dLayer.reset(D2DLayer::Create(p->m_renderer));
 
-	p->m_camera = Camera::Create();
-	p->m_world = World::Create();
+	p->m_camera.reset(Camera::Create());
+	p->m_world.reset(World::Create());
 		
 	p->m_playerCharacter = CharacterPtr(new Character);
 	p->m_playerCharacter->pos = Vector2f(0.0f, 3.0f);

@@ -11,9 +11,6 @@
 #include "GameRenderer.hpp"
 #include "RevealingText.hpp"
 
-class Game;
-typedef std::shared_ptr<Game> GamePtr;
-
 class GameObject
 {
 public:
@@ -37,7 +34,7 @@ public:
 
 	static const unsigned int TICKS_PER_SEC;
 
-	static GamePtr Create(GameRenderer* renderer);
+	static Game* Create(GameRenderer* renderer);
 
 	void Tick(const Vector2f& move);
 	void Render();

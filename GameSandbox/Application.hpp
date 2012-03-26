@@ -13,16 +13,13 @@
 
 #include "MainWindow.hpp"
 
-class Application;
-typedef std::shared_ptr<Application> ApplicationPtr;
-
 class Application
 {
 
 public:
 
 	~Application();
-	static ApplicationPtr Create(HINSTANCE hInstance, int nShowCmd);
+	static Application* Create(HINSTANCE hInstance, int nShowCmd);
 
 	int MessagePump();
 
@@ -31,7 +28,7 @@ private:
 	Application();
 
 	bool m_coInited;
-	MainWindowPtr m_window;
+	std::unique_ptr<MainWindow> m_window;
 
 };
 
