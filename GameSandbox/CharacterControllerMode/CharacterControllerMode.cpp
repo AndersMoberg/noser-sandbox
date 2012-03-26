@@ -10,14 +10,14 @@
 namespace CharacterControllerMode
 {
 
-CharacterControllerModeImpl::CharacterControllerModeImpl()
+CharacterControllerMode::CharacterControllerMode()
 	: m_intendedVel(0.0f, 0.0f),
 	m_actualVel(0.0f, 0.0f)
 { }
 
-CharacterControllerMode CharacterControllerModeImpl::Create(GameRenderer* renderer)
+CharacterControllerMode* CharacterControllerMode::Create(GameRenderer* renderer)
 {
-	CharacterControllerMode p(new CharacterControllerModeImpl);
+	CharacterControllerMode* p(new CharacterControllerMode);
 
 	p->m_renderer = renderer;
 
@@ -113,7 +113,7 @@ static Vector2f CorrectVelAgainstWall(const Vector2f& ws, const Vector2f& we,
 }
 	
 typedef std::list<const Wall*> Collisions;
-Collisions CharacterControllerModeImpl::CheckCharacterCollisions(
+Collisions CharacterControllerMode::CheckCharacterCollisions(
 	const Character& character, const Vector2f& vel)
 {
 	Collisions result;
@@ -137,7 +137,7 @@ Collisions CharacterControllerModeImpl::CheckCharacterCollisions(
 	return result;
 }
 
-void CharacterControllerModeImpl::Tick(const Vector2f& move)
+void CharacterControllerMode::Tick(const Vector2f& move)
 {
 	static const float CHAR_SPEED = 8.0f; // world units per second
 
@@ -192,7 +192,7 @@ void CharacterControllerModeImpl::Tick(const Vector2f& move)
 	m_actualVel = actualVel;
 }
 
-void CharacterControllerModeImpl::Render()
+void CharacterControllerMode::Render()
 {
 	unsigned int width = m_renderer->GetGLES2Manager()->GetWidth();
 	unsigned int height = m_renderer->GetGLES2Manager()->GetHeight();

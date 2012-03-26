@@ -25,9 +25,6 @@ public:
 	virtual void Render() = 0;
 };
 
-class GameMode;
-typedef std::shared_ptr<GameMode> GameModePtr;
-
 class GameMode
 {
 public:
@@ -54,7 +51,7 @@ private:
 
 	GameRenderer* m_renderer;
 
-	GameModePtr m_mode;
+	std::unique_ptr<GameMode> m_mode;
 
 };
 

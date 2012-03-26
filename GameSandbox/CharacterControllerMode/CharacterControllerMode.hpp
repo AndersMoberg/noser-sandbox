@@ -14,23 +14,19 @@
 namespace CharacterControllerMode
 {
 
-class CharacterControllerModeImpl;
-typedef std::shared_ptr<CharacterControllerModeImpl> CharacterControllerMode;
-typedef std::weak_ptr<CharacterControllerModeImpl> CharacterControllerModePtr;
-
-class CharacterControllerModeImpl : public GameMode
+class CharacterControllerMode : public GameMode
 {
 
 public:
 
-	static CharacterControllerMode Create(GameRenderer* renderer);
+	static CharacterControllerMode* Create(GameRenderer* renderer);
 
 	void Tick(const Vector2f& move);
 	void Render();
 
 private:
 
-	CharacterControllerModeImpl();
+	CharacterControllerMode();
 	
 	struct Character
 	{
