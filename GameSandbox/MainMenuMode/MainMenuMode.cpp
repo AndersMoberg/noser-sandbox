@@ -93,9 +93,9 @@ public:
 
 };
 
-MainMenuModePtr MainMenuMode::Create(GameRenderer* renderer)
+MainMenuMode* MainMenuMode::Create(GameRenderer* renderer)
 {
-	return MainMenuModePtr(new MainMenuModeImpl(renderer));
+	return new MainMenuModeImpl(renderer);
 }
 
 }

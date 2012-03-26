@@ -13,13 +13,10 @@
 namespace MainMenuMode
 {
 
-class MainMenuMode;
-typedef std::shared_ptr<MainMenuMode> MainMenuModePtr;
-
 class MainMenuMode : public GameMode
 {
 public:
-	static MainMenuModePtr Create(GameRenderer* renderer);
+	static MainMenuMode* Create(GameRenderer* renderer);
 	virtual void Tick(const Vector2f& move) = 0;
 	virtual void Render() = 0;
 };
