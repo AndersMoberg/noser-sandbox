@@ -21,9 +21,9 @@ Game* Game::Create(GameRenderer* renderer)
 
 	p->m_renderer = renderer;
 
-	p->m_mode.reset(CharacterControllerMode::CharacterControllerMode::Create(renderer));
+	//p->m_mode.reset(CharacterControllerMode::CharacterControllerMode::Create(renderer));
 	//p->m_mode.reset(CharacterTestMode::CharacterTestMode::Create(renderer));
-	//p->m_mode.reset(MainMenuMode::MainMenuMode::Create(renderer));
+	p->m_mode.reset(MainMenuMode::MainMenuMode::Create(renderer));
 
 	return p;
 }
