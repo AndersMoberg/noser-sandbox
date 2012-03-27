@@ -139,15 +139,15 @@ HRESULT OutlinedTextRenderer::DrawGlyphRun(void* clientDrawingContext,
 		if (FAILED(hr)) {
 			return hr;
 		}
+		
+		if (m_strokeBrush)
+		{
+			m_d2dTarget->DrawGeometry(transGeom, m_strokeBrush, m_strokeWidth);
+		}
 
 		if (m_fillBrush)
 		{
 			m_d2dTarget->FillGeometry(transGeom, m_fillBrush);
-		}
-
-		if (m_strokeBrush)
-		{
-			m_d2dTarget->DrawGeometry(transGeom, m_strokeBrush, m_strokeWidth);
 		}
 	}
 

@@ -86,7 +86,7 @@ void MainMenuMode::Render()
 		it != m_options.end(); ++it)
 	{
 		m_d2dLayer.DrawOutlinedTextLayout(it->textLayout,
-			whiteBrush, blackBrush, 1.0f, pos);
+			whiteBrush, blackBrush, 2.0f, pos);
 
 		if (num == m_selection)
 		{
