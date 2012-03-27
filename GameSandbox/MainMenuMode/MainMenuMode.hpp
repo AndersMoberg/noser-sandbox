@@ -23,10 +23,13 @@ public:
 
 	void Tick(const Vector2f& move);
 	void Render();
-	
+
 private:
 
 	MainMenuMode();
+
+	bool m_upTriggered;
+	bool m_downTriggered;
 
 	GameRenderer* m_renderer;
 
@@ -39,6 +42,7 @@ private:
 	typedef std::list<Option> OptionList;
 
 	OptionList m_options;
+	size_t m_selection;
 
 	void AddOption(const std::wstring& label);
 

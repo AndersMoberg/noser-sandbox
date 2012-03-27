@@ -12,6 +12,9 @@ namespace MainMenuMode
 {
 
 MainMenuMode::MainMenuMode()
+	: m_selection(0),
+	m_upTriggered(false),
+	m_downTriggered(false)
 { }
 
 MainMenuMode* MainMenuMode::Create(GameRenderer* renderer)
@@ -29,6 +32,37 @@ MainMenuMode* MainMenuMode::Create(GameRenderer* renderer)
 
 void MainMenuMode::Tick(const Vector2f& move)
 {
+	if (move.y > 0.5f)
+	{
+		if (!m_upTriggered)
+		{
+			m_upTriggered = true;
+			m_downTriggered = false;
+			if (m_selection <= 0) {
+				m_selection = m_options.size()-1;
+			} else {
+				--m_selection;
+			}
+		}
+	}
+	else if (move.y < -0.5f)
+	{
+		if (!m_downTriggered)
+		{
+			m_upTriggered = false;
+			m_downTriggered = true;
+			if (m_selection >= m_options.size()-1) {
+				m_selection = 0;
+			} else {
+				++m_selection;
+			}
+		}
+	}
+	else
+	{
+		m_upTriggered = false;
+		m_downTriggered = false;
+	}
 }
 
 void MainMenuMode::Render()
@@ -37,6 +71,8 @@ void MainMenuMode::Render()
 
 	d2dTarget->BeginDraw();
 
+	d2dTarget->Clear(D2D1::ColorF(D2D1::ColorF::Gray));
+
 	ComPtr<ID2D1SolidColorBrush> whiteBrush;
 	CHECK_HR(d2dTarget->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF::White), whiteBrush.Receive()));
@@ -44,11 +80,26 @@ void MainMenuMode::Render()
 	CHECK_HR(d2dTarget->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF::Black), blackBrush.Receive()));
 
+	Vector2f pos(0.0f, 100.0f);
+	size_t num = 0;
 	for (OptionList::const_iterator it = m_options.begin();
 		it != m_options.end(); ++it)
 	{
 		m_d2dLayer.DrawOutlinedTextLayout(it->textLayout,
-			whiteBrush, blackBrush, 1.0f, Vector2f(100.0f, 100.0f));
+			whiteBrush, blackBrush, 1.0f, pos);
+
+		if (num == m_selection)
+		{
+			DWRITE_TEXT_METRICS metrics;
+			CHECK_HR(it->textLayout->GetMetrics(&metrics));
+			Rectf rc = Rectf(metrics.left - 8.0f, metrics.top - 8.0f,
+				metrics.left+metrics.width+8.0f, metrics.top+metrics.height+8.0f).Offset(pos);
+			d2dTarget->DrawRectangle(rc, blackBrush, 5.0f);
+			d2dTarget->DrawRectangle(rc, whiteBrush, 3.0f);
+		}
+
+		pos.y += 64.0f;
+		++num;
 	}
 
 	d2dTarget->EndDraw();
@@ -76,6 +127,7 @@ void MainMenuMode::AddOption(const std::wstring& label)
 		(float)m_renderer->GetGLES2Manager()->GetWidth(),
 		(float)m_renderer->GetGLES2Manager()->GetHeight(),
 		newOption.textLayout.Receive()));
+	newOption.textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	m_options.push_back(newOption);
 }
 
