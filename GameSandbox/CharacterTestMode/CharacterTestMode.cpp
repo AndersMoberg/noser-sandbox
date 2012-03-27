@@ -10,6 +10,7 @@
 #include "GLES2Texture.hpp"
 #include "Geometry.hpp"
 #include "Game.hpp"
+#include "MainMenuMode/MainMenuMode.hpp"
 
 namespace CharacterTestMode
 {
@@ -85,10 +86,11 @@ CharacterTestMode::CharacterTestMode()
 	m_characterRect(-2.0f, 2.0f, 2.0f, -2.0f)
 { }
 
-CharacterTestMode* CharacterTestMode::Create(GameRenderer* renderer)
+CharacterTestMode* CharacterTestMode::Create(Game* game, GameRenderer* renderer)
 {
 	CharacterTestMode* p(new CharacterTestMode);
 
+	p->m_game = game;
 	p->m_renderer = renderer;
 
 	p->m_bgTexture.reset(p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
@@ -102,12 +104,27 @@ CharacterTestMode* CharacterTestMode::Create(GameRenderer* renderer)
 	return p;
 }
 
+class MainMenuModeSwitcher : public GameModeSwitcher
+{
+public:
+	GameMode* CreateMode(Game* game, GameRenderer* renderer) {
+		return MainMenuMode::MainMenuMode::Create(game, renderer);
+	}
+};
+
 void CharacterTestMode::Tick(const GameInput& input)
 {
-	Vector2f velocity = input.move * m_characterSpeed;
-	m_characterPos += velocity / (float)Game::TICKS_PER_SEC;
+	if (input.esc)
+	{
+		m_game->SwitchMode(new MainMenuModeSwitcher);
+	}
+	else
+	{
+		Vector2f velocity = input.move * m_characterSpeed;
+		m_characterPos += velocity / (float)Game::TICKS_PER_SEC;
 
-	m_object->Tick();
+		m_object->Tick();
+	}
 }
 
 void CharacterTestMode::Render()

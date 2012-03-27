@@ -37,7 +37,7 @@ class CharacterTestModeSwitcher : public GameModeSwitcher
 {
 public:
 	virtual GameMode* CreateMode(Game* game, GameRenderer* renderer) {
-		return CharacterTestMode::CharacterTestMode::Create(renderer);
+		return CharacterTestMode::CharacterTestMode::Create(game, renderer);
 	}
 };
 

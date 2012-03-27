@@ -18,7 +18,7 @@ class CharacterTestMode : public GameMode
 
 public:
 
-	static CharacterTestMode* Create(GameRenderer* renderer);
+	static CharacterTestMode* Create(Game* game, GameRenderer* renderer);
 
 	virtual void Tick(const GameInput& input);
 	virtual void Render();
@@ -27,6 +27,7 @@ private:
 
 	CharacterTestMode();
 
+	Game* m_game;
 	GameRenderer* m_renderer;
 
 	Camera m_camera;

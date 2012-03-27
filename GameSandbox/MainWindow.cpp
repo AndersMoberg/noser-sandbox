@@ -10,8 +10,7 @@ MainWindow::MainWindow()
 	: m_hWnd(NULL),
 	m_exceptionThrown(false),
 	m_leftToRightKeys(0),
-	m_downToUpKeys(0),
-	m_spaceTrigger(false)
+	m_downToUpKeys(0)
 { }
 
 MainWindow::~MainWindow()
@@ -183,9 +182,6 @@ LRESULT MainWindow::OnWMKeyDown(WPARAM wParam)
 	case VK_DOWN:
 		m_downToUpKeys = -1;
 		break;
-	case VK_SPACE:
-		m_spaceTrigger = true;
-		break;
 	}
 	return 0;
 }
@@ -244,14 +240,15 @@ void MainWindow::Update()
 	GameInput input;
 	input.move = move;
 	input.enter = !!(GetKeyState(VK_RETURN) & 0x8000);
+	input.esc = !!(GetKeyState(VK_ESCAPE) & 0x8000);
 
 	long long t;
 	for (t = m_curTime; t < liCurTime.QuadPart; t += tickTime)
 	{
 		m_game->Tick(input);
-		m_spaceTrigger = false;
 
 		input.enter = false;
+		input.esc = false;
 	}
 
 	m_curTime = t;
