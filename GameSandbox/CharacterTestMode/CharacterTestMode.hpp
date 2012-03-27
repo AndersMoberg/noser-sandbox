@@ -17,7 +17,7 @@ class CharacterTestMode : public GameMode
 {
 public:
 	static CharacterTestMode* Create(GameRenderer* renderer);
-	virtual void Tick(const Vector2f& move) = 0;
+	virtual void Tick(const GameInput& input) = 0;
 	virtual void Render() = 0;
 };
 

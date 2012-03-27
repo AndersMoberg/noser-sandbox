@@ -28,9 +28,9 @@ Game* Game::Create(GameRenderer* renderer)
 	return p;
 }
 
-void Game::Tick(const Vector2f& move)
+void Game::Tick(const GameInput& input)
 {
-	m_mode->Tick(move);
+	m_mode->Tick(input);
 }
 
 void Game::Render()

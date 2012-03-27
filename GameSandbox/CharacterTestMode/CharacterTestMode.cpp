@@ -101,9 +101,9 @@ public:
 		return p;
 	}
 
-	virtual void Tick(const Vector2f& move)
+	virtual void Tick(const GameInput& input)
 	{
-		Vector2f velocity = move * m_characterSpeed;
+		Vector2f velocity = input.move * m_characterSpeed;
 		m_characterPos += velocity / (float)Game::TICKS_PER_SEC;
 
 		m_object->Tick();

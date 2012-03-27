@@ -19,11 +19,17 @@ public:
 	virtual void Render() = 0;
 };
 
+struct GameInput
+{
+	Vector2f move;
+	bool enter;
+};
+
 class GameMode
 {
 public:
 	virtual ~GameMode() { }
-	virtual void Tick(const Vector2f& move) = 0;
+	virtual void Tick(const GameInput& input) = 0;
 	virtual void Render() = 0;
 };
 
@@ -36,8 +42,10 @@ public:
 
 	static Game* Create(GameRenderer* renderer);
 
-	void Tick(const Vector2f& move);
+	void Tick(const GameInput& input);
 	void Render();
+
+	void SetMode(GameMode* newMode);
 
 private:
 

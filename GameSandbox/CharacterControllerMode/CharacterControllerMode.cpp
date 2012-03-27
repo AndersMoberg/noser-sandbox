@@ -134,11 +134,11 @@ Collisions CharacterControllerMode::CheckCharacterCollisions(
 	return result;
 }
 
-void CharacterControllerMode::Tick(const Vector2f& move)
+void CharacterControllerMode::Tick(const GameInput& input)
 {
 	static const float CHAR_SPEED = 8.0f; // world units per second
 
-	Vector2f intendedVel = CHAR_SPEED * move;
+	Vector2f intendedVel = CHAR_SPEED * input.move;
 
 	Vector2f actualVel = intendedVel;
 

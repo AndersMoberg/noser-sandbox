@@ -21,7 +21,7 @@ public:
 
 	static MainMenuMode* Create(GameRenderer* renderer);
 
-	void Tick(const Vector2f& move);
+	void Tick(const GameInput& input);
 	void Render();
 
 private:

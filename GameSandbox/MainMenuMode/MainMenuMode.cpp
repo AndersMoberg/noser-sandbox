@@ -30,9 +30,9 @@ MainMenuMode* MainMenuMode::Create(GameRenderer* renderer)
 	return p;
 }
 
-void MainMenuMode::Tick(const Vector2f& move)
+void MainMenuMode::Tick(const GameInput& input)
 {
-	if (move.y > 0.5f)
+	if (input.move.y > 0.5f)
 	{
 		if (!m_upTriggered)
 		{
@@ -45,7 +45,7 @@ void MainMenuMode::Tick(const Vector2f& move)
 			}
 		}
 	}
-	else if (move.y < -0.5f)
+	else if (input.move.y < -0.5f)
 	{
 		if (!m_downTriggered)
 		{

@@ -241,11 +241,17 @@ void MainWindow::Update()
 
 	long long tickTime = m_frequency / (long long)Game::TICKS_PER_SEC;
 
+	GameInput input;
+	input.move = move;
+	input.enter = !!(GetKeyState(VK_RETURN) & 0x8000);
+
 	long long t;
 	for (t = m_curTime; t < liCurTime.QuadPart; t += tickTime)
 	{
-		m_game->Tick(move);
+		m_game->Tick(input);
 		m_spaceTrigger = false;
+
+		input.enter = false;
 	}
 
 	m_curTime = t;
