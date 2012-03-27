@@ -19,10 +19,11 @@ class MainMenuMode : public GameMode
 
 public:
 
-	static MainMenuMode* Create(Game* game, GameRenderer* renderer);
+	static MainMenuMode* Create(Game* game);
 
 	void Tick(const GameInput& input);
 	void Render();
+	void Present();
 
 private:
 
@@ -33,7 +34,7 @@ private:
 	bool m_upTriggered;
 	bool m_downTriggered;
 
-	GameRenderer* m_renderer;
+	std::unique_ptr<GameRenderer> m_renderer;
 
 	D2DLayer m_d2dLayer;
 

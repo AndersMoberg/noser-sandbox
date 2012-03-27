@@ -18,17 +18,19 @@ class CharacterTestMode : public GameMode
 
 public:
 
-	static CharacterTestMode* Create(Game* game, GameRenderer* renderer);
+	static CharacterTestMode* Create(Game* game);
 
 	virtual void Tick(const GameInput& input);
 	virtual void Render();
+	virtual void Present();
 	
 private:
 
 	CharacterTestMode();
 
 	Game* m_game;
-	GameRenderer* m_renderer;
+
+	std::unique_ptr<GameRenderer> m_renderer;
 
 	Camera m_camera;
 

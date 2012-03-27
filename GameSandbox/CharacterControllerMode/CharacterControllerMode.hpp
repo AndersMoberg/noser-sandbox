@@ -23,6 +23,7 @@ public:
 
 	void Tick(const GameInput& input);
 	void Render();
+	void Present();
 
 private:
 

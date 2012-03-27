@@ -129,8 +129,7 @@ LRESULT MainWindow::OnWMCreate(HWND hWnd)
 {
 	m_hWnd = hWnd;
 
-	m_renderer.reset(GameRenderer::Create(m_hWnd));
-	m_game.reset(Game::Create(m_renderer.get()));
+	m_game.reset(Game::Create(m_hWnd));
 
 	return 0;
 }
@@ -138,7 +137,6 @@ LRESULT MainWindow::OnWMCreate(HWND hWnd)
 LRESULT MainWindow::OnWMDestroy()
 {
 	m_game.reset();
-	m_renderer.reset();
 
 	PostQuitMessage(EXIT_SUCCESS);
 
@@ -148,7 +146,7 @@ LRESULT MainWindow::OnWMDestroy()
 
 LRESULT MainWindow::OnWMSize()
 {
-	m_renderer->GetGLES2Manager()->Resize();
+	m_game->Resize();
 	return 0;
 }
 
@@ -261,5 +259,5 @@ void MainWindow::Render()
 
 void MainWindow::Present()
 {
-	m_renderer->GetGLES2Manager()->Present();
+	m_game->Present();
 }

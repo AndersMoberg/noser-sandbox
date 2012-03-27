@@ -50,7 +50,6 @@ private:
 	long long m_curTime;
 	long long m_frequency;
 
-	std::unique_ptr<GameRenderer> m_renderer;
 	std::unique_ptr<Game> m_game;
 
 	// User input processing

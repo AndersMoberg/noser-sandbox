@@ -278,4 +278,9 @@ void CharacterControllerMode::Render()
 	m_renderer->GetGLES2Manager()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 }
 
+void CharacterControllerMode::Present()
+{
+	m_renderer->GetGLES2Manager()->Present();
+}
+
 }

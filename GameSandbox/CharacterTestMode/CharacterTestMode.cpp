@@ -86,12 +86,13 @@ CharacterTestMode::CharacterTestMode()
 	m_characterRect(-2.0f, 2.0f, 2.0f, -2.0f)
 { }
 
-CharacterTestMode* CharacterTestMode::Create(Game* game, GameRenderer* renderer)
+CharacterTestMode* CharacterTestMode::Create(Game* game)
 {
 	CharacterTestMode* p(new CharacterTestMode);
 
 	p->m_game = game;
-	p->m_renderer = renderer;
+
+	p->m_renderer.reset(GameRenderer::Create(p->m_game->GetHWnd()));
 
 	p->m_bgTexture.reset(p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg"));
@@ -99,7 +100,7 @@ CharacterTestMode* CharacterTestMode::Create(Game* game, GameRenderer* renderer)
 	p->m_characterTexture.reset(p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg"));
 
-	p->m_object.reset(new MyGameObject(p->m_renderer));
+	p->m_object.reset(new MyGameObject(p->m_renderer.get()));
 
 	return p;
 }
@@ -107,8 +108,8 @@ CharacterTestMode* CharacterTestMode::Create(Game* game, GameRenderer* renderer)
 class MainMenuModeSwitcher : public GameModeSwitcher
 {
 public:
-	GameMode* CreateMode(Game* game, GameRenderer* renderer) {
-		return MainMenuMode::MainMenuMode::Create(game, renderer);
+	GameMode* CreateMode(Game* game) {
+		return MainMenuMode::MainMenuMode::Create(game);
 	}
 };
 
@@ -172,6 +173,11 @@ void CharacterTestMode::Render()
 	m_renderer->GetGLES2Manager()->DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
 
 	m_object->Render();
+}
+
+void CharacterTestMode::Present()
+{
+	m_renderer->GetGLES2Manager()->Present();
 }
 
 }

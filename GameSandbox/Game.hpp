@@ -32,6 +32,7 @@ public:
 	virtual ~GameMode() { }
 	virtual void Tick(const GameInput& input) = 0;
 	virtual void Render() = 0;
+	virtual void Present() = 0;
 };
 
 class Game;
@@ -39,7 +40,7 @@ class Game;
 class GameModeSwitcher
 {
 public:
-	virtual GameMode* CreateMode(Game* game, GameRenderer* renderer) = 0;
+	virtual GameMode* CreateMode(Game* game) = 0;
 };
 
 class Game
@@ -49,18 +50,22 @@ public:
 
 	static const unsigned int TICKS_PER_SEC;
 
-	static Game* Create(GameRenderer* renderer);
+	static Game* Create(HWND hWnd);
 
 	void Tick(const GameInput& input);
+	void Resize();
 	void Render();
+	void Present();
 
 	void SwitchMode(GameModeSwitcher* nextMode);
+
+	HWND GetHWnd() { return m_hWnd; }
 
 private:
 
 	Game();
 
-	GameRenderer* m_renderer;
+	HWND m_hWnd;
 
 	std::unique_ptr<GameMode> m_mode;
 

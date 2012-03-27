@@ -15,15 +15,15 @@ const unsigned int Game::TICKS_PER_SEC = 3600;
 Game::Game()
 { }
 
-Game* Game::Create(GameRenderer* renderer)
+Game* Game::Create(HWND hWnd)
 {
 	Game* p(new Game);
 
-	p->m_renderer = renderer;
+	p->m_hWnd = hWnd;
 
 	//p->m_mode.reset(CharacterControllerMode::CharacterControllerMode::Create(renderer));
 	//p->m_mode.reset(CharacterTestMode::CharacterTestMode::Create(renderer));
-	p->m_mode.reset(MainMenuMode::MainMenuMode::Create(p, renderer));
+	p->m_mode.reset(MainMenuMode::MainMenuMode::Create(p));
 
 	return p;
 }
@@ -35,14 +35,24 @@ void Game::Tick(const GameInput& input)
 	if (m_nextMode)
 	{
 		m_mode.reset();
-		m_mode.reset(m_nextMode->CreateMode(this, m_renderer));
+		m_mode.reset(m_nextMode->CreateMode(this));
 		m_nextMode.reset();
 	}
+}
+
+void Game::Resize()
+{
+	// TODO: Send resize message to mode
 }
 
 void Game::Render()
 {
 	m_mode->Render();
+}
+
+void Game::Present()
+{
+	m_mode->Present();
 }
 
 void Game::SwitchMode(GameModeSwitcher* nextMode)

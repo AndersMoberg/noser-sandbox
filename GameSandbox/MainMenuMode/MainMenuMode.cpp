@@ -18,14 +18,14 @@ MainMenuMode::MainMenuMode()
 	m_downTriggered(false)
 { }
 
-MainMenuMode* MainMenuMode::Create(Game* game, GameRenderer* renderer)
+MainMenuMode* MainMenuMode::Create(Game* game)
 {
 	MainMenuMode* p = new MainMenuMode;
 
 	p->m_game = game;
+	p->m_renderer.reset(GameRenderer::Create(p->m_game->GetHWnd()));
 
-	p->m_renderer = renderer;
-	p->m_d2dLayer.Create(renderer);
+	p->m_d2dLayer.Create(p->m_renderer.get());
 
 	p->AddOption(L"Character Test");
 	p->AddOption(L"Exit");
@@ -36,8 +36,8 @@ MainMenuMode* MainMenuMode::Create(Game* game, GameRenderer* renderer)
 class CharacterTestModeSwitcher : public GameModeSwitcher
 {
 public:
-	virtual GameMode* CreateMode(Game* game, GameRenderer* renderer) {
-		return CharacterTestMode::CharacterTestMode::Create(game, renderer);
+	virtual GameMode* CreateMode(Game* game) {
+		return CharacterTestMode::CharacterTestMode::Create(game);
 	}
 };
 
@@ -137,6 +137,11 @@ void MainMenuMode::Render()
 
 	m_renderer->GetGLES2Manager()->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
 	m_renderer->GetGLES2Manager()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+}
+
+void MainMenuMode::Present()
+{
+	m_renderer->GetGLES2Manager()->Present();
 }
 
 void MainMenuMode::AddOption(const std::wstring& label)
