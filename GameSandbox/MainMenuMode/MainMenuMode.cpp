@@ -18,7 +18,7 @@ private:
 
 	GameRenderer* m_renderer;
 
-	std::unique_ptr<D2DLayer> m_d2dLayer;
+	D2DLayer m_d2dLayer;
 
 	struct Option
 	{
@@ -44,7 +44,7 @@ public:
 	MainMenuModeImpl(GameRenderer* renderer)
 	{
 		m_renderer = renderer;
-		m_d2dLayer.reset(D2DLayer::Create(renderer));
+		m_d2dLayer.Create(renderer);
 
 		AddOption(L"Character Test");
 		AddOption(L"Exit");
@@ -56,7 +56,7 @@ public:
 
 	virtual void Render()
 	{
-		ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer->GetD2DTarget();
+		ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer.GetD2DTarget();
 
 		d2dTarget->BeginDraw();
 
@@ -70,13 +70,13 @@ public:
 		for (OptionList::const_iterator it = m_options.begin();
 			it != m_options.end(); ++it)
 		{
-			m_d2dLayer->DrawOutlinedTextLayout(it->textLayout,
+			m_d2dLayer.DrawOutlinedTextLayout(it->textLayout,
 				whiteBrush, blackBrush, 1.0f, Vector2f(100.0f, 100.0f));
 		}
 
 		d2dTarget->EndDraw();
 
-		GLES2Texture* texture = m_d2dLayer->GetGLTexture();
+		GLES2Texture* texture = m_d2dLayer.GetGLTexture();
 
 		glBindTexture(GL_TEXTURE_2D, texture->Get());
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

@@ -18,7 +18,8 @@ class D2DLayer
 
 public:
 
-	static D2DLayer* Create(GameRenderer* renderer);
+	D2DLayer();
+	void Create(GameRenderer* renderer);
 
 	void DestroyTargetResources();
 
@@ -31,9 +32,11 @@ public:
 
 private:
 
-	void CreateTargetResources();
+	// Disallow copy and assign
+	D2DLayer(const D2DLayer&);
+	D2DLayer& operator=(const D2DLayer&);
 
-	D2DLayer();
+	void CreateTargetResources();
 
 	GameRenderer* m_renderer;
 

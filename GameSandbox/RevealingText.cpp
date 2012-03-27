@@ -27,7 +27,7 @@ RevealingText* RevealingText::Create(GameRenderer* renderer,
 		layoutBox.right - layoutBox.left, layoutBox.bottom - layoutBox.top,
 		p->m_textLayout.Receive()));
 
-	p->m_d2dLayer.reset(D2DLayer::Create(p->m_renderer));
+	p->m_d2dLayer.Create(p->m_renderer);
 
 	p->RenderD2DLayer();
 
@@ -57,7 +57,7 @@ void RevealingText::Tick()
 
 void RevealingText::Render()
 {
-	GLES2Texture* texture = m_d2dLayer->GetGLTexture();
+	GLES2Texture* texture = m_d2dLayer.GetGLTexture();
 
 	glBindTexture(GL_TEXTURE_2D, texture->Get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -74,7 +74,7 @@ void RevealingText::Render()
 
 void RevealingText::RenderD2DLayer()
 {
-	ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer->GetD2DTarget();
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer.GetD2DTarget();
 
 	d2dTarget->BeginDraw();
 
@@ -87,13 +87,13 @@ void RevealingText::RenderD2DLayer()
 		ComPtr<ID2D1SolidColorBrush> strokeBrush;
 		d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), strokeBrush.Receive());
 
-		m_d2dLayer->DrawOutlinedTextLayout(m_textLayout, fillBrush, strokeBrush, 1.0f,
+		m_d2dLayer.DrawOutlinedTextLayout(m_textLayout, fillBrush, strokeBrush, 1.0f,
 			m_layoutBox.UpperLeft());
 	}
 
 	HRESULT hr = d2dTarget->EndDraw();
 	if (hr == D2DERR_RECREATE_TARGET) {
-		m_d2dLayer->DestroyTargetResources();
+		m_d2dLayer.DestroyTargetResources();
 		// FIXME: What will we do now?
 	} else {
 		CHECK_HR(hr);

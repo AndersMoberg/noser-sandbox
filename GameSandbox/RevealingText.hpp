@@ -38,7 +38,7 @@ private:
 	unsigned long m_charCurTick;
 
 	ComPtr<IDWriteTextLayout> m_textLayout;
-	std::unique_ptr<D2DLayer> m_d2dLayer;
+	D2DLayer m_d2dLayer;
 
 };
 

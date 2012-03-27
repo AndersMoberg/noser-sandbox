@@ -44,7 +44,7 @@ private:
 
 	GameRenderer* m_renderer;
 
-	std::unique_ptr<D2DLayer> m_d2dLayer;
+	D2DLayer m_d2dLayer;
 
 	Camera m_camera;
 	World m_world;

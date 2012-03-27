@@ -21,7 +21,7 @@ CharacterControllerMode* CharacterControllerMode::Create(GameRenderer* renderer)
 
 	p->m_renderer = renderer;
 
-	p->m_d2dLayer.reset(D2DLayer::Create(p->m_renderer));
+	p->m_d2dLayer.Create(p->m_renderer);
 		
 	p->m_playerCharacter = CharacterPtr(new Character);
 	p->m_playerCharacter->pos = Vector2f(0.0f, 3.0f);
@@ -199,7 +199,7 @@ void CharacterControllerMode::Render()
 	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer->GetD2DTarget();
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer.GetD2DTarget();
 
 	d2dTarget->BeginDraw();
 		
@@ -263,7 +263,7 @@ void CharacterControllerMode::Render()
 	d2dTarget->EndDraw();
 
 	// Render D2D layer to GL screen
-	GLES2Texture* texture = m_d2dLayer->GetGLTexture();
+	GLES2Texture* texture = m_d2dLayer.GetGLTexture();
 
 	glBindTexture(GL_TEXTURE_2D, texture->Get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

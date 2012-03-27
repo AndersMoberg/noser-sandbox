@@ -14,17 +14,13 @@
 D2DLayer::D2DLayer()
 { }
 
-D2DLayer* D2DLayer::Create(GameRenderer* renderer)
+void D2DLayer::Create(GameRenderer* renderer)
 {
-	D2DLayer* p(new D2DLayer);
+	m_renderer = renderer;
 
-	p->m_renderer = renderer;
+	m_glTexture.reset(new GLES2Texture);
 
-	p->m_glTexture.reset(new GLES2Texture);
-
-	p->CreateTargetResources();
-
-	return p;
+	CreateTargetResources();
 }
 
 void D2DLayer::CreateTargetResources()
