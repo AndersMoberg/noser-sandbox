@@ -6,6 +6,7 @@
 
 #include <list>
 
+#include "CharacterTestMode/CharacterTestMode.hpp"
 #include "WindowsUtils.hpp"
 
 namespace MainMenuMode
@@ -17,9 +18,11 @@ MainMenuMode::MainMenuMode()
 	m_downTriggered(false)
 { }
 
-MainMenuMode* MainMenuMode::Create(GameRenderer* renderer)
+MainMenuMode* MainMenuMode::Create(Game* game, GameRenderer* renderer)
 {
 	MainMenuMode* p = new MainMenuMode;
+
+	p->m_game = game;
 
 	p->m_renderer = renderer;
 	p->m_d2dLayer.Create(renderer);
@@ -30,9 +33,26 @@ MainMenuMode* MainMenuMode::Create(GameRenderer* renderer)
 	return p;
 }
 
+class CharacterTestModeSwitcher : public GameModeSwitcher
+{
+public:
+	virtual GameMode* CreateMode(Game* game, GameRenderer* renderer) {
+		return CharacterTestMode::CharacterTestMode::Create(renderer);
+	}
+};
+
 void MainMenuMode::Tick(const GameInput& input)
 {
-	if (input.move.y > 0.5f)
+	if (input.enter)
+	{
+		switch (m_selection)
+		{
+		case 0: // Character Test
+			m_game->SwitchMode(new CharacterTestModeSwitcher);
+			break;
+		}
+	}
+	else if (input.move.y > 0.5f)
 	{
 		if (!m_upTriggered)
 		{

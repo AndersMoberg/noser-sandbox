@@ -19,7 +19,7 @@ class MainMenuMode : public GameMode
 
 public:
 
-	static MainMenuMode* Create(GameRenderer* renderer);
+	static MainMenuMode* Create(Game* game, GameRenderer* renderer);
 
 	void Tick(const GameInput& input);
 	void Render();
@@ -27,6 +27,8 @@ public:
 private:
 
 	MainMenuMode();
+
+	Game* m_game;
 
 	bool m_upTriggered;
 	bool m_downTriggered;

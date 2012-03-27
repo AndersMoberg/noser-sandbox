@@ -22,8 +22,8 @@ Game* Game::Create(GameRenderer* renderer)
 	p->m_renderer = renderer;
 
 	//p->m_mode.reset(CharacterControllerMode::CharacterControllerMode::Create(renderer));
-	p->m_mode.reset(CharacterTestMode::CharacterTestMode::Create(renderer));
-	//p->m_mode.reset(MainMenuMode::MainMenuMode::Create(renderer));
+	//p->m_mode.reset(CharacterTestMode::CharacterTestMode::Create(renderer));
+	p->m_mode.reset(MainMenuMode::MainMenuMode::Create(p, renderer));
 
 	return p;
 }
@@ -31,9 +31,21 @@ Game* Game::Create(GameRenderer* renderer)
 void Game::Tick(const GameInput& input)
 {
 	m_mode->Tick(input);
+
+	if (m_nextMode)
+	{
+		m_mode.reset();
+		m_mode.reset(m_nextMode->CreateMode(this, m_renderer));
+		m_nextMode.reset();
+	}
 }
 
 void Game::Render()
 {
 	m_mode->Render();
+}
+
+void Game::SwitchMode(GameModeSwitcher* nextMode)
+{
+	m_nextMode.reset(nextMode);
 }

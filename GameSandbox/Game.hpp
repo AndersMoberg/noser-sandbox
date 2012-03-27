@@ -33,6 +33,14 @@ public:
 	virtual void Render() = 0;
 };
 
+class Game;
+
+class GameModeSwitcher
+{
+public:
+	virtual GameMode* CreateMode(Game* game, GameRenderer* renderer) = 0;
+};
+
 class Game
 {
 
@@ -45,7 +53,7 @@ public:
 	void Tick(const GameInput& input);
 	void Render();
 
-	void SetMode(GameMode* newMode);
+	void SwitchMode(GameModeSwitcher* nextMode);
 
 private:
 
@@ -54,6 +62,8 @@ private:
 	GameRenderer* m_renderer;
 
 	std::unique_ptr<GameMode> m_mode;
+
+	std::unique_ptr<GameModeSwitcher> m_nextMode;
 
 };
 
