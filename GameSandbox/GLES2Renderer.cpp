@@ -1,8 +1,8 @@
-// GLES2Manager.cpp
+// GLES2Renderer.cpp
 // Nolan Check
 // Created 3/16/2012
 
-#include "GLES2Manager.hpp"
+#include "GLES2Renderer.hpp"
 
 #include <vector>
 
@@ -12,17 +12,17 @@
 
 #include "WindowsUtils.hpp"
 
-GLES2Manager::GLES2Manager()
+GLES2Renderer::GLES2Renderer()
 	: m_eglDisplay(0),
 	m_eglSurface(0),
 	m_eglContext(0)
 { }
 
-GLES2Manager::TexturedQuadProgram::TexturedQuadProgram()
+GLES2Renderer::TexturedQuadProgram::TexturedQuadProgram()
 	: program(0)
 { }
 
-GLES2Manager::~GLES2Manager()
+GLES2Renderer::~GLES2Renderer()
 {
 	glDeleteProgram(m_texturedQuadProgram.program);
 	m_texturedQuadProgram.program = 0;
@@ -110,9 +110,9 @@ static GLuint LoadGLSLProgram(const char* vShaderSrc, const char* fShaderSrc)
 	return program;
 }
 
-GLES2Manager* GLES2Manager::Create(HWND hWnd)
+GLES2Renderer* GLES2Renderer::Create(HWND hWnd)
 {
-	GLES2Manager* p(new GLES2Manager);
+	GLES2Renderer* p(new GLES2Renderer);
 
 	p->m_hWnd = hWnd;
 
@@ -199,7 +199,7 @@ GLES2Manager* GLES2Manager::Create(HWND hWnd)
 	return p;
 }
 
-GLES2Texture* GLES2Manager::CreateTextureFromFile(const std::wstring& path)
+GLES2Texture* GLES2Renderer::CreateTextureFromFile(const std::wstring& path)
 {
 	GLES2Texture* result = new GLES2Texture;
 
@@ -237,7 +237,7 @@ GLES2Texture* GLES2Manager::CreateTextureFromFile(const std::wstring& path)
 	return result;
 }
 
-void GLES2Manager::SetTexturedQuadMatrix(const Matrix3x2f& mat)
+void GLES2Renderer::SetTexturedQuadMatrix(const Matrix3x2f& mat)
 {
 	glUseProgram(m_texturedQuadProgram.program);
 
@@ -248,7 +248,7 @@ void GLES2Manager::SetTexturedQuadMatrix(const Matrix3x2f& mat)
 	glUniform2fv(m_texturedQuadProgram.uaddLoc, 1, uadd);
 }
 
-void GLES2Manager::DrawTexturedQuad(const Rectf& rc)
+void GLES2Renderer::DrawTexturedQuad(const Rectf& rc)
 {
 	glUseProgram(m_texturedQuadProgram.program);
 
@@ -270,12 +270,12 @@ void GLES2Manager::DrawTexturedQuad(const Rectf& rc)
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
 
-void GLES2Manager::Present()
+void GLES2Renderer::Present()
 {
 	eglSwapBuffers(m_eglDisplay, m_eglSurface);
 }
 
-void GLES2Manager::Resize()
+void GLES2Renderer::Resize()
 {
 	RECT clientRc;
 	GetClientRect(m_hWnd, &clientRc);

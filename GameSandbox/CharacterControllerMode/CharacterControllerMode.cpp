@@ -191,8 +191,8 @@ void CharacterControllerMode::Tick(const GameInput& input)
 
 void CharacterControllerMode::Render()
 {
-	unsigned int width = m_renderer->GetGLES2Manager()->GetWidth();
-	unsigned int height = m_renderer->GetGLES2Manager()->GetHeight();
+	unsigned int width = m_renderer->GetGLES2Renderer()->GetWidth();
+	unsigned int height = m_renderer->GetGLES2Renderer()->GetHeight();
 
 	glViewport(0, 0, width, height);
 
@@ -274,13 +274,13 @@ void CharacterControllerMode::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->GetGLES2Manager()->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
-	m_renderer->GetGLES2Manager()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+	m_renderer->GetGLES2Renderer()->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
+	m_renderer->GetGLES2Renderer()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 }
 
 void CharacterControllerMode::Present()
 {
-	m_renderer->GetGLES2Manager()->Present();
+	m_renderer->GetGLES2Renderer()->Present();
 }
 
 }

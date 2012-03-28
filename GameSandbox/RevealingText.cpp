@@ -68,8 +68,8 @@ void RevealingText::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->GetGLES2Manager()->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
-	m_renderer->GetGLES2Manager()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+	m_renderer->GetGLES2Renderer()->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
+	m_renderer->GetGLES2Renderer()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 }
 
 void RevealingText::RenderD2DLayer()

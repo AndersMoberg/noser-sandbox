@@ -1,9 +1,9 @@
-// GLES2Manager.hpp
+// GLES2Renderer.hpp
 // Nolan Check
 // Created 3/16/2012
 
-#ifndef _GLES2MANAGER_HPP
-#define _GLES2MANAGER_HPP
+#ifndef _GLES2RENDERER_HPP
+#define _GLES2RENDERER_HPP
 
 #include <memory>
 #include <string>
@@ -14,13 +14,13 @@
 #include "Geometry.hpp"
 #include "GLES2Texture.hpp"
 
-class GLES2Manager
+class GLES2Renderer
 {
 
 public:
 
-	~GLES2Manager();
-	static GLES2Manager* Create(HWND hWnd);
+	~GLES2Renderer();
+	static GLES2Renderer* Create(HWND hWnd);
 	
 	GLES2Texture* CreateTextureFromFile(const std::wstring& path);
 
@@ -35,7 +35,7 @@ public:
 
 private:
 
-	GLES2Manager();
+	GLES2Renderer();
 
 	HWND m_hWnd;
 

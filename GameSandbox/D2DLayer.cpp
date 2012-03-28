@@ -27,8 +27,8 @@ void D2DLayer::CreateTargetResources()
 {
 	if (!m_d2dTarget)
 	{
-		D2D1_SIZE_U size = D2D1::SizeU(m_renderer->GetGLES2Manager()->GetWidth(),
-			m_renderer->GetGLES2Manager()->GetHeight());
+		D2D1_SIZE_U size = D2D1::SizeU(m_renderer->GetGLES2Renderer()->GetWidth(),
+			m_renderer->GetGLES2Renderer()->GetHeight());
 
 		m_imageBuffer.resize(4*size.width*size.height);
 

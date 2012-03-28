@@ -39,8 +39,8 @@ public:
 			ss << m_bottles << " bottles of beer on the wall, " << m_bottles << " bottles of beer...";
 			m_text.reset(RevealingText::Create(m_renderer,
 				ss.str(),
-				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Manager()->GetWidth(),
-				(float)m_renderer->GetGLES2Manager()->GetHeight())));
+				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Renderer()->GetWidth(),
+				(float)m_renderer->GetGLES2Renderer()->GetHeight())));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 1;
 		}
@@ -48,8 +48,8 @@ public:
 		{
 			m_text.reset(RevealingText::Create(m_renderer,
 				L"...take one down, pass it around...",
-				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Manager()->GetWidth(),
-				(float)m_renderer->GetGLES2Manager()->GetHeight())));
+				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Renderer()->GetWidth(),
+				(float)m_renderer->GetGLES2Renderer()->GetHeight())));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 2;
 		}
@@ -60,8 +60,8 @@ public:
 			ss << "..." << m_bottles << " bottles of beer on the wall.";
 			m_text.reset(RevealingText::Create(m_renderer,
 				ss.str(),
-				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Manager()->GetWidth(),
-				(float)m_renderer->GetGLES2Manager()->GetHeight())));
+				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Renderer()->GetWidth(),
+				(float)m_renderer->GetGLES2Renderer()->GetHeight())));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 0;
 		}
@@ -94,10 +94,10 @@ CharacterTestMode* CharacterTestMode::Create(Game* game)
 
 	p->m_renderer.reset(GameRenderer::Create(p->m_game->GetHWnd()));
 
-	p->m_bgTexture.reset(p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
+	p->m_bgTexture.reset(p->m_renderer->GetGLES2Renderer()->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg"));
 
-	p->m_characterTexture.reset(p->m_renderer->GetGLES2Manager()->CreateTextureFromFile(
+	p->m_characterTexture.reset(p->m_renderer->GetGLES2Renderer()->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg"));
 
 	p->m_object.reset(new MyGameObject(p->m_renderer.get()));
@@ -130,8 +130,8 @@ void CharacterTestMode::Tick(const GameInput& input)
 
 void CharacterTestMode::Render()
 {
-	unsigned int width = m_renderer->GetGLES2Manager()->GetWidth();
-	unsigned int height = m_renderer->GetGLES2Manager()->GetHeight();
+	unsigned int width = m_renderer->GetGLES2Renderer()->GetWidth();
+	unsigned int height = m_renderer->GetGLES2Renderer()->GetHeight();
 
 	glViewport(0, 0, width, height);
 
@@ -144,7 +144,7 @@ void CharacterTestMode::Render()
 		Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 	Matrix3x2f worldToClip = worldToViewport * viewportToClip;
 
-	m_renderer->GetGLES2Manager()->SetTexturedQuadMatrix(worldToClip);
+	m_renderer->GetGLES2Renderer()->SetTexturedQuadMatrix(worldToClip);
 	
 	// Draw background image
 	glActiveTexture(GL_TEXTURE0);
@@ -157,7 +157,7 @@ void CharacterTestMode::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->GetGLES2Manager()->DrawTexturedQuad(Rectf(-16.0f, 16.0f, 16.0f, -16.0f));
+	m_renderer->GetGLES2Renderer()->DrawTexturedQuad(Rectf(-16.0f, 16.0f, 16.0f, -16.0f));
 
 	// Draw character image
 	glActiveTexture(GL_TEXTURE0);
@@ -170,14 +170,14 @@ void CharacterTestMode::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->GetGLES2Manager()->DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
+	m_renderer->GetGLES2Renderer()->DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
 
 	m_object->Render();
 }
 
 void CharacterTestMode::Present()
 {
-	m_renderer->GetGLES2Manager()->Present();
+	m_renderer->GetGLES2Renderer()->Present();
 }
 
 }

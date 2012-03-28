@@ -9,7 +9,7 @@
 
 #include <DWrite.h>
 
-#include "GLES2Manager.hpp"
+#include "GLES2Renderer.hpp"
 #include "WindowsUtils.hpp"
 
 class GameRenderer
@@ -19,7 +19,7 @@ public:
 
 	static GameRenderer* Create(HWND hWnd);
 
-	GLES2Manager* GetGLES2Manager() { return m_gles2Manager.get(); }
+	GLES2Renderer* GetGLES2Renderer() { return m_gles2Renderer.get(); }
 
 	ComPtr<ID2D1Factory> GetD2DFactory() { return m_d2dFactory; }
 	ComPtr<IDWriteFactory> GetDWriteFactory() { return m_dwriteFactory; }
@@ -30,7 +30,7 @@ private:
 
 	GameRenderer();
 
-	std::unique_ptr<GLES2Manager> m_gles2Manager;
+	std::unique_ptr<GLES2Renderer> m_gles2Renderer;
 
 	ComPtr<ID2D1Factory> m_d2dFactory;
 	ComPtr<IDWriteFactory> m_dwriteFactory;

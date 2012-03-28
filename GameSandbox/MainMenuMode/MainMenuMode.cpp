@@ -135,13 +135,13 @@ void MainMenuMode::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->GetGLES2Manager()->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
-	m_renderer->GetGLES2Manager()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+	m_renderer->GetGLES2Renderer()->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
+	m_renderer->GetGLES2Renderer()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 }
 
 void MainMenuMode::Present()
 {
-	m_renderer->GetGLES2Manager()->Present();
+	m_renderer->GetGLES2Renderer()->Present();
 }
 
 void MainMenuMode::AddOption(const std::wstring& label)
@@ -149,8 +149,8 @@ void MainMenuMode::AddOption(const std::wstring& label)
 	Option newOption;
 	CHECK_HR(m_renderer->GetDWriteFactory()->CreateTextLayout(
 		label.c_str(), label.size(), m_renderer->GetDefaultTextFormat(),
-		(float)m_renderer->GetGLES2Manager()->GetWidth(),
-		(float)m_renderer->GetGLES2Manager()->GetHeight(),
+		(float)m_renderer->GetGLES2Renderer()->GetWidth(),
+		(float)m_renderer->GetGLES2Renderer()->GetHeight(),
 		newOption.textLayout.Receive()));
 	newOption.textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 	m_options.push_back(newOption);
