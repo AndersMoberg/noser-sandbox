@@ -6,6 +6,7 @@
 
 #include <list>
 
+#include "CharacterControllerMode/CharacterControllerMode.hpp"
 #include "CharacterTestMode/CharacterTestMode.hpp"
 #include "OutlinedTextRenderer.hpp"
 #include "WindowsUtils.hpp"
@@ -34,11 +35,20 @@ MainMenuMode* MainMenuMode::Create(Game* game)
 		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL, 32.0f, L"en-US", p->m_textFormat.Receive()));
 
+	p->AddOption(L"Character Controller");
 	p->AddOption(L"Character Test");
 	p->AddOption(L"Exit");
 
 	return p;
 }
+
+class CharacterControllerModeSwitcher : public GameModeSwitcher
+{
+public:
+	virtual GameMode* CreateMode(Game* game) {
+		return CharacterControllerMode::CharacterControllerMode::Create(game);
+	}
+};
 
 class CharacterTestModeSwitcher : public GameModeSwitcher
 {
@@ -54,7 +64,10 @@ void MainMenuMode::Tick(const GameInput& input)
 	{
 		switch (m_selection)
 		{
-		case 0: // Character Test
+		case 0: // Character Controller
+			m_game->SwitchMode(new CharacterControllerModeSwitcher);
+			break;
+		case 1: // Character Test
 			m_game->SwitchMode(new CharacterTestModeSwitcher);
 			break;
 		}

@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "D2DRenderer.hpp"
 #include "Game.hpp"
 #include "GameRenderer.hpp"
 #include "World.hpp"
@@ -19,7 +20,7 @@ class CharacterControllerMode : public GameMode
 
 public:
 
-	static CharacterControllerMode* Create(GameRenderer* renderer);
+	static CharacterControllerMode* Create(Game* game);
 
 	void Tick(const GameInput& input);
 	void Render();
@@ -43,9 +44,8 @@ private:
 	Collisions CheckCharacterCollisions(
 		const Character& character, const Vector2f& vel);
 
-	GameRenderer* m_renderer;
-
-	D2DLayer m_d2dLayer;
+	Game* m_game;
+	std::unique_ptr<D2DRenderer> m_renderer;
 
 	Camera m_camera;
 	World m_world;

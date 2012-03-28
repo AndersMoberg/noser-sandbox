@@ -15,13 +15,13 @@ CharacterControllerMode::CharacterControllerMode()
 	m_actualVel(0.0f, 0.0f)
 { }
 
-CharacterControllerMode* CharacterControllerMode::Create(GameRenderer* renderer)
+CharacterControllerMode* CharacterControllerMode::Create(Game* game)
 {
 	CharacterControllerMode* p(new CharacterControllerMode);
 
-	p->m_renderer = renderer;
+	p->m_game = game;
 
-	p->m_d2dLayer.Create(p->m_renderer);
+	p->m_renderer.reset(new D2DRenderer(p->m_game->GetHWnd()));
 		
 	p->m_playerCharacter = CharacterPtr(new Character);
 	p->m_playerCharacter->pos = Vector2f(0.0f, 3.0f);
@@ -191,15 +191,7 @@ void CharacterControllerMode::Tick(const GameInput& input)
 
 void CharacterControllerMode::Render()
 {
-	unsigned int width = m_renderer->GetGLES2Renderer()->GetWidth();
-	unsigned int height = m_renderer->GetGLES2Renderer()->GetHeight();
-
-	glViewport(0, 0, width, height);
-
-	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer.GetD2DTarget();
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer->GetD2DTarget();
 
 	d2dTarget->BeginDraw();
 		
@@ -213,8 +205,7 @@ void CharacterControllerMode::Render()
 	ComPtr<ID2D1SolidColorBrush> blackBrush;
 	d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), blackBrush.Receive());
 
-	// Clear to transparent black
-	d2dTarget->Clear();
+	d2dTarget->Clear(D2D1::ColorF(D2D1::ColorF::LightGray));
 
 	ComPtr<ID2D1PathGeometry> geom;
 	factory->CreatePathGeometry(geom.Receive());
@@ -261,26 +252,12 @@ void CharacterControllerMode::Render()
 	d2dTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 
 	d2dTarget->EndDraw();
-
-	// Render D2D layer to GL screen
-	GLES2Texture* texture = m_d2dLayer.GetGLTexture();
-
-	glBindTexture(GL_TEXTURE_2D, texture->Get());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	// Premultiplied alpha blending
-	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	glBlendEquation(GL_FUNC_ADD);
-	glEnable(GL_BLEND);
-
-	m_renderer->GetGLES2Renderer()->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
-	m_renderer->GetGLES2Renderer()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+	// TODO: Handle D2DERR_RECREATETARGET
 }
 
 void CharacterControllerMode::Present()
 {
-	m_renderer->GetGLES2Renderer()->Present();
+	// XXX: Render presents
 }
 
 }
