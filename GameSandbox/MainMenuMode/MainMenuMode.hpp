@@ -8,6 +8,7 @@
 #include <memory>
 #include <list>
 
+#include "D2DRenderer.hpp"
 #include "Game.hpp"
 #include "GameRenderer.hpp"
 
@@ -31,12 +32,13 @@ private:
 
 	Game* m_game;
 
+	std::unique_ptr<D2DRenderer> m_renderer;
+
+	ComPtr<IDWriteFactory> m_dwriteFactory;
+	ComPtr<IDWriteTextFormat> m_textFormat;
+
 	bool m_upTriggered;
 	bool m_downTriggered;
-
-	std::unique_ptr<GameRenderer> m_renderer;
-
-	D2DLayer m_d2dLayer;
 
 	struct Option
 	{

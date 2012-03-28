@@ -5,6 +5,8 @@
 #ifndef _WINDOWSUTILS_HPP
 #define _WINDOWSUTILS_HPP
 
+#include <exception>
+
 #include <ObjBase.h>
 
 #define CHECK_HR(x) \

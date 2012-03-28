@@ -7,6 +7,7 @@
 #include <list>
 
 #include "CharacterTestMode/CharacterTestMode.hpp"
+#include "OutlinedTextRenderer.hpp"
 #include "WindowsUtils.hpp"
 
 namespace MainMenuMode
@@ -23,9 +24,15 @@ MainMenuMode* MainMenuMode::Create(Game* game)
 	MainMenuMode* p = new MainMenuMode;
 
 	p->m_game = game;
-	p->m_renderer.reset(GameRenderer::Create(p->m_game->GetHWnd()));
 
-	p->m_d2dLayer.Create(p->m_renderer.get());
+	p->m_renderer.reset(new D2DRenderer(p->m_game->GetHWnd()));
+	
+	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
+		__uuidof(IDWriteFactory), (IUnknown**)p->m_dwriteFactory.Receive()));
+
+	CHECK_HR(p->m_dwriteFactory->CreateTextFormat(L"Kootenay", NULL,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL, 32.0f, L"en-US", p->m_textFormat.Receive()));
 
 	p->AddOption(L"Character Test");
 	p->AddOption(L"Exit");
@@ -87,7 +94,7 @@ void MainMenuMode::Tick(const GameInput& input)
 
 void MainMenuMode::Render()
 {
-	ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer.GetD2DTarget();
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer->GetD2DTarget();
 
 	d2dTarget->BeginDraw();
 
@@ -105,7 +112,7 @@ void MainMenuMode::Render()
 	for (OptionList::const_iterator it = m_options.begin();
 		it != m_options.end(); ++it)
 	{
-		m_d2dLayer.DrawOutlinedTextLayout(it->textLayout,
+		DrawOutlinedTextLayout(d2dTarget, it->textLayout,
 			whiteBrush, blackBrush, 2.0f, pos);
 
 		if (num == m_selection)
@@ -123,36 +130,26 @@ void MainMenuMode::Render()
 	}
 
 	d2dTarget->EndDraw();
-
-	GLES2Texture* texture = m_d2dLayer.GetGLTexture();
-
-	glBindTexture(GL_TEXTURE_2D, texture->Get());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	// Premultiplied alpha blending
-	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	glBlendEquation(GL_FUNC_ADD);
-	glEnable(GL_BLEND);
-
-	m_renderer->GetGLES2Renderer()->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
-	m_renderer->GetGLES2Renderer()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+	// TODO: Handle when EndDraw returns D2DERR_RECREATETARGET
 }
 
 void MainMenuMode::Present()
 {
-	m_renderer->GetGLES2Renderer()->Present();
+	// XXX: d2dTarget->EndDraw presents
 }
 
 void MainMenuMode::AddOption(const std::wstring& label)
 {
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer->GetD2DTarget();
+	D2D1_SIZE_U targetSize = d2dTarget->GetPixelSize();
+
 	Option newOption;
-	CHECK_HR(m_renderer->GetDWriteFactory()->CreateTextLayout(
-		label.c_str(), label.size(), m_renderer->GetDefaultTextFormat(),
-		(float)m_renderer->GetGLES2Renderer()->GetWidth(),
-		(float)m_renderer->GetGLES2Renderer()->GetHeight(),
+	CHECK_HR(m_dwriteFactory->CreateTextLayout(
+		label.c_str(), label.size(), m_textFormat,
+		(float)targetSize.width, (float)targetSize.height,
 		newOption.textLayout.Receive()));
 	newOption.textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+
 	m_options.push_back(newOption);
 }
 

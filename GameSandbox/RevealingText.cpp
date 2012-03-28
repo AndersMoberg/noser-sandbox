@@ -4,6 +4,8 @@
 
 #include "RevealingText.hpp"
 
+#include "OutlinedTextRenderer.hpp"
+
 RevealingText::RevealingText()
 { }
 
@@ -87,7 +89,7 @@ void RevealingText::RenderD2DLayer()
 		ComPtr<ID2D1SolidColorBrush> strokeBrush;
 		d2dTarget->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), strokeBrush.Receive());
 
-		m_d2dLayer.DrawOutlinedTextLayout(m_textLayout, fillBrush, strokeBrush, 2.0f,
+		DrawOutlinedTextLayout(d2dTarget, m_textLayout, fillBrush, strokeBrush, 2.0f,
 			m_layoutBox.UpperLeft());
 	}
 

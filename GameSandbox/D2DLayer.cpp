@@ -57,15 +57,6 @@ void D2DLayer::DestroyTargetResources()
 	m_wicBitmap.Release();
 }
 
-void D2DLayer::DrawOutlinedTextLayout(ComPtr<IDWriteTextLayout> textLayout,
-	ComPtr<ID2D1Brush> fillBrush, ComPtr<ID2D1Brush> strokeBrush, float strokeWidth,
-	const Vector2f& origin)
-{
-	ComPtr<OutlinedTextRenderer> textRenderer = OutlinedTextRenderer::Create(
-		m_d2dTarget, fillBrush, strokeBrush, strokeWidth);
-	textLayout->Draw(NULL, textRenderer, origin.x, origin.y);
-}
-
 GLES2Texture* D2DLayer::GetGLTexture()
 {
 	ComPtr<IWICBitmapLock> lock;
