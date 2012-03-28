@@ -10,7 +10,6 @@
 
 #include "D2DRenderer.hpp"
 #include "Game.hpp"
-#include "GameRenderer.hpp"
 
 namespace MainMenuMode
 {

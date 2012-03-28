@@ -9,13 +9,14 @@
 RevealingText::RevealingText()
 { }
 
-RevealingText* RevealingText::Create(GameRenderer* renderer,
+RevealingText* RevealingText::Create(GLES2Renderer* renderer,
+	ComPtr<IDWriteFactory> dwriteFactory,
+	ComPtr<IDWriteTextFormat> textFormat,
 	const std::wstring& text, const Rectf& layoutBox)
 {
 	RevealingText* p(new RevealingText);
 
 	p->m_renderer = renderer;
-
 	p->m_text = text;
 	p->m_layoutBox = layoutBox;
 
@@ -23,13 +24,12 @@ RevealingText* RevealingText::Create(GameRenderer* renderer,
 	p->m_ticksPerChar = 60;
 	p->m_charCurTick = 0;
 
-	ComPtr<IDWriteFactory> dwriteFactory = p->m_renderer->GetDWriteFactory();
 	CHECK_HR(dwriteFactory->CreateTextLayout(
-		text.c_str(), text.size(), p->m_renderer->GetDefaultTextFormat(),
+		text.c_str(), text.size(), textFormat,
 		layoutBox.right - layoutBox.left, layoutBox.bottom - layoutBox.top,
 		p->m_textLayout.Receive()));
 
-	p->m_d2dLayer.Create(p->m_renderer);
+	p->m_d2dLayer.Create(renderer);
 
 	p->RenderD2DLayer();
 
@@ -70,8 +70,8 @@ void RevealingText::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->GetGLES2Renderer()->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
-	m_renderer->GetGLES2Renderer()->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+	m_renderer->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
+	m_renderer->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 }
 
 void RevealingText::RenderD2DLayer()

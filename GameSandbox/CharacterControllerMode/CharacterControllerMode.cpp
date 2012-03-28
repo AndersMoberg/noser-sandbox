@@ -4,7 +4,6 @@
 
 #include "CharacterControllerMode.hpp"
 
-#include "GameRenderer.hpp"
 #include "MainMenuMode/MainMenuMode.hpp"
 #include "World.hpp"
 

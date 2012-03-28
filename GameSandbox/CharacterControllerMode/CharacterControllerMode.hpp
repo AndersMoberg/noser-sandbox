@@ -9,7 +9,6 @@
 
 #include "D2DRenderer.hpp"
 #include "Game.hpp"
-#include "GameRenderer.hpp"
 #include "World.hpp"
 
 namespace CharacterControllerMode

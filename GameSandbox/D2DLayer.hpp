@@ -8,10 +8,12 @@
 #include <memory>
 #include <vector>
 
+#include <D2D1.h>
 #include <wincodec.h>
 
-#include "GameRenderer.hpp"
+#include "GLES2Renderer.hpp"
 #include "GLES2Texture.hpp"
+#include "WindowsUtils.hpp"
 
 class D2DLayer
 {
@@ -19,7 +21,7 @@ class D2DLayer
 public:
 
 	D2DLayer();
-	void Create(GameRenderer* renderer);
+	void Create(GLES2Renderer* renderer);
 
 	void DestroyTargetResources();
 
@@ -34,7 +36,9 @@ private:
 
 	void CreateTargetResources();
 
-	GameRenderer* m_renderer;
+	GLES2Renderer* m_renderer;
+
+	ComPtr<ID2D1Factory> m_d2dFactory;
 
 	std::unique_ptr<GLES2Texture> m_glTexture;
 

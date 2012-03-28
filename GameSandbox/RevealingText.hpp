@@ -8,16 +8,20 @@
 #include <memory>
 #include <string>
 
+#include <DWrite.h>
+
 #include "D2DLayer.hpp"
-#include "GameRenderer.hpp"
 #include "Geometry.hpp"
+#include "GLES2Renderer.hpp"
 
 class RevealingText
 {
 
 public:
 
-	static RevealingText* Create(GameRenderer* renderer,
+	static RevealingText* Create(GLES2Renderer* renderer,
+		ComPtr<IDWriteFactory> dwriteFactory,
+		ComPtr<IDWriteTextFormat> textFormat,
 		const std::wstring& text, const Rectf& layoutBox);
 
 	void Tick();
@@ -29,7 +33,7 @@ private:
 
 	void RenderD2DLayer();
 
-	GameRenderer* m_renderer;
+	GLES2Renderer* m_renderer;
 
 	std::wstring m_text;
 	Rectf m_layoutBox;

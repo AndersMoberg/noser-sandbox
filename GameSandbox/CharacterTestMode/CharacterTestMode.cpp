@@ -18,12 +18,19 @@ namespace CharacterTestMode
 class MyGameObject : public GameObject
 {
 public:
-	MyGameObject(GameRenderer* renderer)
+	MyGameObject(GLES2Renderer* renderer)
 		: m_renderer(renderer),
 		m_wait(0),
 		m_bottles(99),
 		m_state(0)
-	{ }
+	{
+		CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
+			__uuidof(IDWriteFactory), (IUnknown**)m_dwriteFactory.Receive()));
+
+		CHECK_HR(m_dwriteFactory->CreateTextFormat(L"Kootenay", NULL,
+			DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
+			DWRITE_FONT_STRETCH_NORMAL, 32.0f, L"en-US", m_textFormat.Receive()));
+	}
 	virtual void Tick()
 	{
 		if (m_wait > 0) // Wait
@@ -37,19 +44,19 @@ public:
 		{
 			std::wstringstream ss;
 			ss << m_bottles << " bottles of beer on the wall, " << m_bottles << " bottles of beer...";
-			m_text.reset(RevealingText::Create(m_renderer,
+			m_text.reset(RevealingText::Create(m_renderer, m_dwriteFactory, m_textFormat,
 				ss.str(),
-				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Renderer()->GetWidth(),
-				(float)m_renderer->GetGLES2Renderer()->GetHeight())));
+				Rectf(0.0f, 0.0f, (float)m_renderer->GetWidth(),
+				(float)m_renderer->GetHeight())));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 1;
 		}
 		else if (m_state == 1) // take one down, pass it around...
 		{
-			m_text.reset(RevealingText::Create(m_renderer,
+			m_text.reset(RevealingText::Create(m_renderer, m_dwriteFactory, m_textFormat,
 				L"...take one down, pass it around...",
-				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Renderer()->GetWidth(),
-				(float)m_renderer->GetGLES2Renderer()->GetHeight())));
+				Rectf(0.0f, 0.0f, (float)m_renderer->GetWidth(),
+				(float)m_renderer->GetHeight())));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 2;
 		}
@@ -58,10 +65,10 @@ public:
 			--m_bottles;
 			std::wstringstream ss;
 			ss << "..." << m_bottles << " bottles of beer on the wall.";
-			m_text.reset(RevealingText::Create(m_renderer,
+			m_text.reset(RevealingText::Create(m_renderer, m_dwriteFactory, m_textFormat,
 				ss.str(),
-				Rectf(0.0f, 0.0f, (float)m_renderer->GetGLES2Renderer()->GetWidth(),
-				(float)m_renderer->GetGLES2Renderer()->GetHeight())));
+				Rectf(0.0f, 0.0f, (float)m_renderer->GetWidth(),
+				(float)m_renderer->GetHeight())));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 0;
 		}
@@ -73,7 +80,9 @@ public:
 		}
 	}
 private:
-	GameRenderer* m_renderer;
+	GLES2Renderer* m_renderer;
+	ComPtr<IDWriteFactory> m_dwriteFactory;
+	ComPtr<IDWriteTextFormat> m_textFormat;
 	unsigned long m_wait;
 	std::unique_ptr<RevealingText> m_text;
 	int m_state;
@@ -92,12 +101,12 @@ CharacterTestMode* CharacterTestMode::Create(Game* game)
 
 	p->m_game = game;
 
-	p->m_renderer.reset(GameRenderer::Create(p->m_game->GetHWnd()));
+	p->m_renderer.reset(GLES2Renderer::Create(p->m_game->GetHWnd()));
 
-	p->m_bgTexture.reset(p->m_renderer->GetGLES2Renderer()->CreateTextureFromFile(
+	p->m_bgTexture.reset(p->m_renderer->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg"));
 
-	p->m_characterTexture.reset(p->m_renderer->GetGLES2Renderer()->CreateTextureFromFile(
+	p->m_characterTexture.reset(p->m_renderer->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg"));
 
 	p->m_object.reset(new MyGameObject(p->m_renderer.get()));
@@ -130,8 +139,8 @@ void CharacterTestMode::Tick(const GameInput& input)
 
 void CharacterTestMode::Render()
 {
-	unsigned int width = m_renderer->GetGLES2Renderer()->GetWidth();
-	unsigned int height = m_renderer->GetGLES2Renderer()->GetHeight();
+	unsigned int width = m_renderer->GetWidth();
+	unsigned int height = m_renderer->GetHeight();
 
 	glViewport(0, 0, width, height);
 
@@ -144,7 +153,7 @@ void CharacterTestMode::Render()
 		Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 	Matrix3x2f worldToClip = worldToViewport * viewportToClip;
 
-	m_renderer->GetGLES2Renderer()->SetTexturedQuadMatrix(worldToClip);
+	m_renderer->SetTexturedQuadMatrix(worldToClip);
 	
 	// Draw background image
 	glActiveTexture(GL_TEXTURE0);
@@ -157,7 +166,7 @@ void CharacterTestMode::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->GetGLES2Renderer()->DrawTexturedQuad(Rectf(-16.0f, 16.0f, 16.0f, -16.0f));
+	m_renderer->DrawTexturedQuad(Rectf(-16.0f, 16.0f, 16.0f, -16.0f));
 
 	// Draw character image
 	glActiveTexture(GL_TEXTURE0);
@@ -170,14 +179,14 @@ void CharacterTestMode::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->GetGLES2Renderer()->DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
+	m_renderer->DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
 
 	m_object->Render();
 }
 
 void CharacterTestMode::Present()
 {
-	m_renderer->GetGLES2Renderer()->Present();
+	m_renderer->Present();
 }
 
 }

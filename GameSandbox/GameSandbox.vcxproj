@@ -92,7 +92,6 @@
     <ClCompile Include="D2DLayer.cpp" />
     <ClCompile Include="D2DRenderer.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameRenderer.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GLES2Renderer.cpp" />
     <ClCompile Include="GLES2Texture.cpp" />
@@ -112,7 +111,6 @@
     <ClInclude Include="D2DLayer.hpp" />
     <ClInclude Include="D2DRenderer.hpp" />
     <ClInclude Include="Game.hpp" />
-    <ClInclude Include="GameRenderer.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="GLES2Renderer.hpp" />
     <ClInclude Include="GLES2Texture.hpp" />

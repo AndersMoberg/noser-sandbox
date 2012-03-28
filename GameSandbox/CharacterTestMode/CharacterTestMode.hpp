@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "Game.hpp"
-#include "GameRenderer.hpp"
 
 namespace CharacterTestMode
 {
@@ -30,7 +29,7 @@ private:
 
 	Game* m_game;
 
-	std::unique_ptr<GameRenderer> m_renderer;
+	std::unique_ptr<GLES2Renderer> m_renderer;
 
 	Camera m_camera;
 

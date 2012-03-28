@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "Camera.hpp"
-#include "GameRenderer.hpp"
 #include "RevealingText.hpp"
 
 class GameObject

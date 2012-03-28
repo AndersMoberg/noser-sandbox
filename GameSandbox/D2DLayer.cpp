@@ -14,9 +14,12 @@
 D2DLayer::D2DLayer()
 { }
 
-void D2DLayer::Create(GameRenderer* renderer)
+void D2DLayer::Create(GLES2Renderer* renderer)
 {
 	m_renderer = renderer;
+
+	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
+		m_d2dFactory.Receive()));
 
 	m_glTexture.reset(new GLES2Texture);
 
@@ -27,8 +30,8 @@ void D2DLayer::CreateTargetResources()
 {
 	if (!m_d2dTarget)
 	{
-		D2D1_SIZE_U size = D2D1::SizeU(m_renderer->GetGLES2Renderer()->GetWidth(),
-			m_renderer->GetGLES2Renderer()->GetHeight());
+		D2D1_SIZE_U size = D2D1::SizeU(m_renderer->GetWidth(),
+			m_renderer->GetHeight());
 
 		m_imageBuffer.resize(4*size.width*size.height);
 
@@ -46,7 +49,7 @@ void D2DLayer::CreateTargetResources()
 		rtProps.dpiX = 96.0f;
 		rtProps.dpiY = 96.0f;
 
-		CHECK_HR(m_renderer->GetD2DFactory()->CreateWicBitmapRenderTarget(
+		CHECK_HR(m_d2dFactory->CreateWicBitmapRenderTarget(
 			m_wicBitmap, rtProps, m_d2dTarget.Receive()));
 	}
 }

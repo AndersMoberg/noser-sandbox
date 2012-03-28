@@ -12,7 +12,6 @@
 #include <Windows.h>
 
 #include "Game.hpp"
-#include "GameRenderer.hpp"
 #include "GLES2Renderer.hpp"
 
 class MainWindow
