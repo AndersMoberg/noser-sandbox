@@ -15,7 +15,7 @@
 namespace CharacterTestMode
 {
 
-class MyGameObject : public GameObject
+class CharacterTestMode::MyGameObject
 {
 public:
 	MyGameObject(GLES2Renderer* renderer)
@@ -182,10 +182,7 @@ void CharacterTestMode::Render()
 	m_renderer->DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
 
 	m_object->Render();
-}
 
-void CharacterTestMode::Present()
-{
 	m_renderer->Present();
 }
 

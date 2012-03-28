@@ -156,7 +156,6 @@ LRESULT MainWindow::OnWMPaint()
 	Update();
 
 	Render();
-	Present();
 
 	// Animate!
 	InvalidateRect(m_hWnd, NULL, FALSE);
@@ -255,9 +254,4 @@ void MainWindow::Update()
 void MainWindow::Render()
 {
 	m_game->Render();
-}
-
-void MainWindow::Present()
-{
-	m_game->Present();
 }

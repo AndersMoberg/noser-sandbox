@@ -270,9 +270,4 @@ void CharacterControllerMode::Render()
 	// TODO: Handle D2DERR_RECREATETARGET
 }
 
-void CharacterControllerMode::Present()
-{
-	// XXX: Render presents
-}
-
 }

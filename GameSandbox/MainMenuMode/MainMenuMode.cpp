@@ -146,11 +146,6 @@ void MainMenuMode::Render()
 	// TODO: Handle when EndDraw returns D2DERR_RECREATETARGET
 }
 
-void MainMenuMode::Present()
-{
-	// XXX: d2dTarget->EndDraw presents
-}
-
 void MainMenuMode::AddOption(const std::wstring& label)
 {
 	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer->GetD2DTarget();

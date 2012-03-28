@@ -39,7 +39,6 @@ private:
 
 	void Update();
 	void Render();
-	void Present();
 
 	HWND m_hWnd;
 

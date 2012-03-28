@@ -50,11 +50,6 @@ void Game::Render()
 	m_mode->Render();
 }
 
-void Game::Present()
-{
-	m_mode->Present();
-}
-
 void Game::SwitchMode(GameModeSwitcher* nextMode)
 {
 	m_nextMode.reset(nextMode);

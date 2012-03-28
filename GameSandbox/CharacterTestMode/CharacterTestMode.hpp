@@ -21,7 +21,6 @@ public:
 
 	virtual void Tick(const GameInput& input);
 	virtual void Render();
-	virtual void Present();
 	
 private:
 
@@ -40,7 +39,9 @@ private:
 	Rectf m_characterRect;
 	std::unique_ptr<GLES2Texture> m_characterTexture;
 
-	std::unique_ptr<GameObject> m_object;
+	class MyGameObject;
+
+	std::unique_ptr<MyGameObject> m_object;
 
 };
 

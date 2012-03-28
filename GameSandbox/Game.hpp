@@ -10,14 +10,6 @@
 #include "Camera.hpp"
 #include "RevealingText.hpp"
 
-class GameObject
-{
-public:
-	virtual ~GameObject() { }
-	virtual void Tick() = 0;
-	virtual void Render() = 0;
-};
-
 struct GameInput
 {
 	Vector2f move;
@@ -31,7 +23,6 @@ public:
 	virtual ~GameMode() { }
 	virtual void Tick(const GameInput& input) = 0;
 	virtual void Render() = 0;
-	virtual void Present() = 0;
 };
 
 class Game;
@@ -54,7 +45,6 @@ public:
 	void Tick(const GameInput& input);
 	void Resize();
 	void Render();
-	void Present();
 
 	void SwitchMode(GameModeSwitcher* nextMode);
 
