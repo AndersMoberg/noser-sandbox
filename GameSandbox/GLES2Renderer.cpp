@@ -187,7 +187,7 @@ GLES2Renderer::GLES2Renderer(HWND hWnd)
 		"varying vec2 v_tex;\n"
 		"void main()\n"
 		"{\n"
-			"gl_Position = vec4(a_pos, 0, 1);\n"
+			"gl_Position = vec4(a_pos, 0.0, 1.0);\n"
 			"v_tex = a_tex;\n"
 		"}\n"
 		;
@@ -195,17 +195,28 @@ GLES2Renderer::GLES2Renderer(HWND hWnd)
 		"precision mediump float;\n"
 		"varying vec2 v_tex;\n"
 		"uniform vec2 u_offset;\n"
+		"uniform vec2 u_sampleOffset;\n"
 		"uniform sampler2D u_sampler;\n"
 		"void main()\n"
 		"{\n"
-			"float sample = texture2D(u_sampler, v_tex + u_offset).a;\n"
-			"gl_FragColor = vec4(0, 0, 0, sample);\n"
+			"float sum = 0.0;\n"
+			"sum += texture2D(u_sampler, v_tex + u_offset - 4.0*u_sampleOffset).a * 0.05;\n"
+			"sum += texture2D(u_sampler, v_tex + u_offset - 3.0*u_sampleOffset).a * 0.09;\n"
+			"sum += texture2D(u_sampler, v_tex + u_offset - 2.0*u_sampleOffset).a * 0.12;\n"
+			"sum += texture2D(u_sampler, v_tex + u_offset - u_sampleOffset).a * 0.15;\n"
+			"sum += texture2D(u_sampler, v_tex + u_offset).a * 0.16;\n"
+			"sum += texture2D(u_sampler, v_tex + u_offset + u_sampleOffset).a * 0.15;\n"
+			"sum += texture2D(u_sampler, v_tex + u_offset + 2.0*u_sampleOffset).a * 0.12;\n"
+			"sum += texture2D(u_sampler, v_tex + u_offset + 3.0*u_sampleOffset).a * 0.09;\n"
+			"sum += texture2D(u_sampler, v_tex + u_offset + 4.0*u_sampleOffset).a * 0.05;\n"
+			"gl_FragColor = vec4(0.0, 0.0, 0.0, sum * 0.75);\n"
 		"}\n"
 		;
 	m_dropShadowProgram.program = LoadGLSLProgram(DROP_SHADOW_VERTEX_SHADER, DROP_SHADOW_FRAGMENT_SHADER);
 	m_dropShadowProgram.aposLoc = glGetAttribLocation(m_dropShadowProgram.program, "a_pos");
 	m_dropShadowProgram.atexLoc = glGetAttribLocation(m_dropShadowProgram.program, "a_tex");
 	m_dropShadowProgram.uoffsetLoc = glGetUniformLocation(m_dropShadowProgram.program, "u_offset");
+	m_dropShadowProgram.usampleOffsetLoc = glGetUniformLocation(m_dropShadowProgram.program, "u_sampleOffset");
 	m_dropShadowProgram.usamplerLoc = glGetUniformLocation(m_dropShadowProgram.program, "u_sampler");
 
 	glGenFramebuffers(1, &m_dropShadowFramebuffer);
@@ -304,13 +315,15 @@ void GLES2Renderer::DrawTexturedQuad(const Rectf& rc)
 }
 
 void GLES2Renderer::generateDropShadow(GLuint dstTexture, GLuint srcTexture,
-	int width, int height, const Vector2f& offset)
+	int width, int height, const Vector2f& offset, const Vector2f& blurSize)
 {
 	glBindTexture(GL_TEXTURE_2D, dstTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NULL);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, m_dropShadowFramebuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstTexture, 0);
+	GLuint tempTexture = 0;
+	glGenTextures(1, &tempTexture);
+	glBindTexture(GL_TEXTURE_2D, tempTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NULL);
 
 	glUseProgram(m_dropShadowProgram.program);
 	
@@ -330,6 +343,16 @@ void GLES2Renderer::generateDropShadow(GLuint dstTexture, GLuint srcTexture,
 	glEnableVertexAttribArray(m_dropShadowProgram.atexLoc);
 
 	glUniform2f(m_dropShadowProgram.uoffsetLoc, offset.x, offset.y);
+	
+	// No blending
+	glDisable(GL_BLEND);
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, m_dropShadowFramebuffer);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tempTexture, 0);
+	
+	glUniform2f(m_dropShadowProgram.uoffsetLoc, offset.x, offset.y);
+	// Blur along X axis
+	glUniform2f(m_dropShadowProgram.usampleOffsetLoc, blurSize.x, 0.0f);
 
 	glBindTexture(GL_TEXTURE_2D, srcTexture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -337,13 +360,26 @@ void GLES2Renderer::generateDropShadow(GLuint dstTexture, GLuint srcTexture,
 
 	glUniform1i(m_dropShadowProgram.usamplerLoc, 0);
 
-	// No blending
-	glDisable(GL_BLEND);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstTexture, 0);
+	
+	glUniform2f(m_dropShadowProgram.uoffsetLoc, 0.0f, 0.0f);
+	// Blur along Y axis
+	glUniform2f(m_dropShadowProgram.usampleOffsetLoc, 0.0f, blurSize.y);
+
+	glBindTexture(GL_TEXTURE_2D, tempTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glUniform1i(m_dropShadowProgram.usamplerLoc, 0);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glDeleteTextures(1, &tempTexture);
 }
 
 void GLES2Renderer::Present()

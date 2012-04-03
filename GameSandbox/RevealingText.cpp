@@ -64,7 +64,8 @@ void RevealingText::Render()
 	D2D1_SIZE_U size = m_d2dLayer.GetD2DTarget()->GetPixelSize();
 
 	m_renderer->generateDropShadow(m_shadowTexture.get(), texture->get(),
-		size.width, size.height, Vector2f(-2.0f / size.width, -2.0f / size.height));
+		size.width, size.height, Vector2f(-2.0f / size.width, -2.0f / size.height),
+		Vector2f(0.5f / size.width, 0.5f / size.height));
 
 	// Render shadow texture
 	glBindTexture(GL_TEXTURE_2D, m_shadowTexture.get());

@@ -28,7 +28,7 @@ public:
 	void DrawTexturedQuad(const Rectf& rc);
 
 	void generateDropShadow(GLuint dstTexture, GLuint srcTexture,
-		int width, int height, const Vector2f& offset);
+		int width, int height, const Vector2f& offset, const Vector2f& blurSize);
 	
 	void Present();
 	void Resize();
@@ -67,6 +67,7 @@ private:
 		GLuint aposLoc;
 		GLuint atexLoc;
 		GLuint uoffsetLoc;
+		GLuint usampleOffsetLoc;
 		GLuint usamplerLoc;
 	} m_dropShadowProgram;
 
