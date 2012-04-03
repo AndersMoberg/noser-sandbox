@@ -17,7 +17,7 @@ public:
 	GLES2Texture();
 	~GLES2Texture();
 
-	GLuint Get() { return m_texture; }
+	GLuint get() { return m_texture; }
 
 private:
 

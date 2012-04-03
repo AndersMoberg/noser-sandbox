@@ -61,7 +61,26 @@ void RevealingText::Render()
 {
 	GLES2Texture* texture = m_d2dLayer.GetGLTexture();
 
-	glBindTexture(GL_TEXTURE_2D, texture->Get());
+	D2D1_SIZE_U size = m_d2dLayer.GetD2DTarget()->GetPixelSize();
+
+	m_renderer->generateDropShadow(m_shadowTexture.get(), texture->get(),
+		size.width, size.height, Vector2f(-2.0f / size.width, -2.0f / size.height));
+
+	// Render shadow texture
+	glBindTexture(GL_TEXTURE_2D, m_shadowTexture.get());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	// Premultiplied alpha blending
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquation(GL_FUNC_ADD);
+	glEnable(GL_BLEND);
+
+	m_renderer->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
+	m_renderer->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+	
+	// Render D2D layer texture
+	glBindTexture(GL_TEXTURE_2D, texture->get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 

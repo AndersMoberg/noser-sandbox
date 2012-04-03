@@ -101,7 +101,7 @@ CharacterTestMode* CharacterTestMode::Create(Game* game)
 
 	p->m_game = game;
 
-	p->m_renderer.reset(GLES2Renderer::Create(p->m_game->GetHWnd()));
+	p->m_renderer.reset(new GLES2Renderer(p->m_game->GetHWnd()));
 
 	p->m_bgTexture.reset(p->m_renderer->CreateTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg"));
@@ -157,7 +157,7 @@ void CharacterTestMode::Render()
 	
 	// Draw background image
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_bgTexture->Get());
+	glBindTexture(GL_TEXTURE_2D, m_bgTexture->get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -170,7 +170,7 @@ void CharacterTestMode::Render()
 
 	// Draw character image
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_characterTexture->Get());
+	glBindTexture(GL_TEXTURE_2D, m_characterTexture->get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

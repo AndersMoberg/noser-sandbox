@@ -71,7 +71,7 @@ GLES2Texture* D2DLayer::GetGLTexture()
 
 	D2D1_SIZE_U size = m_d2dTarget->GetPixelSize();
 
-	glBindTexture(GL_TEXTURE_2D, m_glTexture->Get());
+	glBindTexture(GL_TEXTURE_2D, m_glTexture->get());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, size.width, size.height, 0,
 		GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
 

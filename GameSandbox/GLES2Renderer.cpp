@@ -12,31 +12,6 @@
 
 #include "WindowsUtils.hpp"
 
-GLES2Renderer::GLES2Renderer()
-	: m_eglDisplay(0),
-	m_eglSurface(0),
-	m_eglContext(0)
-{ }
-
-GLES2Renderer::TexturedQuadProgram::TexturedQuadProgram()
-	: program(0)
-{ }
-
-GLES2Renderer::~GLES2Renderer()
-{
-	glDeleteProgram(m_texturedQuadProgram.program);
-	m_texturedQuadProgram.program = 0;
-
-	eglDestroyContext(m_eglDisplay, m_eglContext);
-	m_eglContext = 0;
-
-	eglDestroySurface(m_eglDisplay, m_eglSurface);
-	m_eglSurface = 0;
-
-	eglTerminate(m_eglDisplay);
-	m_eglDisplay = 0;
-}
-
 static GLuint LoadGLSLShader(GLenum type, const char* src)
 {
 	GLuint shader = glCreateShader(type);
@@ -110,23 +85,33 @@ static GLuint LoadGLSLProgram(const char* vShaderSrc, const char* fShaderSrc)
 	return program;
 }
 
-GLES2Renderer* GLES2Renderer::Create(HWND hWnd)
+GLES2Renderer::TexturedQuadProgram::TexturedQuadProgram()
+	: program(0)
+{ }
+
+GLES2Renderer::DropShadowProgram::DropShadowProgram()
+	: program(0)
+{ }
+
+GLES2Renderer::GLES2Renderer(HWND hWnd)
+	: m_eglDisplay(0),
+	m_eglSurface(0),
+	m_eglContext(0),
+	m_dropShadowFramebuffer(0)
 {
-	GLES2Renderer* p(new GLES2Renderer);
+	m_hWnd = hWnd;
 
-	p->m_hWnd = hWnd;
-
-	p->m_eglDisplay = eglGetDisplay(GetDC(hWnd));
-	if (p->m_eglDisplay == EGL_NO_DISPLAY) {
+	m_eglDisplay = eglGetDisplay(GetDC(hWnd));
+	if (m_eglDisplay == EGL_NO_DISPLAY) {
 		throw std::exception("Failed to get display for EGL");
 	}
 
-	if (eglInitialize(p->m_eglDisplay, NULL, NULL) != EGL_TRUE) {
+	if (eglInitialize(m_eglDisplay, NULL, NULL) != EGL_TRUE) {
 		throw std::exception("Failed to initialize EGL");
 	}
 	
 	EGLint numConfigs;
-	if (eglGetConfigs(p->m_eglDisplay, NULL, 0, &numConfigs) != EGL_TRUE) {
+	if (eglGetConfigs(m_eglDisplay, NULL, 0, &numConfigs) != EGL_TRUE) {
 		throw std::exception("Failed to get number of EGL configurations");
 	}
 
@@ -134,12 +119,12 @@ GLES2Renderer* GLES2Renderer::Create(HWND hWnd)
 		EGL_NONE
 	};
 	EGLConfig eglConfig;
-	if (eglChooseConfig(p->m_eglDisplay, chooseConfigAttribs, &eglConfig, 1, &numConfigs) != EGL_TRUE) {
+	if (eglChooseConfig(m_eglDisplay, chooseConfigAttribs, &eglConfig, 1, &numConfigs) != EGL_TRUE) {
 		throw std::exception("Failed to choose an EGL configuration");
 	}
 
-	p->m_eglSurface = eglCreateWindowSurface(p->m_eglDisplay, eglConfig, hWnd, NULL);
-	if (p->m_eglSurface == EGL_NO_SURFACE) {
+	m_eglSurface = eglCreateWindowSurface(m_eglDisplay, eglConfig, hWnd, NULL);
+	if (m_eglSurface == EGL_NO_SURFACE) {
 		throw std::exception("Failed to create EGL window surface");
 	}
 
@@ -147,19 +132,19 @@ GLES2Renderer* GLES2Renderer::Create(HWND hWnd)
 		EGL_CONTEXT_CLIENT_VERSION, 2,
 		EGL_NONE
 	};
-	p->m_eglContext = eglCreateContext(p->m_eglDisplay, eglConfig, EGL_NO_CONTEXT, createContextAttribs);
-	if (p->m_eglContext == EGL_NO_CONTEXT) {
+	m_eglContext = eglCreateContext(m_eglDisplay, eglConfig, EGL_NO_CONTEXT, createContextAttribs);
+	if (m_eglContext == EGL_NO_CONTEXT) {
 		throw std::exception("Failed to create EGL context");
 	}
 
-	if (eglMakeCurrent(p->m_eglDisplay, p->m_eglSurface, p->m_eglSurface, p->m_eglContext) != EGL_TRUE) {
+	if (eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext) != EGL_TRUE) {
 		throw std::exception("Failed to make EGL context current");
 	}
 
 	RECT clientRc;
 	GetClientRect(hWnd, &clientRc);
-	p->m_width = clientRc.right - clientRc.left;
-	p->m_height = clientRc.bottom - clientRc.top;
+	m_width = clientRc.right - clientRc.left;
+	m_height = clientRc.bottom - clientRc.top;
 
 	static const char TEXTURED_QUAD_VERTEX_SHADER[] =
 		"attribute vec2 a_pos;\n"
@@ -182,21 +167,69 @@ GLES2Renderer* GLES2Renderer::Create(HWND hWnd)
 			"gl_FragColor = texture2D(u_sampler, v_tex);\n"
 		"}\n"
 		;
-	p->m_texturedQuadProgram.program = LoadGLSLProgram(TEXTURED_QUAD_VERTEX_SHADER,
+	m_texturedQuadProgram.program = LoadGLSLProgram(TEXTURED_QUAD_VERTEX_SHADER,
 		TEXTURED_QUAD_FRAGMENT_SHADER);
-	p->m_texturedQuadProgram.aposLoc = glGetAttribLocation(
-		p->m_texturedQuadProgram.program, "a_pos");
-	p->m_texturedQuadProgram.atexLoc = glGetAttribLocation(
-		p->m_texturedQuadProgram.program, "a_tex");
-	p->m_texturedQuadProgram.umatLoc = glGetUniformLocation(
-		p->m_texturedQuadProgram.program, "u_mat");
-	p->m_texturedQuadProgram.uaddLoc = glGetUniformLocation(
-		p->m_texturedQuadProgram.program, "u_add");
-	p->m_texturedQuadProgram.usamplerLoc = glGetUniformLocation(
-		p->m_texturedQuadProgram.program, "u_sampler");
-	p->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
+	m_texturedQuadProgram.aposLoc = glGetAttribLocation(
+		m_texturedQuadProgram.program, "a_pos");
+	m_texturedQuadProgram.atexLoc = glGetAttribLocation(
+		m_texturedQuadProgram.program, "a_tex");
+	m_texturedQuadProgram.umatLoc = glGetUniformLocation(
+		m_texturedQuadProgram.program, "u_mat");
+	m_texturedQuadProgram.uaddLoc = glGetUniformLocation(
+		m_texturedQuadProgram.program, "u_add");
+	m_texturedQuadProgram.usamplerLoc = glGetUniformLocation(
+		m_texturedQuadProgram.program, "u_sampler");
+	SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
 
-	return p;
+	static const char DROP_SHADOW_VERTEX_SHADER[] =
+		"attribute vec2 a_pos;\n"
+		"attribute vec2 a_tex;\n"
+		"varying vec2 v_tex;\n"
+		"void main()\n"
+		"{\n"
+			"gl_Position = vec4(a_pos, 0, 1);\n"
+			"v_tex = a_tex;\n"
+		"}\n"
+		;
+	static const char DROP_SHADOW_FRAGMENT_SHADER[] =
+		"precision mediump float;\n"
+		"varying vec2 v_tex;\n"
+		"uniform vec2 u_offset;\n"
+		"uniform sampler2D u_sampler;\n"
+		"void main()\n"
+		"{\n"
+			"float sample = texture2D(u_sampler, v_tex + u_offset).a;\n"
+			"gl_FragColor = vec4(0, 0, 0, sample);\n"
+		"}\n"
+		;
+	m_dropShadowProgram.program = LoadGLSLProgram(DROP_SHADOW_VERTEX_SHADER, DROP_SHADOW_FRAGMENT_SHADER);
+	m_dropShadowProgram.aposLoc = glGetAttribLocation(m_dropShadowProgram.program, "a_pos");
+	m_dropShadowProgram.atexLoc = glGetAttribLocation(m_dropShadowProgram.program, "a_tex");
+	m_dropShadowProgram.uoffsetLoc = glGetUniformLocation(m_dropShadowProgram.program, "u_offset");
+	m_dropShadowProgram.usamplerLoc = glGetUniformLocation(m_dropShadowProgram.program, "u_sampler");
+
+	glGenFramebuffers(1, &m_dropShadowFramebuffer);
+}
+
+GLES2Renderer::~GLES2Renderer()
+{
+	glDeleteFramebuffers(1, &m_dropShadowFramebuffer);
+	m_dropShadowFramebuffer = 0;
+
+	glDeleteProgram(m_dropShadowProgram.program);
+	m_dropShadowProgram.program = 0;
+
+	glDeleteProgram(m_texturedQuadProgram.program);
+	m_texturedQuadProgram.program = 0;
+
+	eglDestroyContext(m_eglDisplay, m_eglContext);
+	m_eglContext = 0;
+
+	eglDestroySurface(m_eglDisplay, m_eglSurface);
+	m_eglSurface = 0;
+
+	eglTerminate(m_eglDisplay);
+	m_eglDisplay = 0;
 }
 
 GLES2Texture* GLES2Renderer::CreateTextureFromFile(const std::wstring& path)
@@ -231,7 +264,7 @@ GLES2Texture* GLES2Renderer::CreateTextureFromFile(const std::wstring& path)
 	std::vector<BYTE> data(4*width*height);
 	CHECK_HR(formatConverter->CopyPixels(NULL, 4*width, 4*width*height, &data[0]));
 
-	glBindTexture(GL_TEXTURE_2D, result->Get());
+	glBindTexture(GL_TEXTURE_2D, result->get());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &data[0]);
 
 	return result;
@@ -268,6 +301,49 @@ void GLES2Renderer::DrawTexturedQuad(const Rectf& rc)
 	glUniform1i(m_texturedQuadProgram.usamplerLoc, 0);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
+void GLES2Renderer::generateDropShadow(GLuint dstTexture, GLuint srcTexture,
+	int width, int height, const Vector2f& offset)
+{
+	glBindTexture(GL_TEXTURE_2D, dstTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NULL);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_dropShadowFramebuffer);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstTexture, 0);
+
+	glUseProgram(m_dropShadowProgram.program);
+	
+	// XXX: Pay attention to texture coordinates! They are upside-down from what
+	// you expect.
+	GLfloat verts[] = { -1.0f, -1.0f, 0.0f, 0.0f, // Lower left
+		1.0f, -1.0f, 1.0f, 0.0f, // Lower right
+		-1.0f, 1.0f, 0.0f, 1.0f, // Upper left
+		1.0f, 1.0f, 1.0f, 1.0f }; // Upper right
+
+	glVertexAttribPointer(m_dropShadowProgram.aposLoc, 2, GL_FLOAT, GL_FALSE,
+		4 * sizeof(GLfloat), &verts[0]);
+	glVertexAttribPointer(m_dropShadowProgram.atexLoc, 2, GL_FLOAT, GL_FALSE,
+		4 * sizeof(GLfloat), &verts[2]);
+
+	glEnableVertexAttribArray(m_dropShadowProgram.aposLoc);
+	glEnableVertexAttribArray(m_dropShadowProgram.atexLoc);
+
+	glUniform2f(m_dropShadowProgram.uoffsetLoc, offset.x, offset.y);
+
+	glBindTexture(GL_TEXTURE_2D, srcTexture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glUniform1i(m_dropShadowProgram.usamplerLoc, 0);
+
+	// No blending
+	glDisable(GL_BLEND);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GLES2Renderer::Present()

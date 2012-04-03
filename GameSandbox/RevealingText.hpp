@@ -35,6 +35,8 @@ private:
 
 	GLES2Renderer* m_renderer;
 
+	GLES2Texture m_shadowTexture;
+
 	std::wstring m_text;
 	Rectf m_layoutBox;
 	size_t m_progress;

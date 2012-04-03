@@ -18,14 +18,17 @@ class GLES2Renderer
 {
 
 public:
-
+	
+	GLES2Renderer(HWND hWnd);
 	~GLES2Renderer();
-	static GLES2Renderer* Create(HWND hWnd);
 	
 	GLES2Texture* CreateTextureFromFile(const std::wstring& path);
 
 	void SetTexturedQuadMatrix(const Matrix3x2f& mat);
 	void DrawTexturedQuad(const Rectf& rc);
+
+	void generateDropShadow(GLuint dstTexture, GLuint srcTexture,
+		int width, int height, const Vector2f& offset);
 	
 	void Present();
 	void Resize();
@@ -34,8 +37,6 @@ public:
 	unsigned int GetHeight() const { return m_height; }
 
 private:
-
-	GLES2Renderer();
 
 	HWND m_hWnd;
 
@@ -57,6 +58,19 @@ private:
 		GLuint uaddLoc;
 		GLuint usamplerLoc;
 	} m_texturedQuadProgram;
+
+	struct DropShadowProgram
+	{
+		DropShadowProgram();
+
+		GLuint program;
+		GLuint aposLoc;
+		GLuint atexLoc;
+		GLuint uoffsetLoc;
+		GLuint usamplerLoc;
+	} m_dropShadowProgram;
+
+	GLuint m_dropShadowFramebuffer;
 
 };
 
