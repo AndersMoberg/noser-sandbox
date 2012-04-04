@@ -19,23 +19,14 @@ class RevealingText
 
 public:
 
-	static RevealingText* Create(GLES2Renderer* renderer,
-		ComPtr<IDWriteFactory> dwriteFactory,
+	RevealingText(ComPtr<IDWriteFactory> dwriteFactory,
 		ComPtr<IDWriteTextFormat> textFormat,
 		const std::wstring& text, const Rectf& layoutBox);
 
-	void Tick();
-	void Render();
+	bool Tick(); // Returns true if rendering changed (needs re-rendering)
+	void Render(ComPtr<ID2D1RenderTarget> d2dTarget);
 
 private:
-
-	RevealingText();
-
-	void RenderD2DLayer();
-
-	GLES2Renderer* m_renderer;
-
-	GLES2Texture m_shadowTexture;
 
 	std::wstring m_text;
 	Rectf m_layoutBox;
@@ -44,7 +35,6 @@ private:
 	unsigned long m_charCurTick;
 
 	ComPtr<IDWriteTextLayout> m_textLayout;
-	D2DLayer m_d2dLayer;
 
 };
 

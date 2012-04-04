@@ -21,22 +21,34 @@ public:
 	MyGameObject(GLES2Renderer* renderer)
 		: m_renderer(renderer),
 		m_wait(0),
+		m_dropShadowTexture(0),
 		m_bottles(99),
 		m_state(0)
 	{
+		m_d2dLayer.Create(m_renderer);
+
 		CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
 			__uuidof(IDWriteFactory), (IUnknown**)m_dwriteFactory.Receive()));
 
 		CHECK_HR(m_dwriteFactory->CreateTextFormat(L"Kootenay", NULL,
 			DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL, 32.0f, L"en-US", m_textFormat.Receive()));
+
+		glGenTextures(1, &m_dropShadowTexture);
+
+		m_textNeedsRerender = true;
+	}
+	~MyGameObject()
+	{
+		glDeleteTextures(1, &m_dropShadowTexture);
+		m_dropShadowTexture = 0;
 	}
 	virtual void Tick()
 	{
 		if (m_wait > 0) // Wait
 		{
 			if (m_text) {
-				m_text->Tick();
+				m_textNeedsRerender |= m_text->Tick();
 			}
 			--m_wait;
 		}
@@ -44,7 +56,7 @@ public:
 		{
 			std::wstringstream ss;
 			ss << m_bottles << " bottles of beer on the wall, " << m_bottles << " bottles of beer...";
-			m_text.reset(RevealingText::Create(m_renderer, m_dwriteFactory, m_textFormat,
+			m_text.reset(new RevealingText(m_dwriteFactory, m_textFormat,
 				ss.str(),
 				Rectf(0.0f, 0.0f, (float)m_renderer->GetWidth(),
 				(float)m_renderer->GetHeight())));
@@ -53,7 +65,7 @@ public:
 		}
 		else if (m_state == 1) // take one down, pass it around...
 		{
-			m_text.reset(RevealingText::Create(m_renderer, m_dwriteFactory, m_textFormat,
+			m_text.reset(new RevealingText(m_dwriteFactory, m_textFormat,
 				L"...take one down, pass it around...",
 				Rectf(0.0f, 0.0f, (float)m_renderer->GetWidth(),
 				(float)m_renderer->GetHeight())));
@@ -65,7 +77,7 @@ public:
 			--m_bottles;
 			std::wstringstream ss;
 			ss << "..." << m_bottles << " bottles of beer on the wall.";
-			m_text.reset(RevealingText::Create(m_renderer, m_dwriteFactory, m_textFormat,
+			m_text.reset(new RevealingText(m_dwriteFactory, m_textFormat,
 				ss.str(),
 				Rectf(0.0f, 0.0f, (float)m_renderer->GetWidth(),
 				(float)m_renderer->GetHeight())));
@@ -75,16 +87,73 @@ public:
 	}
 	virtual void Render()
 	{
-		if (m_text) {
-			m_text->Render();
+		if (m_text)
+		{
+			GLES2Texture* texture;
+			if (m_textNeedsRerender)
+			{
+				ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer.GetD2DTarget();
+
+				D2D1_SIZE_U size = d2dTarget->GetPixelSize();
+
+				d2dTarget->BeginDraw();
+
+				m_text->Render(m_d2dLayer.GetD2DTarget());
+
+				d2dTarget->EndDraw(); // TODO: Handle D2DERR_RECREATE_TARGET
+
+				texture = m_d2dLayer.GetGLTexture();
+				
+				m_renderer->generateDropShadow(m_dropShadowTexture, m_d2dLayer.GetGLTexture()->get(),
+					size.width, size.height, Vector2f(-2.0f / size.width, -2.0f / size.height),
+					Vector2f(1.0f / size.width, 1.0f / size.height));
+
+				m_textNeedsRerender = false;
+			}
+			else
+			{
+				texture = m_d2dLayer.GetGLTexture();
+			}
+
+			// Render drop shadow
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_dropShadowTexture);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+			// Premultiplied alpha blending
+			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendEquation(GL_FUNC_ADD);
+			glEnable(GL_BLEND);
+
+			m_renderer->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
+			m_renderer->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+
+			// Render D2D layer texture
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture->get());
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			// Premultiplied alpha blending
+			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendEquation(GL_FUNC_ADD);
+			glEnable(GL_BLEND);
+
+			m_renderer->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
+			m_renderer->DrawTexturedQuad(Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
+
 		}
 	}
 private:
 	GLES2Renderer* m_renderer;
+	D2DLayer m_d2dLayer;
+	GLuint m_dropShadowTexture;
 	ComPtr<IDWriteFactory> m_dwriteFactory;
 	ComPtr<IDWriteTextFormat> m_textFormat;
 	unsigned long m_wait;
 	std::unique_ptr<RevealingText> m_text;
+	bool m_textNeedsRerender;
 	int m_state;
 	long m_bottles;
 };
