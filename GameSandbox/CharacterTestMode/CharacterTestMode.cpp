@@ -11,6 +11,7 @@
 #include "Geometry.hpp"
 #include "Game.hpp"
 #include "MainMenuMode/MainMenuMode.hpp"
+#include "DropShadow.hpp"
 
 namespace CharacterTestMode
 {
@@ -21,7 +22,6 @@ public:
 	MyGameObject(GLES2Renderer* renderer)
 		: m_renderer(renderer),
 		m_wait(0),
-		m_dropShadowTexture(0),
 		m_bottles(99),
 		m_state(0)
 	{
@@ -34,14 +34,12 @@ public:
 			DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL, 32.0f, L"en-US", m_textFormat.Receive()));
 
-		glGenTextures(1, &m_dropShadowTexture);
+		m_dropShadowCommon.reset(new DropShadowCommon);
+
+		D2D1_SIZE_U size = m_d2dLayer.GetD2DTarget()->GetPixelSize();
+		m_dropShadow.reset(new DropShadow(m_dropShadowCommon.get(), m_d2dLayer.GetGLTexture()->get(), size.width, size.height));
 
 		m_textNeedsRerender = true;
-	}
-	~MyGameObject()
-	{
-		glDeleteTextures(1, &m_dropShadowTexture);
-		m_dropShadowTexture = 0;
 	}
 	virtual void Tick()
 	{
@@ -104,9 +102,11 @@ public:
 
 				texture = m_d2dLayer.GetGLTexture();
 				
-				m_renderer->generateDropShadow(m_dropShadowTexture, m_d2dLayer.GetGLTexture()->get(),
-					size.width, size.height, Vector2f(-2.0f / size.width, -2.0f / size.height),
-					Vector2f(1.0f / size.width, 1.0f / size.height));
+				//m_renderer->generateDropShadow(m_dropShadowTexture, m_d2dLayer.GetGLTexture()->get(),
+				//	size.width, size.height, Vector2f(-2.0f / size.width, -2.0f / size.height),
+				//	Vector2f(1.0f / size.width, 1.0f / size.height));
+				m_dropShadow->generate(Vector2f(-2.0f/size.width, -2.0f/size.height),
+					Vector2f(1.0f/size.width, 1.0f/size.height));
 
 				m_textNeedsRerender = false;
 			}
@@ -117,7 +117,7 @@ public:
 
 			// Render drop shadow
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, m_dropShadowTexture);
+			glBindTexture(GL_TEXTURE_2D, m_dropShadow->getTexture());
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -132,8 +132,8 @@ public:
 			// Render D2D layer texture
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture->get());
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 			// Premultiplied alpha blending
 			glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -148,7 +148,8 @@ public:
 private:
 	GLES2Renderer* m_renderer;
 	D2DLayer m_d2dLayer;
-	GLuint m_dropShadowTexture;
+	std::unique_ptr<DropShadowCommon> m_dropShadowCommon;
+	std::unique_ptr<DropShadow> m_dropShadow;
 	ComPtr<IDWriteFactory> m_dwriteFactory;
 	ComPtr<IDWriteTextFormat> m_textFormat;
 	unsigned long m_wait;

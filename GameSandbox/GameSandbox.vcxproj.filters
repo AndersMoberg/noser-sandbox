@@ -66,6 +66,9 @@
     <ClCompile Include="D2DRenderer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterTestMode\DropShadow.cpp">
+      <Filter>Source\CharacterTestMode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="D2DRenderer.hpp">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterTestMode\DropShadow.hpp">
+      <Filter>Source\CharacterTestMode</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

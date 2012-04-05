@@ -89,15 +89,10 @@ GLES2Renderer::TexturedQuadProgram::TexturedQuadProgram()
 	: program(0)
 { }
 
-GLES2Renderer::DropShadowProgram::DropShadowProgram()
-	: program(0)
-{ }
-
 GLES2Renderer::GLES2Renderer(HWND hWnd)
 	: m_eglDisplay(0),
 	m_eglSurface(0),
-	m_eglContext(0),
-	m_dropShadowFramebuffer(0)
+	m_eglContext(0)
 {
 	m_hWnd = hWnd;
 
@@ -180,56 +175,10 @@ GLES2Renderer::GLES2Renderer(HWND hWnd)
 	m_texturedQuadProgram.usamplerLoc = glGetUniformLocation(
 		m_texturedQuadProgram.program, "u_sampler");
 	SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
-
-	static const char DROP_SHADOW_VERTEX_SHADER[] =
-		"attribute vec2 a_pos;\n"
-		"attribute vec2 a_tex;\n"
-		"varying vec2 v_tex;\n"
-		"void main()\n"
-		"{\n"
-			"gl_Position = vec4(a_pos, 0.0, 1.0);\n"
-			"v_tex = a_tex;\n"
-		"}\n"
-		;
-	static const char DROP_SHADOW_FRAGMENT_SHADER[] =
-		"precision mediump float;\n"
-		"varying vec2 v_tex;\n"
-		"uniform vec2 u_offset;\n"
-		"uniform vec2 u_sampleOffset;\n"
-		"uniform sampler2D u_sampler;\n"
-		"void main()\n"
-		"{\n"
-			"float sum = 0.0;\n"
-			"sum += texture2D(u_sampler, v_tex + u_offset - 4.0*u_sampleOffset).a * 0.05;\n"
-			"sum += texture2D(u_sampler, v_tex + u_offset - 3.0*u_sampleOffset).a * 0.09;\n"
-			"sum += texture2D(u_sampler, v_tex + u_offset - 2.0*u_sampleOffset).a * 0.12;\n"
-			"sum += texture2D(u_sampler, v_tex + u_offset - u_sampleOffset).a * 0.15;\n"
-			"sum += texture2D(u_sampler, v_tex + u_offset).a * 0.16;\n"
-			"sum += texture2D(u_sampler, v_tex + u_offset + u_sampleOffset).a * 0.15;\n"
-			"sum += texture2D(u_sampler, v_tex + u_offset + 2.0*u_sampleOffset).a * 0.12;\n"
-			"sum += texture2D(u_sampler, v_tex + u_offset + 3.0*u_sampleOffset).a * 0.09;\n"
-			"sum += texture2D(u_sampler, v_tex + u_offset + 4.0*u_sampleOffset).a * 0.05;\n"
-			"gl_FragColor = vec4(0.0, 0.0, 0.0, sum * 0.75);\n"
-		"}\n"
-		;
-	m_dropShadowProgram.program = LoadGLSLProgram(DROP_SHADOW_VERTEX_SHADER, DROP_SHADOW_FRAGMENT_SHADER);
-	m_dropShadowProgram.aposLoc = glGetAttribLocation(m_dropShadowProgram.program, "a_pos");
-	m_dropShadowProgram.atexLoc = glGetAttribLocation(m_dropShadowProgram.program, "a_tex");
-	m_dropShadowProgram.uoffsetLoc = glGetUniformLocation(m_dropShadowProgram.program, "u_offset");
-	m_dropShadowProgram.usampleOffsetLoc = glGetUniformLocation(m_dropShadowProgram.program, "u_sampleOffset");
-	m_dropShadowProgram.usamplerLoc = glGetUniformLocation(m_dropShadowProgram.program, "u_sampler");
-
-	glGenFramebuffers(1, &m_dropShadowFramebuffer);
 }
 
 GLES2Renderer::~GLES2Renderer()
 {
-	glDeleteFramebuffers(1, &m_dropShadowFramebuffer);
-	m_dropShadowFramebuffer = 0;
-
-	glDeleteProgram(m_dropShadowProgram.program);
-	m_dropShadowProgram.program = 0;
-
 	glDeleteProgram(m_texturedQuadProgram.program);
 	m_texturedQuadProgram.program = 0;
 
@@ -312,74 +261,6 @@ void GLES2Renderer::DrawTexturedQuad(const Rectf& rc)
 	glUniform1i(m_texturedQuadProgram.usamplerLoc, 0);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-}
-
-void GLES2Renderer::generateDropShadow(GLuint dstTexture, GLuint srcTexture,
-	int width, int height, const Vector2f& offset, const Vector2f& blurSize)
-{
-	glBindTexture(GL_TEXTURE_2D, dstTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NULL);
-
-	GLuint tempTexture = 0;
-	glGenTextures(1, &tempTexture);
-	glBindTexture(GL_TEXTURE_2D, tempTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NULL);
-
-	glUseProgram(m_dropShadowProgram.program);
-	
-	// XXX: Pay attention to texture coordinates! They are upside-down from what
-	// you expect.
-	GLfloat verts[] = { -1.0f, -1.0f, 0.0f, 0.0f, // Lower left
-		1.0f, -1.0f, 1.0f, 0.0f, // Lower right
-		-1.0f, 1.0f, 0.0f, 1.0f, // Upper left
-		1.0f, 1.0f, 1.0f, 1.0f }; // Upper right
-
-	glVertexAttribPointer(m_dropShadowProgram.aposLoc, 2, GL_FLOAT, GL_FALSE,
-		4 * sizeof(GLfloat), &verts[0]);
-	glVertexAttribPointer(m_dropShadowProgram.atexLoc, 2, GL_FLOAT, GL_FALSE,
-		4 * sizeof(GLfloat), &verts[2]);
-
-	glEnableVertexAttribArray(m_dropShadowProgram.aposLoc);
-	glEnableVertexAttribArray(m_dropShadowProgram.atexLoc);
-
-	glUniform2f(m_dropShadowProgram.uoffsetLoc, offset.x, offset.y);
-	
-	// No blending
-	glDisable(GL_BLEND);
-	
-	glBindFramebuffer(GL_FRAMEBUFFER, m_dropShadowFramebuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tempTexture, 0);
-	
-	glUniform2f(m_dropShadowProgram.uoffsetLoc, offset.x, offset.y);
-	// Blur along X axis
-	glUniform2f(m_dropShadowProgram.usampleOffsetLoc, blurSize.x, 0.0f);
-
-	glBindTexture(GL_TEXTURE_2D, srcTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glUniform1i(m_dropShadowProgram.usamplerLoc, 0);
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstTexture, 0);
-	
-	glUniform2f(m_dropShadowProgram.uoffsetLoc, 0.0f, 0.0f);
-	// Blur along Y axis
-	glUniform2f(m_dropShadowProgram.usampleOffsetLoc, 0.0f, blurSize.y);
-
-	glBindTexture(GL_TEXTURE_2D, tempTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glUniform1i(m_dropShadowProgram.usamplerLoc, 0);
-
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glDeleteTextures(1, &tempTexture);
 }
 
 void GLES2Renderer::Present()

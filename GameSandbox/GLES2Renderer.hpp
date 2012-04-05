@@ -27,8 +27,8 @@ public:
 	void SetTexturedQuadMatrix(const Matrix3x2f& mat);
 	void DrawTexturedQuad(const Rectf& rc);
 
-	void generateDropShadow(GLuint dstTexture, GLuint srcTexture,
-		int width, int height, const Vector2f& offset, const Vector2f& blurSize);
+	//void generateDropShadow(GLuint dstTexture, GLuint srcTexture,
+	//	int width, int height, const Vector2f& offset, const Vector2f& blurSize);
 	
 	void Present();
 	void Resize();
@@ -58,20 +58,6 @@ private:
 		GLuint uaddLoc;
 		GLuint usamplerLoc;
 	} m_texturedQuadProgram;
-
-	struct DropShadowProgram
-	{
-		DropShadowProgram();
-
-		GLuint program;
-		GLuint aposLoc;
-		GLuint atexLoc;
-		GLuint uoffsetLoc;
-		GLuint usampleOffsetLoc;
-		GLuint usamplerLoc;
-	} m_dropShadowProgram;
-
-	GLuint m_dropShadowFramebuffer;
 
 };
 

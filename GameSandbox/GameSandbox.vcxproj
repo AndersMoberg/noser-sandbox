@@ -89,6 +89,7 @@
     <ClCompile Include="CharacterControllerMode\CharacterControllerMode.cpp" />
     <ClCompile Include="CharacterControllerMode\World.cpp" />
     <ClCompile Include="CharacterTestMode\CharacterTestMode.cpp" />
+    <ClCompile Include="CharacterTestMode\DropShadow.cpp" />
     <ClCompile Include="D2DLayer.cpp" />
     <ClCompile Include="D2DRenderer.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="CharacterControllerMode\CharacterControllerMode.hpp" />
     <ClInclude Include="CharacterControllerMode\World.hpp" />
     <ClInclude Include="CharacterTestMode\CharacterTestMode.hpp" />
+    <ClInclude Include="CharacterTestMode\DropShadow.hpp" />
     <ClInclude Include="D2DLayer.hpp" />
     <ClInclude Include="D2DRenderer.hpp" />
     <ClInclude Include="Game.hpp" />
