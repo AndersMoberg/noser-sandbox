@@ -36,7 +36,7 @@ public:
 
 		m_dropShadowCommon.reset(new DropShadowCommon);
 
-		D2D1_SIZE_U size = m_d2dLayer.GetD2DTarget()->GetPixelSize();
+		D2D1_SIZE_U size = m_d2dLayer.getD2DTarget()->GetPixelSize();
 		m_dropShadow.reset(new DropShadow(m_dropShadowCommon.get(), m_d2dLayer.GetGLTexture()->get(), size.width, size.height));
 
 		m_textNeedsRerender = true;
@@ -90,13 +90,13 @@ public:
 			GLES2Texture* texture;
 			if (m_textNeedsRerender)
 			{
-				ComPtr<ID2D1RenderTarget> d2dTarget = m_d2dLayer.GetD2DTarget();
+				ID2D1RenderTarget* d2dTarget = m_d2dLayer.getD2DTarget();
 
 				D2D1_SIZE_U size = d2dTarget->GetPixelSize();
 
 				d2dTarget->BeginDraw();
 
-				m_text->Render(m_d2dLayer.GetD2DTarget());
+				m_text->Render(m_d2dLayer.getD2DTarget());
 
 				d2dTarget->EndDraw(); // TODO: Handle D2DERR_RECREATE_TARGET
 

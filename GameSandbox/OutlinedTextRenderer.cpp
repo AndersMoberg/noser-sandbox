@@ -10,8 +10,8 @@ class OutlinedTextRenderer : public IDWriteTextRenderer
 public:
 
 	static ComPtr<OutlinedTextRenderer> Create(
-		ComPtr<ID2D1RenderTarget> d2dTarget, ComPtr<ID2D1Brush> fillBrush,
-		ComPtr<ID2D1Brush> strokeBrush, float strokeWidth);
+		ID2D1RenderTarget* d2dTarget, ID2D1Brush* fillBrush,
+		ID2D1Brush* strokeBrush, float strokeWidth);
 
 	// IUnknown implementation
 
@@ -53,8 +53,8 @@ public:
 private:
 
 	OutlinedTextRenderer(
-		ComPtr<ID2D1RenderTarget> d2dTarget, ComPtr<ID2D1Brush> fillBrush,
-		ComPtr<ID2D1Brush> strokeBrush, float strokeWidth);
+		ID2D1RenderTarget* d2dTarget, ID2D1Brush* fillBrush,
+		ID2D1Brush* strokeBrush, float strokeWidth);
 	~OutlinedTextRenderer();
 
 	ULONG m_refCount;
@@ -65,9 +65,8 @@ private:
 
 };
 
-OutlinedTextRenderer::OutlinedTextRenderer(ComPtr<ID2D1RenderTarget> d2dTarget,
-	ComPtr<ID2D1Brush> fillBrush, ComPtr<ID2D1Brush> strokeBrush,
-	float strokeWidth)
+OutlinedTextRenderer::OutlinedTextRenderer(ID2D1RenderTarget* d2dTarget,
+	ID2D1Brush* fillBrush, ID2D1Brush* strokeBrush, float strokeWidth)
 	: m_refCount(1),
 	m_d2dTarget(d2dTarget),
 	m_fillBrush(fillBrush),
@@ -79,8 +78,8 @@ OutlinedTextRenderer::~OutlinedTextRenderer()
 { }
 
 ComPtr<OutlinedTextRenderer> OutlinedTextRenderer::Create(
-	ComPtr<ID2D1RenderTarget> d2dTarget, ComPtr<ID2D1Brush> fillBrush,
-	ComPtr<ID2D1Brush> strokeBrush, float strokeWidth)
+	ID2D1RenderTarget* d2dTarget, ID2D1Brush* fillBrush,
+	ID2D1Brush* strokeBrush, float strokeWidth)
 {
 	ComPtr<OutlinedTextRenderer> p;
 	*p.Receive() = new OutlinedTextRenderer(d2dTarget, fillBrush, strokeBrush,
@@ -238,9 +237,9 @@ HRESULT OutlinedTextRenderer::DrawInlineObject(void* clientDrawingContext,
 	return E_NOTIMPL;
 }
 
-void DrawOutlinedTextLayout(ComPtr<ID2D1RenderTarget> d2dTarget,
-	ComPtr<IDWriteTextLayout> textLayout, ComPtr<ID2D1Brush> fillBrush,
-	ComPtr<ID2D1Brush> strokeBrush, float strokeWidth,
+void DrawOutlinedTextLayout(ID2D1RenderTarget* d2dTarget,
+	IDWriteTextLayout* textLayout, ID2D1Brush* fillBrush,
+	ID2D1Brush* strokeBrush, float strokeWidth,
 	const Vector2f& origin)
 {
 	ComPtr<OutlinedTextRenderer> textRenderer = OutlinedTextRenderer::Create(

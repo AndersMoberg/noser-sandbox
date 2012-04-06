@@ -59,6 +59,14 @@ public:
 		return *this;
 	}
 
+	explicit ComPtr(Interface* rhs)
+		: m_ptr(rhs)
+	{
+		if (m_ptr) {
+			m_ptr->AddRef();
+		}
+	}
+
 	~ComPtr()
 	{
 		if (m_ptr)

@@ -33,15 +33,12 @@ void D2DLayer::CreateTargetResources()
 		D2D1_SIZE_U size = D2D1::SizeU(m_renderer->GetWidth(),
 			m_renderer->GetHeight());
 
-		m_imageBuffer.resize(4*size.width*size.height);
-
 		ComPtr<IWICImagingFactory> wicFactory;
 		CHECK_HR(CoCreateInstance(CLSID_WICImagingFactory, NULL,
 			CLSCTX_INPROC_SERVER, IID_IWICImagingFactory, (LPVOID*)wicFactory.Receive()));
 
-		CHECK_HR(wicFactory->CreateBitmapFromMemory(
-			size.width, size.height, GUID_WICPixelFormat32bppPBGRA,
-			4*size.width, 4*size.width*size.height, &m_imageBuffer[0],
+		CHECK_HR(wicFactory->CreateBitmap(size.width, size.height,
+			GUID_WICPixelFormat32bppPBGRA, WICBitmapCacheOnDemand,
 			m_wicBitmap.Receive()));
 
 		D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties();
@@ -78,7 +75,7 @@ GLES2Texture* D2DLayer::GetGLTexture()
 	return m_glTexture.get();
 }
 
-ComPtr<ID2D1RenderTarget> D2DLayer::GetD2DTarget()
+ID2D1RenderTarget* D2DLayer::getD2DTarget()
 {
 	CreateTargetResources();
 	return m_d2dTarget;

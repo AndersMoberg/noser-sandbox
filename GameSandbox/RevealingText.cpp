@@ -6,9 +6,9 @@
 
 #include "OutlinedTextRenderer.hpp"
 
-RevealingText::RevealingText(ComPtr<IDWriteFactory> dwriteFactory,
-	ComPtr<IDWriteTextFormat> textFormat,
-	const std::wstring& text, const Rectf& layoutBox)
+RevealingText::RevealingText(IDWriteFactory* dwriteFactory,
+	IDWriteTextFormat* textFormat, const std::wstring& text,
+	const Rectf& layoutBox)
 {
 	m_text = text;
 	m_layoutBox = layoutBox;
@@ -48,7 +48,7 @@ bool RevealingText::Tick()
 	return needsRerender;
 }
 
-void RevealingText::Render(ComPtr<ID2D1RenderTarget> d2dTarget)
+void RevealingText::Render(ID2D1RenderTarget* d2dTarget)
 {
 	d2dTarget->Clear(D2D1::ColorF(D2D1::ColorF::Black, 0.0f));
 

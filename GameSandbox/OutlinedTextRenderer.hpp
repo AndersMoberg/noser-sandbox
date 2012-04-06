@@ -11,9 +11,9 @@
 #include "Geometry.hpp"
 #include "WindowsUtils.hpp"
 
-void DrawOutlinedTextLayout(ComPtr<ID2D1RenderTarget> d2dTarget,
-	ComPtr<IDWriteTextLayout> textLayout, ComPtr<ID2D1Brush> fillBrush,
-	ComPtr<ID2D1Brush> strokeBrush, float strokeWidth,
+void DrawOutlinedTextLayout(ID2D1RenderTarget* d2dTarget,
+	IDWriteTextLayout* textLayout, ID2D1Brush* fillBrush,
+	ID2D1Brush* strokeBrush, float strokeWidth,
 	const Vector2f& origin);
 
 #endif

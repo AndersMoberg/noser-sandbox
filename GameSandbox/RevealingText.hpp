@@ -19,12 +19,11 @@ class RevealingText
 
 public:
 
-	RevealingText(ComPtr<IDWriteFactory> dwriteFactory,
-		ComPtr<IDWriteTextFormat> textFormat,
+	RevealingText(IDWriteFactory* dwriteFactory, IDWriteTextFormat* textFormat,
 		const std::wstring& text, const Rectf& layoutBox);
 
 	bool Tick(); // Returns true if rendering changed (needs re-rendering)
-	void Render(ComPtr<ID2D1RenderTarget> d2dTarget);
+	void Render(ID2D1RenderTarget* d2dTarget);
 
 private:
 

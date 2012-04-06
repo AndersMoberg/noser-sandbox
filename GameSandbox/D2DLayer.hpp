@@ -6,7 +6,6 @@
 #define _D2DLAYER_HPP
 
 #include <memory>
-#include <vector>
 
 #include <D2D1.h>
 #include <wincodec.h>
@@ -26,7 +25,7 @@ public:
 	void DestroyTargetResources();
 
 	GLES2Texture* GetGLTexture();
-	ComPtr<ID2D1RenderTarget> GetD2DTarget();
+	ID2D1RenderTarget* getD2DTarget();
 
 private:
 
@@ -42,7 +41,6 @@ private:
 
 	std::unique_ptr<GLES2Texture> m_glTexture;
 
-	std::vector<BYTE> m_imageBuffer;
 	ComPtr<IWICBitmap> m_wicBitmap;
 	ComPtr<ID2D1RenderTarget> m_d2dTarget;
 
