@@ -19,7 +19,7 @@ class CharacterControllerMode : public GameMode
 
 public:
 
-	static CharacterControllerMode* Create(Game* game);
+	static std::unique_ptr<CharacterControllerMode> create(Game* game);
 
 	void Tick(const GameInput& input);
 	void Render();

@@ -20,9 +20,9 @@ MainMenuMode::MainMenuMode()
 	m_downTriggered(false)
 { }
 
-MainMenuMode* MainMenuMode::Create(Game* game)
+std::unique_ptr<MainMenuMode> MainMenuMode::create(Game* game)
 {
-	MainMenuMode* p = new MainMenuMode;
+	std::unique_ptr<MainMenuMode> p(new MainMenuMode);
 
 	p->m_game = game;
 
@@ -45,16 +45,16 @@ MainMenuMode* MainMenuMode::Create(Game* game)
 class CharacterControllerModeSwitcher : public GameModeSwitcher
 {
 public:
-	virtual GameMode* CreateMode(Game* game) {
-		return CharacterControllerMode::CharacterControllerMode::Create(game);
+	virtual std::unique_ptr<GameMode> createMode(Game* game) {
+		return CharacterControllerMode::CharacterControllerMode::create(game);
 	}
 };
 
 class CharacterTestModeSwitcher : public GameModeSwitcher
 {
 public:
-	virtual GameMode* CreateMode(Game* game) {
-		return CharacterTestMode::CharacterTestMode::Create(game);
+	virtual std::unique_ptr<GameMode> createMode(Game* game) {
+		return CharacterTestMode::CharacterTestMode::create(game);
 	}
 };
 

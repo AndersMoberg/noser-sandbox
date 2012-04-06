@@ -19,7 +19,7 @@ class MainMenuMode : public GameMode
 
 public:
 
-	static MainMenuMode* Create(Game* game);
+	static std::unique_ptr<MainMenuMode> create(Game* game);
 
 	void Tick(const GameInput& input);
 	void Render();

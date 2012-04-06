@@ -165,9 +165,9 @@ CharacterTestMode::CharacterTestMode()
 	m_characterRect(-2.0f, 2.0f, 2.0f, -2.0f)
 { }
 
-CharacterTestMode* CharacterTestMode::Create(Game* game)
+std::unique_ptr<CharacterTestMode> CharacterTestMode::create(Game* game)
 {
-	CharacterTestMode* p(new CharacterTestMode);
+	std::unique_ptr<CharacterTestMode> p(new CharacterTestMode);
 
 	p->m_game = game;
 
@@ -187,8 +187,8 @@ CharacterTestMode* CharacterTestMode::Create(Game* game)
 class MainMenuModeSwitcher : public GameModeSwitcher
 {
 public:
-	GameMode* CreateMode(Game* game) {
-		return MainMenuMode::MainMenuMode::Create(game);
+	std::unique_ptr<GameMode> createMode(Game* game) {
+		return MainMenuMode::MainMenuMode::create(game);
 	}
 };
 

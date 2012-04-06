@@ -15,9 +15,9 @@ CharacterControllerMode::CharacterControllerMode()
 	m_actualVel(0.0f, 0.0f)
 { }
 
-CharacterControllerMode* CharacterControllerMode::Create(Game* game)
+std::unique_ptr<CharacterControllerMode> CharacterControllerMode::create(Game* game)
 {
-	CharacterControllerMode* p(new CharacterControllerMode);
+	std::unique_ptr<CharacterControllerMode> p(new CharacterControllerMode);
 
 	p->m_game = game;
 
@@ -137,8 +137,8 @@ Collisions CharacterControllerMode::CheckCharacterCollisions(
 class MainMenuModeSwitcher : public GameModeSwitcher
 {
 public:
-	GameMode* CreateMode(Game* game) {
-		return MainMenuMode::MainMenuMode::Create(game);
+	std::unique_ptr<GameMode> createMode(Game* game) {
+		return MainMenuMode::MainMenuMode::create(game);
 	}
 };
 

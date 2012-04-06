@@ -30,7 +30,7 @@ class Game;
 class GameModeSwitcher
 {
 public:
-	virtual GameMode* CreateMode(Game* game) = 0;
+	virtual std::unique_ptr<GameMode> createMode(Game* game) = 0;
 };
 
 class Game

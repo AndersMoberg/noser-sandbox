@@ -23,7 +23,7 @@ Game* Game::Create(HWND hWnd)
 
 	//p->m_mode.reset(CharacterControllerMode::CharacterControllerMode::Create(renderer));
 	//p->m_mode.reset(CharacterTestMode::CharacterTestMode::Create(renderer));
-	p->m_mode.reset(MainMenuMode::MainMenuMode::Create(p));
+	p->m_mode = MainMenuMode::MainMenuMode::create(p);
 
 	return p;
 }
@@ -35,7 +35,7 @@ void Game::Tick(const GameInput& input)
 	if (m_nextMode)
 	{
 		m_mode.reset();
-		m_mode.reset(m_nextMode->CreateMode(this));
+		m_mode = m_nextMode->createMode(this);
 		m_nextMode.reset();
 	}
 }

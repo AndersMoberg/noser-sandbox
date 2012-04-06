@@ -17,7 +17,7 @@ class CharacterTestMode : public GameMode
 
 public:
 
-	static CharacterTestMode* Create(Game* game);
+	static std::unique_ptr<CharacterTestMode> create(Game* game);
 
 	virtual void Tick(const GameInput& input);
 	virtual void Render();
