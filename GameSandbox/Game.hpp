@@ -40,7 +40,7 @@ public:
 
 	static const unsigned int TICKS_PER_SEC;
 
-	static Game* Create(HWND hWnd);
+	static std::unique_ptr<Game> create(HWND hWnd);
 
 	void Tick(const GameInput& input);
 	void Resize();

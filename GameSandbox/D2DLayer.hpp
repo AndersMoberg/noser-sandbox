@@ -19,8 +19,7 @@ class D2DLayer
 
 public:
 
-	D2DLayer();
-	void Create(GLES2Renderer* renderer);
+	static std::unique_ptr<D2DLayer> create(GLES2Renderer* renderer);
 
 	void DestroyTargetResources();
 
@@ -29,9 +28,7 @@ public:
 
 private:
 
-	// Disallow copy and assign
-	D2DLayer(const D2DLayer&);
-	D2DLayer& operator=(const D2DLayer&);
+	D2DLayer();
 
 	void CreateTargetResources();
 

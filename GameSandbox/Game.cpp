@@ -15,15 +15,13 @@ const unsigned int Game::TICKS_PER_SEC = 3600;
 Game::Game()
 { }
 
-Game* Game::Create(HWND hWnd)
+std::unique_ptr<Game> Game::create(HWND hWnd)
 {
-	Game* p(new Game);
+	std::unique_ptr<Game> p(new Game);
 
 	p->m_hWnd = hWnd;
 
-	//p->m_mode.reset(CharacterControllerMode::CharacterControllerMode::Create(renderer));
-	//p->m_mode.reset(CharacterTestMode::CharacterTestMode::Create(renderer));
-	p->m_mode = MainMenuMode::MainMenuMode::create(p);
+	p->m_mode = MainMenuMode::MainMenuMode::create(p.get());
 
 	return p;
 }

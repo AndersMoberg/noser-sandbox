@@ -25,19 +25,19 @@ public:
 		m_bottles(99),
 		m_state(0)
 	{
-		m_d2dLayer.Create(m_renderer);
+		m_d2dLayer = D2DLayer::create(m_renderer);
 
 		CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
 			__uuidof(IDWriteFactory), (IUnknown**)m_dwriteFactory.Receive()));
 
-		CHECK_HR(m_dwriteFactory->CreateTextFormat(L"Kootenay", NULL,
+		CHECK_HR(m_dwriteFactory->CreateTextFormat(L"Trebuchet MS", NULL,
 			DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
-			DWRITE_FONT_STRETCH_NORMAL, 32.0f, L"en-US", m_textFormat.Receive()));
+			DWRITE_FONT_STRETCH_NORMAL, 36.0f, L"en-US", m_textFormat.Receive()));
 
-		m_dropShadowCommon.reset(new DropShadowCommon);
+		m_dropShadowCommon = DropShadowCommon::create();
 
-		D2D1_SIZE_U size = m_d2dLayer.getD2DTarget()->GetPixelSize();
-		m_dropShadow.reset(new DropShadow(m_dropShadowCommon.get(), m_d2dLayer.GetGLTexture()->get(), size.width, size.height));
+		D2D1_SIZE_U size = m_d2dLayer->getD2DTarget()->GetPixelSize();
+		m_dropShadow = DropShadow::create(m_dropShadowCommon.get(), m_d2dLayer->GetGLTexture()->get(), size.width, size.height);
 
 		m_textNeedsRerender = true;
 	}
@@ -90,21 +90,18 @@ public:
 			GLES2Texture* texture;
 			if (m_textNeedsRerender)
 			{
-				ID2D1RenderTarget* d2dTarget = m_d2dLayer.getD2DTarget();
+				ID2D1RenderTarget* d2dTarget = m_d2dLayer->getD2DTarget();
 
 				D2D1_SIZE_U size = d2dTarget->GetPixelSize();
 
 				d2dTarget->BeginDraw();
 
-				m_text->Render(m_d2dLayer.getD2DTarget());
+				m_text->Render(m_d2dLayer->getD2DTarget());
 
 				d2dTarget->EndDraw(); // TODO: Handle D2DERR_RECREATE_TARGET
 
-				texture = m_d2dLayer.GetGLTexture();
+				texture = m_d2dLayer->GetGLTexture();
 				
-				//m_renderer->generateDropShadow(m_dropShadowTexture, m_d2dLayer.GetGLTexture()->get(),
-				//	size.width, size.height, Vector2f(-2.0f / size.width, -2.0f / size.height),
-				//	Vector2f(1.0f / size.width, 1.0f / size.height));
 				m_dropShadow->generate(Vector2f(-2.0f/size.width, -2.0f/size.height),
 					Vector2f(1.0f/size.width, 1.0f/size.height));
 
@@ -112,7 +109,7 @@ public:
 			}
 			else
 			{
-				texture = m_d2dLayer.GetGLTexture();
+				texture = m_d2dLayer->GetGLTexture();
 			}
 
 			// Render drop shadow
@@ -147,7 +144,7 @@ public:
 	}
 private:
 	GLES2Renderer* m_renderer;
-	D2DLayer m_d2dLayer;
+	std::unique_ptr<D2DLayer> m_d2dLayer;
 	std::unique_ptr<DropShadowCommon> m_dropShadowCommon;
 	std::unique_ptr<DropShadow> m_dropShadow;
 	ComPtr<IDWriteFactory> m_dwriteFactory;

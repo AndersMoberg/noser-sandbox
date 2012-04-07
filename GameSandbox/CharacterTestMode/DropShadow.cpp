@@ -86,7 +86,18 @@ static GLuint LoadGLSLProgram(const char* vShaderSrc, const char* fShaderSrc)
 
 DropShadowCommon::DropShadowCommon()
 	: m_program(0)
+{ }
+
+DropShadowCommon::~DropShadowCommon()
 {
+	glDeleteProgram(m_program);
+	m_program = 0;
+}
+
+std::unique_ptr<DropShadowCommon> DropShadowCommon::create()
+{
+	std::unique_ptr<DropShadowCommon> p(new DropShadowCommon);
+
 	static const char DROP_SHADOW_VERTEX_SHADER[] =
 		"attribute vec2 a_pos;\n"
 		"attribute vec2 a_tex;\n"
@@ -118,48 +129,22 @@ DropShadowCommon::DropShadowCommon()
 			"gl_FragColor = vec4(0.0, 0.0, 0.0, sum * 0.75);\n"
 		"}\n"
 		;
-	m_program = LoadGLSLProgram(DROP_SHADOW_VERTEX_SHADER, DROP_SHADOW_FRAGMENT_SHADER);
-	m_aposLoc = glGetAttribLocation(m_program, "a_pos");
-	m_atexLoc = glGetAttribLocation(m_program, "a_tex");
-	m_uoffsetLoc = glGetUniformLocation(m_program, "u_offset");
-	m_usampleOffsetLoc = glGetUniformLocation(m_program, "u_sampleOffset");
-	m_usamplerLoc = glGetUniformLocation(m_program, "u_sampler");
+	p->m_program = LoadGLSLProgram(DROP_SHADOW_VERTEX_SHADER, DROP_SHADOW_FRAGMENT_SHADER);
+	p->m_aposLoc = glGetAttribLocation(p->m_program, "a_pos");
+	p->m_atexLoc = glGetAttribLocation(p->m_program, "a_tex");
+	p->m_uoffsetLoc = glGetUniformLocation(p->m_program, "u_offset");
+	p->m_usampleOffsetLoc = glGetUniformLocation(p->m_program, "u_sampleOffset");
+	p->m_usamplerLoc = glGetUniformLocation(p->m_program, "u_sampler");
+
+	return p;
 }
 
-DropShadowCommon::~DropShadowCommon()
-{
-	glDeleteProgram(m_program);
-	m_program = 0;
-}
-
-DropShadow::DropShadow(DropShadowCommon* common, GLuint srcTexture, int width, int height)
-	: m_common(common),
-	m_srcTexture(srcTexture),
-	m_width(width),
-	m_height(height),
-	m_tempFramebuffer(0),
+DropShadow::DropShadow()
+	: m_tempFramebuffer(0),
 	m_tempTexture(0),
 	m_dstFramebuffer(0),
 	m_dstTexture(0)
-{
-	glGenFramebuffers(1, &m_tempFramebuffer);
-	glGenTextures(1, &m_tempTexture);
-	glGenFramebuffers(1, &m_dstFramebuffer);
-	glGenTextures(1, &m_dstTexture);
-
-	glBindTexture(GL_TEXTURE_2D, m_tempTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, m_width, m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NULL);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_tempFramebuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_tempTexture, 0);
-
-	glBindTexture(GL_TEXTURE_2D, m_dstTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, m_width, m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NULL);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_dstFramebuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_dstTexture, 0);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
+{ }
 
 DropShadow::~DropShadow()
 {
@@ -171,6 +156,37 @@ DropShadow::~DropShadow()
 	m_tempTexture = 0;
 	glDeleteFramebuffers(1, &m_tempFramebuffer);
 	m_tempFramebuffer = 0;
+}
+
+std::unique_ptr<DropShadow> DropShadow::create(
+	DropShadowCommon* common, GLuint srcTexture, int width, int height)
+{
+	std::unique_ptr<DropShadow> p(new DropShadow);
+
+	p->m_common = common;
+	p->m_srcTexture = srcTexture;
+	p->m_width = width;
+	p->m_height = height;
+
+	glGenFramebuffers(1, &p->m_tempFramebuffer);
+	glGenTextures(1, &p->m_tempTexture);
+	glGenFramebuffers(1, &p->m_dstFramebuffer);
+	glGenTextures(1, &p->m_dstTexture);
+
+	glBindTexture(GL_TEXTURE_2D, p->m_tempTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, p->m_width, p->m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NULL);
+	glBindFramebuffer(GL_FRAMEBUFFER, p->m_tempFramebuffer);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, p->m_tempTexture, 0);
+
+	glBindTexture(GL_TEXTURE_2D, p->m_dstTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, p->m_width, p->m_height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, NULL);
+	glBindFramebuffer(GL_FRAMEBUFFER, p->m_dstFramebuffer);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, p->m_dstTexture, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return p;
 }
 
 void DropShadow::generate(const Vector2f& offset, const Vector2f& blurSize)

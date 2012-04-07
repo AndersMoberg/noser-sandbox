@@ -90,35 +90,52 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 	{
 		MainWindow* self = (MainWindow*)GetWindowLongPtr(hwnd, 0);
 
-		try
+		if (self && self->m_exceptionThrown)
 		{
 			switch (uMsg)
 			{
 			case WM_DESTROY:
-				result = self->OnWMDestroy();
-				break;
-			case WM_SIZE:
-				result = self->OnWMSize();
-				break;
-			case WM_PAINT:
-				result = self->OnWMPaint();
-				break;
-			case WM_KEYDOWN:
-				result = self->OnWMKeyDown(wParam);
-				break;
-			case WM_KEYUP:
-				result = self->OnWMKeyUp(wParam);
+				PostQuitMessage(EXIT_FAILURE);
+				result = 0;
 				break;
 			default:
 				result = DefWindowProc(hwnd, uMsg, wParam, lParam);
 				break;
 			}
 		}
-		catch (const std::exception& e)
+		else
 		{
-			self->m_exceptionThrown = true;
-			self->m_exceptionProxy = e;
-			result = 0;
+			try
+			{
+				switch (uMsg)
+				{
+				case WM_DESTROY:
+					result = self->OnWMDestroy();
+					break;
+				case WM_SIZE:
+					result = self->OnWMSize();
+					break;
+				case WM_PAINT:
+					result = self->OnWMPaint();
+					break;
+				case WM_KEYDOWN:
+					result = self->OnWMKeyDown(wParam);
+					break;
+				case WM_KEYUP:
+					result = self->OnWMKeyUp(wParam);
+					break;
+				default:
+					result = DefWindowProc(hwnd, uMsg, wParam, lParam);
+					break;
+				}
+			}
+			catch (const std::exception& e)
+			{
+				self->m_exceptionThrown = true;
+				self->m_exceptionProxy = e;
+				DestroyWindow(hwnd);
+				result = 0;
+			}
 		}
 	}
 
@@ -129,7 +146,7 @@ LRESULT MainWindow::OnWMCreate(HWND hWnd)
 {
 	m_hWnd = hWnd;
 
-	m_game.reset(Game::Create(m_hWnd));
+	m_game = Game::create(m_hWnd);
 
 	return 0;
 }

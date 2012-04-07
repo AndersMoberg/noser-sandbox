@@ -14,16 +14,20 @@
 D2DLayer::D2DLayer()
 { }
 
-void D2DLayer::Create(GLES2Renderer* renderer)
+std::unique_ptr<D2DLayer> D2DLayer::create(GLES2Renderer* renderer)
 {
-	m_renderer = renderer;
+	std::unique_ptr<D2DLayer> p(new D2DLayer);
+
+	p->m_renderer = renderer;
 
 	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
-		m_d2dFactory.Receive()));
+		p->m_d2dFactory.Receive()));
 
-	m_glTexture.reset(new GLES2Texture);
+	p->m_glTexture.reset(new GLES2Texture);
 
-	CreateTargetResources();
+	p->CreateTargetResources();
+
+	return p;
 }
 
 void D2DLayer::CreateTargetResources()
