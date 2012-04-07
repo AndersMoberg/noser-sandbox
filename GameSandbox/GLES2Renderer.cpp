@@ -192,9 +192,10 @@ GLES2Renderer::~GLES2Renderer()
 	m_eglDisplay = 0;
 }
 
-GLES2Texture* GLES2Renderer::CreateTextureFromFile(const std::wstring& path)
+std::unique_ptr<GLES2Texture> GLES2Renderer::CreateTextureFromFile(
+	const std::wstring& path)
 {
-	GLES2Texture* result = new GLES2Texture;
+	std::unique_ptr<GLES2Texture> result = GLES2Texture::create();
 
 	ComPtr<IWICImagingFactory> wicFactory;
 	CHECK_HR(CoCreateInstance(CLSID_WICImagingFactory, NULL,

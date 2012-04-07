@@ -170,11 +170,11 @@ std::unique_ptr<CharacterTestMode> CharacterTestMode::create(Game* game)
 
 	p->m_renderer.reset(new GLES2Renderer(p->m_game->GetHWnd()));
 
-	p->m_bgTexture.reset(p->m_renderer->CreateTextureFromFile(
-		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg"));
+	p->m_bgTexture = p->m_renderer->CreateTextureFromFile(
+		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
 
-	p->m_characterTexture.reset(p->m_renderer->CreateTextureFromFile(
-		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg"));
+	p->m_characterTexture = p->m_renderer->CreateTextureFromFile(
+		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg");
 
 	p->m_object.reset(new MyGameObject(p->m_renderer.get()));
 

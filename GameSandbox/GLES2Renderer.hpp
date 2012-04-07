@@ -22,13 +22,10 @@ public:
 	GLES2Renderer(HWND hWnd);
 	~GLES2Renderer();
 	
-	GLES2Texture* CreateTextureFromFile(const std::wstring& path);
+	std::unique_ptr<GLES2Texture> CreateTextureFromFile(const std::wstring& path);
 
 	void SetTexturedQuadMatrix(const Matrix3x2f& mat);
 	void DrawTexturedQuad(const Rectf& rc);
-
-	//void generateDropShadow(GLuint dstTexture, GLuint srcTexture,
-	//	int width, int height, const Vector2f& offset, const Vector2f& blurSize);
 	
 	void Present();
 	void Resize();

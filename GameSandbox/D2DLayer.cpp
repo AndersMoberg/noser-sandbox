@@ -23,7 +23,7 @@ std::unique_ptr<D2DLayer> D2DLayer::create(GLES2Renderer* renderer)
 	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
 		p->m_d2dFactory.Receive()));
 
-	p->m_glTexture.reset(new GLES2Texture);
+	p->m_glTexture = GLES2Texture::create();
 
 	p->CreateTargetResources();
 

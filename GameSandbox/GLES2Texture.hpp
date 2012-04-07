@@ -14,16 +14,14 @@ class GLES2Texture
 
 public:
 	
-	GLES2Texture();
 	~GLES2Texture();
+	static std::unique_ptr<GLES2Texture> create();
 
 	GLuint get() { return m_texture; }
 
 private:
 
-	// Disallow copy and assign
-	GLES2Texture(const GLES2Texture&);
-	GLES2Texture& operator=(const GLES2Texture&);
+	GLES2Texture();
 
 	GLuint m_texture;
 
