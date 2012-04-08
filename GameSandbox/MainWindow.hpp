@@ -25,6 +25,8 @@ public:
 	bool IsExceptionThrown() const { return m_exceptionThrown; }
 	const std::exception& GetExceptionProxy() const { return m_exceptionProxy; }
 
+	void process();
+
 private:
 
 	MainWindow();

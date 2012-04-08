@@ -65,6 +65,12 @@ MainWindow* MainWindow::Create(HINSTANCE hInstance, int nShowCmd)
 	return p;
 }
 
+void MainWindow::process()
+{
+	Update();
+	Render();
+}
+
 LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT result;
@@ -169,14 +175,8 @@ LRESULT MainWindow::OnWMSize()
 
 LRESULT MainWindow::OnWMPaint()
 {
-	// FIXME: WM_PAINT is not the ideal place to call Update.
-	Update();
-
 	Render();
-
-	// Animate!
-	InvalidateRect(m_hWnd, NULL, FALSE);
-
+	ValidateRect(m_hWnd, NULL);
 	return 0;
 }
 
