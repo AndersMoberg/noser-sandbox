@@ -90,6 +90,7 @@
     <ClCompile Include="CharacterControllerMode\World.cpp" />
     <ClCompile Include="CharacterTestMode\CharacterTestMode.cpp" />
     <ClCompile Include="CharacterTestMode\DropShadow.cpp" />
+    <ClCompile Include="CharacterTestMode\RevealingText.cpp" />
     <ClCompile Include="D2DLayer.cpp" />
     <ClCompile Include="D2DRenderer.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -100,7 +101,6 @@
     <ClCompile Include="MainMenuMode\MainMenuMode.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="OutlinedTextRenderer.cpp" />
-    <ClCompile Include="RevealingText.cpp" />
     <ClCompile Include="WindowsUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +110,7 @@
     <ClInclude Include="CharacterControllerMode\World.hpp" />
     <ClInclude Include="CharacterTestMode\CharacterTestMode.hpp" />
     <ClInclude Include="CharacterTestMode\DropShadow.hpp" />
+    <ClInclude Include="CharacterTestMode\RevealingText.hpp" />
     <ClInclude Include="D2DLayer.hpp" />
     <ClInclude Include="D2DRenderer.hpp" />
     <ClInclude Include="Game.hpp" />
@@ -119,7 +120,6 @@
     <ClInclude Include="MainMenuMode\MainMenuMode.hpp" />
     <ClInclude Include="MainWindow.hpp" />
     <ClInclude Include="OutlinedTextRenderer.hpp" />
-    <ClInclude Include="RevealingText.hpp" />
     <ClInclude Include="WindowsUtils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

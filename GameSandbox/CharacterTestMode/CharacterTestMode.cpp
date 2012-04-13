@@ -7,11 +7,13 @@
 #include <sstream>
 
 #include "Camera.hpp"
+#include "D2DLayer.hpp"
 #include "GLES2Texture.hpp"
 #include "Geometry.hpp"
 #include "Game.hpp"
 #include "MainMenuMode/MainMenuMode.hpp"
 #include "DropShadow.hpp"
+#include "RevealingText.hpp"
 
 namespace CharacterTestMode
 {

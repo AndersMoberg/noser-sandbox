@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "Camera.hpp"
-#include "RevealingText.hpp"
 
 struct GameInput
 {

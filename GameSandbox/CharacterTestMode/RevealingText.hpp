@@ -14,6 +14,9 @@
 #include "Geometry.hpp"
 #include "GLES2Renderer.hpp"
 
+namespace CharacterTestMode
+{
+
 class RevealingText
 {
 
@@ -36,5 +39,7 @@ private:
 	ComPtr<IDWriteTextLayout> m_textLayout;
 
 };
+
+}
 
 #endif

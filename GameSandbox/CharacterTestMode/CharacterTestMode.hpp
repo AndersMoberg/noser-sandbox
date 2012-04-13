@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "Game.hpp"
+#include "GLES2Renderer.hpp"
 
 namespace CharacterTestMode
 {

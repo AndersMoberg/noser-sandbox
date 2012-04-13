@@ -8,6 +8,8 @@
 #include <memory>
 #include <list>
 
+#include <DWrite.h>
+
 #include "D2DRenderer.hpp"
 #include "Game.hpp"
 

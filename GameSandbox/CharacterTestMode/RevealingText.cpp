@@ -6,6 +6,9 @@
 
 #include "OutlinedTextRenderer.hpp"
 
+namespace CharacterTestMode
+{
+
 RevealingText::RevealingText(IDWriteFactory* dwriteFactory,
 	IDWriteTextFormat* textFormat, const std::wstring& text,
 	const Rectf& layoutBox)
@@ -62,4 +65,6 @@ void RevealingText::Render(ID2D1RenderTarget* d2dTarget)
 		DrawOutlinedTextLayout(d2dTarget, m_textLayout, fillBrush, strokeBrush, 2.0f,
 			m_layoutBox.UpperLeft());
 	}
+}
+
 }
