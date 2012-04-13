@@ -44,18 +44,19 @@ int Application::MessagePump()
 
 	for (;;)
 	{
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			if (msg.message == WM_QUIT) {
-				goto quit;
+				break;
 			} else {
 				DispatchMessage(&msg);
 			}
 		}
-
-		m_window->process();
+		else
+		{
+			m_window->process();
+		}
 	}
-	quit:
 
 	if (m_window->IsExceptionThrown()) {
 		throw m_window->GetExceptionProxy();

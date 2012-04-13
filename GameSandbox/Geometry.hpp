@@ -5,6 +5,8 @@
 #ifndef _GEOMETRY_HPP
 #define _GEOMETRY_HPP
 
+#include <cmath>
+
 #include <d2d1.h>
 
 static const float M_PIf = 3.14159265358979323846f;
@@ -37,7 +39,10 @@ struct Vector2f
 	operator D2D1_POINT_2F() const { return D2D1::Point2F(x, y); }
 
 	float LengthSquared() const { return x * x + y * y; }
+	float length() const { return sqrt(LengthSquared()); }
 	Vector2f Perpendicular() const { return Vector2f(-y, x); }
+	bool isZero() const { return x == 0.0f && y == 0.0f; }
+	Vector2f normalize() const { return *this / length(); }
 
 	// Return the dot product of a and b.
 	// Equivalent to |a|*|b|*cos(angle)

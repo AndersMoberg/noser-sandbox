@@ -220,30 +220,12 @@ LRESULT MainWindow::OnWMKeyUp(WPARAM wParam)
 	return 0;
 }
 
-static const float SQRT_1_OVER_2 = 0.70710677f;
-
 void MainWindow::Update()
 {
 	// Gather input
-	Vector2f move(0.0f, 0.0f);
-	if (m_leftToRightKeys == -1 && m_downToUpKeys == -1) {
-		move = Vector2f(-SQRT_1_OVER_2, -SQRT_1_OVER_2); // Southwest
-	} else if (m_leftToRightKeys == -1 && m_downToUpKeys == 0) {
-		move = Vector2f(-1.0f, 0.0f); // West
-	} else if (m_leftToRightKeys == -1 && m_downToUpKeys == 1) {
-		move = Vector2f(-SQRT_1_OVER_2, SQRT_1_OVER_2); // Northwest
-	} else if (m_leftToRightKeys == 0 && m_downToUpKeys == -1) {
-		move = Vector2f(0.0f, -1.0f); // South
-	} else if (m_leftToRightKeys == 0 && m_downToUpKeys == 0) {
-		move = Vector2f(0.0f, 0.0f); // Center
-	} else if (m_leftToRightKeys == 0 && m_downToUpKeys == 1) {
-		move = Vector2f(0.0f, 1.0f); // North
-	} else if (m_leftToRightKeys == 1 && m_downToUpKeys == -1) {
-		move = Vector2f(SQRT_1_OVER_2, -SQRT_1_OVER_2); // Southeast
-	} else if (m_leftToRightKeys == 1 && m_downToUpKeys == 0) {
-		move = Vector2f(1.0f, 0.0f); // East
-	} else if (m_leftToRightKeys == 1 && m_downToUpKeys == 1) {
-		move = Vector2f(SQRT_1_OVER_2, SQRT_1_OVER_2); // Northeast
+	Vector2f move = Vector2f((float)m_leftToRightKeys, (float)m_downToUpKeys);
+	if (!move.isZero()) {
+		move = move.normalize();
 	}
 
 	LARGE_INTEGER liCurTime;
