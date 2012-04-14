@@ -12,7 +12,11 @@ bool Application::OnInit()
 		return false;
 	}
 
-	WorldEditorFrame* frame = new WorldEditorFrame;
+	m_doc.reset(new Document);
+
+	m_doc->addPoint(Vector2f(50.0f, 50.0f));
+
+	WorldEditorFrame* frame = new WorldEditorFrame(m_doc.get());
 
 	frame->Show();
 

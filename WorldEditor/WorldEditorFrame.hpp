@@ -7,10 +7,21 @@
 
 #include <wx/wx.h>
 
+#include "Document.hpp"
+
 class WorldEditorFrame : public wxFrame
 {
+
 public:
-	WorldEditorFrame();
+
+	WorldEditorFrame(Document* doc);
+
+	virtual void OnPaint(wxPaintEvent& event);
+
+private:
+
+	Document* m_doc;
+
 };
 
 #endif
