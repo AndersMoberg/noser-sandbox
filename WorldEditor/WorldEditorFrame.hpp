@@ -16,9 +16,20 @@ public:
 
 	WorldEditorFrame(Document* doc);
 
-	virtual void OnPaint(wxPaintEvent& event);
+	void OnPaint(wxPaintEvent& event);
+	void OnLeftDown(wxMouseEvent& event);
 
 private:
+
+	enum Tool
+	{
+		TOOL_ADDPOINT,
+		TOOL_MOVEPOINT
+	};
+
+	void findClosestPoint(const Vector2f& pt);
+
+	Tool m_tool;
 
 	Document* m_doc;
 
