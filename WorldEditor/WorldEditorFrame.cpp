@@ -10,6 +10,7 @@
 WorldEditorFrame::WorldEditorFrame(Document* doc)
 	: wxFrame(NULL, wxID_ANY, wxT("World Editor")),
 	m_tool(TOOL_ADDPOINT),
+	m_draggingPoint(NULL),
 	m_doc(doc)
 {
 	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
@@ -17,6 +18,8 @@ WorldEditorFrame::WorldEditorFrame(Document* doc)
 
 	Connect(wxEVT_PAINT, wxPaintEventHandler(WorldEditorFrame::OnPaint));
 	Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(WorldEditorFrame::OnLeftDown));
+	Connect(wxEVT_MOTION, wxMouseEventHandler(WorldEditorFrame::OnMouseMove));
+	Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(WorldEditorFrame::OnKeyDown));
 }
 
 void WorldEditorFrame::OnPaint(wxPaintEvent& event)
@@ -27,12 +30,14 @@ void WorldEditorFrame::OnPaint(wxPaintEvent& event)
 
 	std::unique_ptr<wxGraphicsContext> gc(wxGraphicsContext::Create(dc));
 
-	const std::vector<Vector2f>& points = m_doc->getPoints();
-	for (std::vector<Vector2f>::const_iterator it = points.begin();
+	const Document::PointList& points = m_doc->getPoints();
+	for (Document::PointList::const_iterator it = points.begin();
 		it != points.end(); ++it)
 	{
 		gc->SetPen(*wxBLACK_PEN);
-		gc->DrawEllipse(it->x - 10.0f, it->y - 10.0f, 20.0f, 20.0f);
+
+		const Vector2f& pos = it->getPosition();
+		gc->DrawEllipse(pos.x - 4.0f, pos.y - 4.0f, 8.0f, 8.0f);
 	}
 }
 
@@ -45,6 +50,32 @@ void WorldEditorFrame::OnLeftDown(wxMouseEvent& event)
 		Refresh();
 		break;
 	case TOOL_MOVEPOINT:
+		m_draggingPoint = m_doc->findPoint(
+			Vector2f(event.GetPosition().x, event.GetPosition().y),
+			10.0f);
+		break;
+	}
+}
+
+void WorldEditorFrame::OnMouseMove(wxMouseEvent& event)
+{
+	if (m_tool == TOOL_MOVEPOINT && m_draggingPoint != NULL)
+	{
+		Vector2f newPos(event.GetPosition().x, event.GetPosition().y);
+		m_draggingPoint->setPosition(newPos);
+		Refresh();
+	}
+}
+
+void WorldEditorFrame::OnKeyDown(wxKeyEvent& event)
+{
+	switch (event.GetKeyCode())
+	{
+	case 'A':
+		m_tool = TOOL_ADDPOINT;
+		break;
+	case 'M':
+		m_tool = TOOL_MOVEPOINT;
 		break;
 	}
 }

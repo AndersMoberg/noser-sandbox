@@ -18,6 +18,8 @@ public:
 
 	void OnPaint(wxPaintEvent& event);
 	void OnLeftDown(wxMouseEvent& event);
+	void OnMouseMove(wxMouseEvent& event);
+	void OnKeyDown(wxKeyEvent& event);
 
 private:
 
@@ -30,6 +32,7 @@ private:
 	void findClosestPoint(const Vector2f& pt);
 
 	Tool m_tool;
+	Point* m_draggingPoint;
 
 	Document* m_doc;
 

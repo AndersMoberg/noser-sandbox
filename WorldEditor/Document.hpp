@@ -5,22 +5,44 @@
 #ifndef _DOCUMENT_HPP
 #define _DOCUMENT_HPP
 
-#include <vector>
+#include <list>
 
 #include "Geometry.hpp"
+
+class Point
+{
+
+public:
+
+	Point(const Vector2f& pos)
+		: m_pos(pos)
+	{ }
+
+	const Vector2f& getPosition() const { return m_pos; }
+	void setPosition(const Vector2f& pos);
+
+private:
+
+	Vector2f m_pos;
+
+};
 
 class Document
 {
 
 public:
 
-	void addPoint(const Vector2f& pt);
+	typedef std::list<Point> PointList;
 
-	const std::vector<Vector2f>& getPoints() const { return m_points; }
+	void addPoint(const Vector2f& pos);
+
+	Point* findPoint(const Vector2f& pos, float radius);
+
+	const PointList& getPoints() const { return m_points; }
 
 private:
 
-	std::vector<Vector2f> m_points;
+	PointList m_points;
 
 };
 
