@@ -172,11 +172,11 @@ std::unique_ptr<CharacterTestMode> CharacterTestMode::create(Game* game)
 
 	p->m_renderer.reset(new GLES2Renderer(p->m_game->GetHWnd()));
 
-	p->m_bgTexture = p->m_renderer->CreateTextureFromFile(
-		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
+	p->m_renderer->createTextureFromFile(
+		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg", p->m_bgTexture);
 
-	p->m_characterTexture = p->m_renderer->CreateTextureFromFile(
-		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg");
+	p->m_renderer->createTextureFromFile(
+		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg", p->m_characterTexture);
 
 	p->m_object.reset(new MyGameObject(p->m_renderer.get()));
 
@@ -226,7 +226,7 @@ void CharacterTestMode::Render()
 	
 	// Draw background image
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_bgTexture->get());
+	glBindTexture(GL_TEXTURE_2D, m_bgTexture.get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -239,7 +239,7 @@ void CharacterTestMode::Render()
 
 	// Draw character image
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_characterTexture->get());
+	glBindTexture(GL_TEXTURE_2D, m_characterTexture.get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

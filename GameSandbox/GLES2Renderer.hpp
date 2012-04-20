@@ -22,7 +22,8 @@ public:
 	GLES2Renderer(HWND hWnd);
 	~GLES2Renderer();
 	
-	std::unique_ptr<GLES2Texture> CreateTextureFromFile(const std::wstring& path);
+	void createTextureFromFile(const std::wstring& path,
+		GLES2Texture& result);
 
 	void SetTexturedQuadMatrix(const Matrix3x2f& mat);
 	void DrawTexturedQuad(const Rectf& rc);

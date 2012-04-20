@@ -33,12 +33,12 @@ private:
 
 	Camera m_camera;
 
-	std::unique_ptr<GLES2Texture> m_bgTexture;
+	GLES2Texture m_bgTexture;
 
 	Vector2f m_characterPos;
 	float m_characterSpeed;
 	Rectf m_characterRect;
-	std::unique_ptr<GLES2Texture> m_characterTexture;
+	GLES2Texture m_characterTexture;
 
 	class MyGameObject;
 
