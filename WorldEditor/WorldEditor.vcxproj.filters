@@ -18,6 +18,9 @@
     <ClCompile Include="Document.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="WallTool.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -30,6 +33,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Geometry.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="WallTool.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

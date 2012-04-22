@@ -14,6 +14,11 @@ void Document::addPoint(const Vector2f& pos)
 	m_points.push_back(Point(pos));
 }
 
+void Document::addWall(Point* pt1, Point* pt2)
+{
+	m_walls.push_back(Wall(pt1, pt2));
+}
+
 Point* Document::findPoint(const Vector2f& pos, float radius)
 {
 	for (PointList::iterator it = m_points.begin();

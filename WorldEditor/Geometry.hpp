@@ -5,6 +5,8 @@
 #ifndef _GEOMETRY_HPP
 #define _GEOMETRY_HPP
 
+#include <wx/wx.h>
+
 struct Vector2f
 {
 	float x;
@@ -18,6 +20,11 @@ struct Vector2f
 	}
 
 	float lengthSquared() const { return x*x + y*y; }
+
+	operator wxPoint2DDouble() const {
+		return wxPoint2DDouble(x, y);
+	}
+
 };
 
 #endif

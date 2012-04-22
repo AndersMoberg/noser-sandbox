@@ -29,13 +29,22 @@ void WorldEditorFrame::OnPaint(wxPaintEvent& event)
 	dc.Clear();
 
 	std::unique_ptr<wxGraphicsContext> gc(wxGraphicsContext::Create(dc));
+	
+	gc->SetPen(*wxBLACK_PEN);
+
+	const Document::WallList& walls = m_doc->getWalls();
+	for (Document::WallList::const_iterator it = walls.begin();
+		it != walls.end(); ++it)
+	{
+		wxPoint2DDouble pts[2] = { it->getPoint(false)->getPosition(),
+			it->getPoint(true)->getPosition() };
+		gc->DrawLines(2, pts);
+	}
 
 	const Document::PointList& points = m_doc->getPoints();
 	for (Document::PointList::const_iterator it = points.begin();
 		it != points.end(); ++it)
 	{
-		gc->SetPen(*wxBLACK_PEN);
-
 		const Vector2f& pos = it->getPosition();
 		gc->DrawEllipse(pos.x - 4.0f, pos.y - 4.0f, 8.0f, 8.0f);
 	}
@@ -53,6 +62,15 @@ void WorldEditorFrame::OnLeftDown(wxMouseEvent& event)
 		m_draggingPoint = m_doc->findPoint(
 			Vector2f(event.GetPosition().x, event.GetPosition().y),
 			10.0f);
+		break;
+	case TOOL_WALL:
+		Point* pt = m_doc->findPoint(
+			Vector2f(event.GetPosition().x, event.GetPosition().y),
+			10.0f);
+		if (pt != NULL) {
+			m_wallTool.onClickPoint(pt);
+			Refresh();
+		}
 		break;
 	}
 }
@@ -76,6 +94,10 @@ void WorldEditorFrame::OnKeyDown(wxKeyEvent& event)
 		break;
 	case 'M':
 		m_tool = TOOL_MOVEPOINT;
+		break;
+	case 'W':
+		m_tool = TOOL_WALL;
+		m_wallTool.start(m_doc);
 		break;
 	}
 }

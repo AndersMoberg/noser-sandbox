@@ -8,6 +8,7 @@
 #include <wx/wx.h>
 
 #include "Document.hpp"
+#include "WallTool.hpp"
 
 class WorldEditorFrame : public wxFrame
 {
@@ -26,7 +27,8 @@ private:
 	enum Tool
 	{
 		TOOL_ADDPOINT,
-		TOOL_MOVEPOINT
+		TOOL_MOVEPOINT,
+		TOOL_WALL
 	};
 
 	void findClosestPoint(const Vector2f& pt);
@@ -35,6 +37,8 @@ private:
 	Point* m_draggingPoint;
 
 	Document* m_doc;
+
+	WallTool m_wallTool;
 
 };
 
