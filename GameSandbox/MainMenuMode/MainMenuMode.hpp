@@ -32,7 +32,7 @@ private:
 
 	Game* m_game;
 
-	std::unique_ptr<D2DRenderer> m_renderer;
+	D2DRenderer m_renderer;
 
 	ComPtr<IDWriteFactory> m_dwriteFactory;
 	ComPtr<IDWriteTextFormat> m_textFormat;

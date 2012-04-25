@@ -9,7 +9,7 @@
 namespace CharacterTestMode
 {
 
-RevealingText::RevealingText(IDWriteFactory* dwriteFactory,
+void RevealingText::init(IDWriteFactory* dwriteFactory,
 	IDWriteTextFormat* textFormat, const std::wstring& text,
 	const Rectf& layoutBox)
 {

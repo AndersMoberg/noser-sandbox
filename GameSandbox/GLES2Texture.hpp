@@ -16,8 +16,7 @@ public:
 	
 	GLES2Texture();
 	~GLES2Texture();
-
-	void create();
+	void init();
 
 	GLuint get();
 

@@ -27,7 +27,7 @@ public:
 		m_bottles(99),
 		m_state(0)
 	{
-		m_d2dLayer = D2DLayer::create(m_renderer);
+		m_d2dLayer.init(m_renderer);
 
 		CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
 			__uuidof(IDWriteFactory), (IUnknown**)m_dwriteFactory.Receive()));
@@ -38,8 +38,8 @@ public:
 
 		m_dropShadowCommon = DropShadowCommon::create();
 
-		D2D1_SIZE_U size = m_d2dLayer->getD2DTarget()->GetPixelSize();
-		m_dropShadow = DropShadow::create(m_dropShadowCommon.get(), m_d2dLayer->GetGLTexture()->get(), size.width, size.height);
+		D2D1_SIZE_U size = m_d2dLayer.getD2DTarget()->GetPixelSize();
+		m_dropShadow = DropShadow::create(m_dropShadowCommon.get(), m_d2dLayer.getGLTexture()->get(), size.width, size.height);
 
 		m_textNeedsRerender = true;
 	}
@@ -56,19 +56,21 @@ public:
 		{
 			std::wstringstream ss;
 			ss << m_bottles << " bottles of beer on the wall, " << m_bottles << " bottles of beer...";
-			m_text.reset(new RevealingText(m_dwriteFactory, m_textFormat,
+			m_text.reset(new RevealingText);
+			m_text->init(m_dwriteFactory, m_textFormat,
 				ss.str(),
 				Rectf(0.0f, 0.0f, (float)m_renderer->GetWidth(),
-				(float)m_renderer->GetHeight())));
+				(float)m_renderer->GetHeight()));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 1;
 		}
 		else if (m_state == 1) // take one down, pass it around...
 		{
-			m_text.reset(new RevealingText(m_dwriteFactory, m_textFormat,
+			m_text.reset(new RevealingText);
+			m_text->init(m_dwriteFactory, m_textFormat,
 				L"...take one down, pass it around...",
 				Rectf(0.0f, 0.0f, (float)m_renderer->GetWidth(),
-				(float)m_renderer->GetHeight())));
+				(float)m_renderer->GetHeight()));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 2;
 		}
@@ -77,10 +79,11 @@ public:
 			--m_bottles;
 			std::wstringstream ss;
 			ss << "..." << m_bottles << " bottles of beer on the wall.";
-			m_text.reset(new RevealingText(m_dwriteFactory, m_textFormat,
+			m_text.reset(new RevealingText);
+			m_text->init(m_dwriteFactory, m_textFormat,
 				ss.str(),
 				Rectf(0.0f, 0.0f, (float)m_renderer->GetWidth(),
-				(float)m_renderer->GetHeight())));
+				(float)m_renderer->GetHeight()));
 			m_wait = Game::TICKS_PER_SEC * 3;
 			m_state = 0;
 		}
@@ -92,17 +95,23 @@ public:
 			GLES2Texture* texture;
 			if (m_textNeedsRerender)
 			{
-				ID2D1RenderTarget* d2dTarget = m_d2dLayer->getD2DTarget();
+				ID2D1RenderTarget* d2dTarget = m_d2dLayer.getD2DTarget();
 
 				D2D1_SIZE_U size = d2dTarget->GetPixelSize();
 
 				d2dTarget->BeginDraw();
 
-				m_text->Render(m_d2dLayer->getD2DTarget());
+				m_text->Render(m_d2dLayer.getD2DTarget());
 
-				d2dTarget->EndDraw(); // TODO: Handle D2DERR_RECREATE_TARGET
+				HRESULT hr = d2dTarget->EndDraw();
+				if (hr == D2DERR_RECREATE_TARGET) {
+					m_d2dLayer.recreateTarget();
+				} else {
+					CHECK_HR(hr);
+				}
 
-				texture = m_d2dLayer->GetGLTexture();
+				m_d2dLayer.transferToGLTexture();
+				texture = m_d2dLayer.getGLTexture();
 				
 				m_dropShadow->generate(Vector2f(-2.0f/size.width, -2.0f/size.height),
 					Vector2f(1.0f/size.width, 1.0f/size.height));
@@ -111,7 +120,7 @@ public:
 			}
 			else
 			{
-				texture = m_d2dLayer->GetGLTexture();
+				texture = m_d2dLayer.getGLTexture();
 			}
 
 			// Render drop shadow
@@ -146,7 +155,7 @@ public:
 	}
 private:
 	GLES2Renderer* m_renderer;
-	std::unique_ptr<D2DLayer> m_d2dLayer;
+	D2DLayer m_d2dLayer;
 	std::unique_ptr<DropShadowCommon> m_dropShadowCommon;
 	std::unique_ptr<DropShadow> m_dropShadow;
 	ComPtr<IDWriteFactory> m_dwriteFactory;

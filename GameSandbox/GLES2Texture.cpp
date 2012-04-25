@@ -16,7 +16,7 @@ GLES2Texture::~GLES2Texture()
 	m_texture = 0;
 }
 
-void GLES2Texture::create()
+void GLES2Texture::init()
 {
 	glGenTextures(1, &m_texture);
 }

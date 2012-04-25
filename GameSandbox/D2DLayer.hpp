@@ -18,25 +18,24 @@ class D2DLayer
 {
 
 public:
+	
+	D2DLayer();
+	void init(GLES2Renderer* renderer);
 
-	static std::unique_ptr<D2DLayer> create(GLES2Renderer* renderer);
+	void recreateTarget();
 
-	void DestroyTargetResources();
+	void transferToGLTexture();
 
-	GLES2Texture* GetGLTexture();
+	GLES2Texture* getGLTexture();
 	ID2D1RenderTarget* getD2DTarget();
 
 private:
-
-	D2DLayer();
-
-	void CreateTargetResources();
 
 	GLES2Renderer* m_renderer;
 
 	ComPtr<ID2D1Factory> m_d2dFactory;
 
-	std::unique_ptr<GLES2Texture> m_glTexture;
+	GLES2Texture m_glTexture;
 
 	ComPtr<IWICBitmap> m_wicBitmap;
 	ComPtr<ID2D1RenderTarget> m_d2dTarget;

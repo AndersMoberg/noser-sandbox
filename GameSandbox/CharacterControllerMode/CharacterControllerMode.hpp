@@ -43,7 +43,7 @@ private:
 		const Character& character, const Vector2f& vel);
 
 	Game* m_game;
-	std::unique_ptr<D2DRenderer> m_renderer;
+	D2DRenderer m_renderer;
 
 	Camera m_camera;
 	World m_world;

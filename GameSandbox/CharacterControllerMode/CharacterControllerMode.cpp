@@ -21,7 +21,7 @@ std::unique_ptr<CharacterControllerMode> CharacterControllerMode::create(Game* g
 
 	p->m_game = game;
 
-	p->m_renderer.reset(new D2DRenderer(p->m_game->GetHWnd()));
+	p->m_renderer.init(p->m_game->GetHWnd());
 		
 	p->m_playerCharacter = CharacterPtr(new Character);
 	p->m_playerCharacter->pos = Vector2f(0.0f, 3.0f);
@@ -206,7 +206,7 @@ void CharacterControllerMode::Tick(const GameInput& input)
 
 void CharacterControllerMode::Render()
 {
-	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer->GetD2DTarget();
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer.GetD2DTarget();
 
 	d2dTarget->BeginDraw();
 		

@@ -22,7 +22,7 @@ class RevealingText
 
 public:
 
-	RevealingText(IDWriteFactory* dwriteFactory, IDWriteTextFormat* textFormat,
+	void init(IDWriteFactory* dwriteFactory, IDWriteTextFormat* textFormat,
 		const std::wstring& text, const Rectf& layoutBox);
 
 	bool Tick(); // Returns true if rendering changed (needs re-rendering)

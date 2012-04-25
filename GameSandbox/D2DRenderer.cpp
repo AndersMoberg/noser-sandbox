@@ -4,7 +4,7 @@
 
 #include "D2DRenderer.hpp"
 
-D2DRenderer::D2DRenderer(HWND hWnd)
+void D2DRenderer::init(HWND hWnd)
 {
 	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
 		m_d2dFactory.Receive()));

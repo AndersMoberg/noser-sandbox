@@ -14,7 +14,7 @@ class D2DRenderer
 
 public:
 
-	D2DRenderer(HWND hWnd);
+	void init(HWND hWnd);
 
 	ComPtr<ID2D1RenderTarget> GetD2DTarget() { return m_d2dTarget; }
 

@@ -195,7 +195,7 @@ GLES2Renderer::~GLES2Renderer()
 void GLES2Renderer::createTextureFromFile(
 	const std::wstring& path, GLES2Texture& result)
 {
-	result.create();
+	result.init();
 
 	ComPtr<IWICImagingFactory> wicFactory;
 	CHECK_HR(CoCreateInstance(CLSID_WICImagingFactory, NULL,

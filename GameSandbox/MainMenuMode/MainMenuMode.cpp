@@ -26,7 +26,7 @@ std::unique_ptr<MainMenuMode> MainMenuMode::create(Game* game)
 
 	p->m_game = game;
 
-	p->m_renderer.reset(new D2DRenderer(p->m_game->GetHWnd()));
+	p->m_renderer.init(p->m_game->GetHWnd());
 	
 	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
 		__uuidof(IDWriteFactory), (IUnknown**)p->m_dwriteFactory.Receive()));
@@ -107,7 +107,7 @@ void MainMenuMode::Tick(const GameInput& input)
 
 void MainMenuMode::Render()
 {
-	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer->GetD2DTarget();
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer.GetD2DTarget();
 
 	d2dTarget->BeginDraw();
 
@@ -148,7 +148,7 @@ void MainMenuMode::Render()
 
 void MainMenuMode::AddOption(const std::wstring& label)
 {
-	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer->GetD2DTarget();
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer.GetD2DTarget();
 	D2D1_SIZE_U targetSize = d2dTarget->GetPixelSize();
 
 	Option newOption;
