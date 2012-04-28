@@ -179,15 +179,15 @@ std::unique_ptr<CharacterTestMode> CharacterTestMode::create(Game* game)
 
 	p->m_game = game;
 
-	p->m_renderer.reset(new GLES2Renderer(p->m_game->GetHWnd()));
+	p->m_renderer.init(p->m_game->GetHWnd());
 
-	p->m_renderer->createTextureFromFile(
+	p->m_renderer.createTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg", p->m_bgTexture);
 
-	p->m_renderer->createTextureFromFile(
+	p->m_renderer.createTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg", p->m_characterTexture);
 
-	p->m_object.reset(new MyGameObject(p->m_renderer.get()));
+	p->m_object.reset(new MyGameObject(&p->m_renderer));
 
 	return p;
 }
@@ -217,8 +217,8 @@ void CharacterTestMode::Tick(const GameInput& input)
 
 void CharacterTestMode::Render()
 {
-	unsigned int width = m_renderer->GetWidth();
-	unsigned int height = m_renderer->GetHeight();
+	unsigned int width = m_renderer.GetWidth();
+	unsigned int height = m_renderer.GetHeight();
 
 	glViewport(0, 0, width, height);
 
@@ -231,7 +231,7 @@ void CharacterTestMode::Render()
 		Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 	Matrix3x2f worldToClip = worldToViewport * viewportToClip;
 
-	m_renderer->SetTexturedQuadMatrix(worldToClip);
+	m_renderer.SetTexturedQuadMatrix(worldToClip);
 	
 	// Draw background image
 	glActiveTexture(GL_TEXTURE0);
@@ -244,7 +244,7 @@ void CharacterTestMode::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->DrawTexturedQuad(Rectf(-16.0f, 16.0f, 16.0f, -16.0f));
+	m_renderer.DrawTexturedQuad(Rectf(-16.0f, 16.0f, 16.0f, -16.0f));
 
 	// Draw character image
 	glActiveTexture(GL_TEXTURE0);
@@ -257,11 +257,11 @@ void CharacterTestMode::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
+	m_renderer.DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
 
 	m_object->Render();
 
-	m_renderer->Present();
+	m_renderer.Present();
 }
 
 }

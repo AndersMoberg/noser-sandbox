@@ -18,9 +18,10 @@ class MainWindow
 {
 
 public:
-
+	
+	MainWindow();
 	~MainWindow();
-	static MainWindow* Create(HINSTANCE hInstance, int nShowCmd);
+	void init(HINSTANCE hInstance, int nShowCmd);
 
 	bool IsExceptionThrown() const { return m_exceptionThrown; }
 	const std::exception& GetExceptionProxy() const { return m_exceptionProxy; }
@@ -28,8 +29,6 @@ public:
 	void process();
 
 private:
-
-	MainWindow();
 
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnWMCreate(HWND hWnd);

@@ -17,18 +17,17 @@ class Application
 {
 
 public:
-
+	
+	Application();
 	~Application();
-	static Application* Create(HINSTANCE hInstance, int nShowCmd);
+	void init(HINSTANCE hInstance, int nShowCmd);
 
 	int MessagePump();
 
 private:
 
-	Application();
-
 	bool m_coInited;
-	std::unique_ptr<MainWindow> m_window;
+	MainWindow m_window;
 
 };
 

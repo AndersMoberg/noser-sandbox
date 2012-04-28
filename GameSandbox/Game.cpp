@@ -12,18 +12,11 @@
 
 const unsigned int Game::TICKS_PER_SEC = 3600;
 
-Game::Game()
-{ }
-
-std::unique_ptr<Game> Game::create(HWND hWnd)
+void Game::init(HWND hWnd)
 {
-	std::unique_ptr<Game> p(new Game);
+	m_hWnd = hWnd;
 
-	p->m_hWnd = hWnd;
-
-	p->m_mode = MainMenuMode::MainMenuMode::create(p.get());
-
-	return p;
+	m_mode = MainMenuMode::MainMenuMode::create(this);
 }
 
 void Game::Tick(const GameInput& input)

@@ -24,18 +24,14 @@ Application::~Application()
 	timeEndPeriod(1);
 }
 
-Application* Application::Create(HINSTANCE hInstance, int nShowCmd)
+void Application::init(HINSTANCE hInstance, int nShowCmd)
 {
-	Application* p(new Application);
-
 	timeBeginPeriod(1);
 
 	CHECK_HR(CoInitialize(NULL));
-	p->m_coInited = true;
+	m_coInited = true;
 
-	p->m_window.reset(MainWindow::Create(hInstance, nShowCmd));
-
-	return p;
+	m_window.init(hInstance, nShowCmd);
 }
 
 int Application::MessagePump()
@@ -54,12 +50,15 @@ int Application::MessagePump()
 		}
 		else
 		{
-			m_window->process();
+			if (m_window.IsExceptionThrown()) {
+				throw m_window.GetExceptionProxy();
+			}
+			m_window.process();
 		}
 	}
 
-	if (m_window->IsExceptionThrown()) {
-		throw m_window->GetExceptionProxy();
+	if (m_window.IsExceptionThrown()) {
+		throw m_window.GetExceptionProxy();
 	}
 
 	return (int)msg.wParam;

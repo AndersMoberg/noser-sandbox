@@ -85,14 +85,32 @@ static GLuint LoadGLSLProgram(const char* vShaderSrc, const char* fShaderSrc)
 	return program;
 }
 
+GLES2Renderer::GLES2Renderer()
+	: m_eglDisplay(0),
+	m_eglSurface(0),
+	m_eglContext(0)
+{ }
+
 GLES2Renderer::TexturedQuadProgram::TexturedQuadProgram()
 	: program(0)
 { }
 
-GLES2Renderer::GLES2Renderer(HWND hWnd)
-	: m_eglDisplay(0),
-	m_eglSurface(0),
-	m_eglContext(0)
+GLES2Renderer::~GLES2Renderer()
+{
+	glDeleteProgram(m_texturedQuadProgram.program);
+	m_texturedQuadProgram.program = 0;
+
+	eglDestroyContext(m_eglDisplay, m_eglContext);
+	m_eglContext = 0;
+
+	eglDestroySurface(m_eglDisplay, m_eglSurface);
+	m_eglSurface = 0;
+
+	eglTerminate(m_eglDisplay);
+	m_eglDisplay = 0;
+}
+
+void GLES2Renderer::init(HWND hWnd)
 {
 	m_hWnd = hWnd;
 
@@ -175,21 +193,6 @@ GLES2Renderer::GLES2Renderer(HWND hWnd)
 	m_texturedQuadProgram.usamplerLoc = glGetUniformLocation(
 		m_texturedQuadProgram.program, "u_sampler");
 	SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
-}
-
-GLES2Renderer::~GLES2Renderer()
-{
-	glDeleteProgram(m_texturedQuadProgram.program);
-	m_texturedQuadProgram.program = 0;
-
-	eglDestroyContext(m_eglDisplay, m_eglContext);
-	m_eglContext = 0;
-
-	eglDestroySurface(m_eglDisplay, m_eglSurface);
-	m_eglSurface = 0;
-
-	eglTerminate(m_eglDisplay);
-	m_eglDisplay = 0;
 }
 
 void GLES2Renderer::createTextureFromFile(

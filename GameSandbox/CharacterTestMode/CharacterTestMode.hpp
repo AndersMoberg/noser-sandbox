@@ -29,7 +29,7 @@ private:
 
 	Game* m_game;
 
-	std::unique_ptr<GLES2Renderer> m_renderer;
+	GLES2Renderer m_renderer;
 
 	Camera m_camera;
 

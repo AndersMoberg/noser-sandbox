@@ -38,8 +38,8 @@ class Game
 public:
 
 	static const unsigned int TICKS_PER_SEC;
-
-	static std::unique_ptr<Game> create(HWND hWnd);
+	
+	void init(HWND hWnd);
 
 	void Tick(const GameInput& input);
 	void Resize();
@@ -50,8 +50,6 @@ public:
 	HWND GetHWnd() { return m_hWnd; }
 
 private:
-
-	Game();
 
 	HWND m_hWnd;
 

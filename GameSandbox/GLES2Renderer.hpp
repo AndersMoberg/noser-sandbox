@@ -19,8 +19,9 @@ class GLES2Renderer
 
 public:
 	
-	GLES2Renderer(HWND hWnd);
+	GLES2Renderer();
 	~GLES2Renderer();
+	void init(HWND hWnd);
 	
 	void createTextureFromFile(const std::wstring& path,
 		GLES2Texture& result);

@@ -20,17 +20,15 @@ MainWindow::~MainWindow()
 	}
 }
 
-MainWindow* MainWindow::Create(HINSTANCE hInstance, int nShowCmd)
+void MainWindow::init(HINSTANCE hInstance, int nShowCmd)
 {
-	MainWindow* p(new MainWindow);
-
 	LARGE_INTEGER frequency;
 	QueryPerformanceFrequency(&frequency);
-	p->m_frequency = frequency.QuadPart;
+	m_frequency = frequency.QuadPart;
 
 	LARGE_INTEGER curTime;
 	QueryPerformanceCounter(&curTime);
-	p->m_curTime = curTime.QuadPart;
+	m_curTime = curTime.QuadPart;
 
 	WNDCLASS wc = { 0 };
 	wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -50,19 +48,17 @@ MainWindow* MainWindow::Create(HINSTANCE hInstance, int nShowCmd)
 		NULL,
 		NULL,
 		hInstance,
-		p);
+		this);
 	// The WM_CREATE handler sets m_hWnd
 	if (!hWnd)
 	{
-		p->m_hWnd = NULL;
-		if (p->m_exceptionThrown) {
-			throw p->m_exceptionProxy;
+		m_hWnd = NULL;
+		if (m_exceptionThrown) {
+			throw m_exceptionProxy;
 		} else {
 			throw std::exception("Failed to create window");
 		}
 	}
-
-	return p;
 }
 
 void MainWindow::process()
@@ -152,7 +148,8 @@ LRESULT MainWindow::OnWMCreate(HWND hWnd)
 {
 	m_hWnd = hWnd;
 
-	m_game = Game::create(m_hWnd);
+	m_game.reset(new Game);
+	m_game->init(m_hWnd);
 
 	return 0;
 }
