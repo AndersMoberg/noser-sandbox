@@ -36,10 +36,10 @@ public:
 			DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL, 36.0f, L"en-US", m_textFormat.Receive()));
 
-		m_dropShadowCommon = DropShadowCommon::create();
+		m_dropShadowCommon.init();
 
 		D2D1_SIZE_U size = m_d2dLayer.getD2DTarget()->GetPixelSize();
-		m_dropShadow = DropShadow::create(m_dropShadowCommon.get(), m_d2dLayer.getGLTexture()->get(), size.width, size.height);
+		m_dropShadow.init(&m_dropShadowCommon, m_d2dLayer.getGLTexture()->get(), size.width, size.height);
 
 		m_textNeedsRerender = true;
 	}
@@ -113,7 +113,7 @@ public:
 				m_d2dLayer.transferToGLTexture();
 				texture = m_d2dLayer.getGLTexture();
 				
-				m_dropShadow->generate(Vector2f(-2.0f/size.width, -2.0f/size.height),
+				m_dropShadow.generate(Vector2f(-2.0f/size.width, -2.0f/size.height),
 					Vector2f(1.0f/size.width, 1.0f/size.height));
 
 				m_textNeedsRerender = false;
@@ -125,7 +125,7 @@ public:
 
 			// Render drop shadow
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, m_dropShadow->getTexture());
+			glBindTexture(GL_TEXTURE_2D, m_dropShadow.getTexture());
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -156,8 +156,8 @@ public:
 private:
 	GLES2Renderer* m_renderer;
 	D2DLayer m_d2dLayer;
-	std::unique_ptr<DropShadowCommon> m_dropShadowCommon;
-	std::unique_ptr<DropShadow> m_dropShadow;
+	DropShadowCommon m_dropShadowCommon;
+	DropShadow m_dropShadow;
 	ComPtr<IDWriteFactory> m_dwriteFactory;
 	ComPtr<IDWriteTextFormat> m_textFormat;
 	unsigned long m_wait;

@@ -19,13 +19,12 @@ class DropShadowCommon
 	friend class DropShadow;
 
 public:
-
-	static std::unique_ptr<DropShadowCommon> create();
+	
+	DropShadowCommon();
 	~DropShadowCommon();
+	void init();
 
 private:
-
-	DropShadowCommon();
 
 	GLuint m_program;
 	GLuint m_aposLoc;
@@ -40,17 +39,15 @@ class DropShadow
 {
 
 public:
-
-	static std::unique_ptr<DropShadow>
-		create(DropShadowCommon* common, GLuint srcTexture, int width, int height);
+	
+	DropShadow();
 	~DropShadow();
+	void init(DropShadowCommon* common, GLuint srcTexture, int width, int height);
 
 	void generate(const Vector2f& offset, const Vector2f& blurSize);
 	GLuint getTexture() { return m_dstTexture; }
 
 private:
-
-	DropShadow();
 
 	DropShadowCommon* m_common;
 	GLuint m_srcTexture;
