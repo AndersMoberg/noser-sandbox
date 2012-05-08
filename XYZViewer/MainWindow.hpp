@@ -19,6 +19,8 @@ public:
 
 	void init(HINSTANCE hInstance, int nShowCmd);
 
+	HWND getHWnd();
+
 private:
 
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

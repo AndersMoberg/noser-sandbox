@@ -43,6 +43,11 @@ void MainWindow::init(HINSTANCE hInstance, int nShowCmd)
 		this);
 }
 
+HWND MainWindow::getHWnd()
+{
+	return m_hWnd;
+}
+
 LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT result;

@@ -15,12 +15,18 @@
     <ClCompile Include="MainWindow.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="GLES2Renderer.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="MainWindow.hpp">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="GLES2Renderer.hpp">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

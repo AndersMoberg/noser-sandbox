@@ -6,6 +6,7 @@
 #define _APPLICATION_HPP
 
 #include "MainWindow.hpp"
+#include "GLES2Renderer.hpp"
 
 class Application
 {
@@ -18,6 +19,7 @@ public:
 private:
 
 	MainWindow m_window;
+	GLES2Renderer m_renderer;
 
 };
 

@@ -7,6 +7,7 @@
 void Application::init(HINSTANCE hInstance, int nShowCmd)
 {
 	m_window.init(hInstance, nShowCmd);
+	m_renderer.init(m_window.getHWnd());
 }
 
 int Application::messagePump()
