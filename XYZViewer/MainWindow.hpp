@@ -5,6 +5,8 @@
 #ifndef _MAINWINDOW_HPP
 #define _MAINWINDOW_HPP
 
+#include <memory>
+
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
@@ -14,14 +16,14 @@ class MainWindow
 
 public:
 
-	MainWindow();
 	~MainWindow();
-
-	void init(HINSTANCE hInstance, int nShowCmd);
+	static std::unique_ptr<MainWindow> create(HINSTANCE hInstance, int nShowCmd);
 
 	HWND getHWnd();
 
 private:
+	
+	MainWindow();
 
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnWMCreate(HWND hWnd);

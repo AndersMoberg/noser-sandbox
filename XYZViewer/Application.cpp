@@ -6,8 +6,8 @@
 
 void Application::init(HINSTANCE hInstance, int nShowCmd)
 {
-	m_window.init(hInstance, nShowCmd);
-	m_renderer.init(m_window.getHWnd());
+	m_window = MainWindow::create(hInstance, nShowCmd);
+	m_renderer = GLES2Renderer::create(m_window->getHWnd());
 }
 
 int Application::messagePump()

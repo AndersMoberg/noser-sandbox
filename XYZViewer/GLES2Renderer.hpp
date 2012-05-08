@@ -5,6 +5,8 @@
 #ifndef _GLES2RENDERER_HPP
 #define _GLES2RENDERER_HPP
 
+#include <memory>
+
 #include <EGL/egl.h>
 
 class GLES2Renderer
@@ -12,11 +14,12 @@ class GLES2Renderer
 
 public:
 
-	GLES2Renderer();
 	~GLES2Renderer();
-	bool init(HWND hWnd);
+	static std::unique_ptr<GLES2Renderer> create(HWND hWnd);
 
 private:
+	
+	GLES2Renderer();
 
 	EGLDisplay m_eglDisplay;
 	EGLSurface m_eglSurface;

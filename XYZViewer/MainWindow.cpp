@@ -19,8 +19,10 @@ MainWindow::~MainWindow()
 	}
 }
 
-void MainWindow::init(HINSTANCE hInstance, int nShowCmd)
+std::unique_ptr<MainWindow> MainWindow::create(HINSTANCE hInstance, int nShowCmd)
 {
+	std::unique_ptr<MainWindow> p(new MainWindow);
+
 	WNDCLASS wc = { 0 };
 	wc.style = CS_HREDRAW | CS_VREDRAW;
 	wc.lpfnWndProc = WindowProc;
@@ -31,7 +33,7 @@ void MainWindow::init(HINSTANCE hInstance, int nShowCmd)
 	RegisterClass(&wc);
 
 	// The WM_CREATE handler sets m_hWnd
-	CreateWindow(
+	HWND hWnd = CreateWindow(
 		MAINWINDOW_CLASS_NAME,
 		TEXT("XYZ Viewer"),
 		WS_OVERLAPPEDWINDOW | WS_VISIBLE,
@@ -40,7 +42,12 @@ void MainWindow::init(HINSTANCE hInstance, int nShowCmd)
 		NULL,
 		NULL,
 		hInstance,
-		this);
+		p.get());
+	if (!hWnd) {
+		throw std::exception("Failed to create main window");
+	}
+
+	return p;
 }
 
 HWND MainWindow::getHWnd()

@@ -22,47 +22,49 @@ GLES2Renderer::~GLES2Renderer()
 	m_eglDisplay = 0;
 }
 
-bool GLES2Renderer::init(HWND hWnd)
+std::unique_ptr<GLES2Renderer> GLES2Renderer::create(HWND hWnd)
 {
-	m_eglDisplay = eglGetDisplay(GetDC(hWnd));
-	if (m_eglDisplay == EGL_NO_DISPLAY) {
-		return false;
+	std::unique_ptr<GLES2Renderer> p(new GLES2Renderer);
+
+	p->m_eglDisplay = eglGetDisplay(GetDC(hWnd));
+	if (p->m_eglDisplay == EGL_NO_DISPLAY) {
+		throw std::exception("Failed to get display for EGL");
 	}
 
-	if (eglInitialize(m_eglDisplay, NULL, NULL) != EGL_TRUE) {
-		return false;
+	if (eglInitialize(p->m_eglDisplay, NULL, NULL) != EGL_TRUE) {
+		throw std::exception("Failed to initialize EGL");
 	}
 	
 	EGLint numConfigs;
-	if (eglGetConfigs(m_eglDisplay, NULL, 0, &numConfigs) != EGL_TRUE) {
-		return false;
+	if (eglGetConfigs(p->m_eglDisplay, NULL, 0, &numConfigs) != EGL_TRUE) {
+		throw std::exception("Failed to get number of EGL configurations");
 	}
 
 	static const EGLint chooseConfigAttribs[] = {
 		EGL_NONE
 	};
 	EGLConfig eglConfig;
-	if (eglChooseConfig(m_eglDisplay, chooseConfigAttribs, &eglConfig, 1, &numConfigs) != EGL_TRUE) {
-		return false;
+	if (eglChooseConfig(p->m_eglDisplay, chooseConfigAttribs, &eglConfig, 1, &numConfigs) != EGL_TRUE) {
+		throw std::exception("Failed to choose an EGL configuration");
 	}
 
-	m_eglSurface = eglCreateWindowSurface(m_eglDisplay, eglConfig, hWnd, NULL);
-	if (m_eglSurface == EGL_NO_SURFACE) {
-		return false;
+	p->m_eglSurface = eglCreateWindowSurface(p->m_eglDisplay, eglConfig, hWnd, NULL);
+	if (p->m_eglSurface == EGL_NO_SURFACE) {
+		throw std::exception("Failed to create EGL window surface");
 	}
 
 	static const EGLint createContextAttribs[] = {
 		EGL_CONTEXT_CLIENT_VERSION, 2,
 		EGL_NONE
 	};
-	m_eglContext = eglCreateContext(m_eglDisplay, eglConfig, EGL_NO_CONTEXT, createContextAttribs);
-	if (m_eglContext == EGL_NO_CONTEXT) {
-		return false;
+	p->m_eglContext = eglCreateContext(p->m_eglDisplay, eglConfig, EGL_NO_CONTEXT, createContextAttribs);
+	if (p->m_eglContext == EGL_NO_CONTEXT) {
+		throw std::exception("Failed to create EGL context");
 	}
 
-	if (eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext) != EGL_TRUE) {
-		return false;
+	if (eglMakeCurrent(p->m_eglDisplay, p->m_eglSurface, p->m_eglSurface, p->m_eglContext) != EGL_TRUE) {
+		throw std::exception("Failed to make EGL context current");
 	}
 
-	return true;
+	return p;
 }

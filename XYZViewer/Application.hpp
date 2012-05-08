@@ -18,8 +18,8 @@ public:
 
 private:
 
-	MainWindow m_window;
-	GLES2Renderer m_renderer;
+	std::unique_ptr<MainWindow> m_window;
+	std::unique_ptr<GLES2Renderer> m_renderer;
 
 };
 
