@@ -17,6 +17,8 @@ public:
 
 	int messagePump();
 
+	void paint();
+
 private:
 
 	Application();

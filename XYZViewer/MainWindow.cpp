@@ -6,6 +6,8 @@
 
 #include <cstdlib>
 
+#include "Application.hpp"
+
 static LPCTSTR MAINWINDOW_CLASS_NAME = TEXT("XYZViewerMainWindowClass");
 
 MainWindow::MainWindow()
@@ -19,9 +21,11 @@ MainWindow::~MainWindow()
 	}
 }
 
-std::unique_ptr<MainWindow> MainWindow::create(HINSTANCE hInstance, int nShowCmd)
+std::unique_ptr<MainWindow> MainWindow::create(Application* app, HINSTANCE hInstance, int nShowCmd)
 {
 	std::unique_ptr<MainWindow> p(new MainWindow);
+
+	p->m_app = app;
 
 	WNDCLASS wc = { 0 };
 	wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -76,6 +80,9 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 		case WM_DESTROY:
 			result = self->OnWMDestroy();
 			break;
+		case WM_PAINT:
+			result = self->OnWMPaint();
+			break;
 		default:
 			result = DefWindowProc(hwnd, uMsg, wParam, lParam);
 			break;
@@ -95,5 +102,12 @@ LRESULT MainWindow::OnWMDestroy()
 {
 	PostQuitMessage(EXIT_SUCCESS);
 	m_hWnd = NULL;
+	return 0;
+}
+
+LRESULT MainWindow::OnWMPaint()
+{
+	m_app->paint();
+	ValidateRect(m_hWnd, NULL);
 	return 0;
 }

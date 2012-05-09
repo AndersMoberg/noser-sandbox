@@ -17,6 +17,11 @@ public:
 	~GLES2Renderer();
 	static std::unique_ptr<GLES2Renderer> create(HWND hWnd);
 
+	void present();
+
+	unsigned int getWidth() const { return m_width; }
+	unsigned int getHeight() const { return m_height; }
+
 private:
 	
 	GLES2Renderer();
@@ -24,6 +29,9 @@ private:
 	EGLDisplay m_eglDisplay;
 	EGLSurface m_eglSurface;
 	EGLContext m_eglContext;
+
+	unsigned int m_width;
+	unsigned int m_height;
 
 };
 

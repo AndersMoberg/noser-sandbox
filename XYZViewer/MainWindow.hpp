@@ -11,13 +11,15 @@
 #define NOMINMAX
 #include <Windows.h>
 
+class Application;
+
 class MainWindow
 {
 
 public:
 
 	~MainWindow();
-	static std::unique_ptr<MainWindow> create(HINSTANCE hInstance, int nShowCmd);
+	static std::unique_ptr<MainWindow> create(Application* app, HINSTANCE hInstance, int nShowCmd);
 
 	HWND getHWnd();
 
@@ -28,6 +30,9 @@ private:
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT OnWMCreate(HWND hWnd);
 	LRESULT OnWMDestroy();
+	LRESULT OnWMPaint();
+
+	Application* m_app;
 
 	HWND m_hWnd;
 

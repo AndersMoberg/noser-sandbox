@@ -4,6 +4,8 @@
 
 #include "Application.hpp"
 
+#include <GLES2/gl2.h>
+
 Application::Application()
 { }
 
@@ -11,7 +13,7 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 {
 	std::unique_ptr<Application> p(new Application);
 
-	p->m_window = MainWindow::create(hInstance, nShowCmd);
+	p->m_window = MainWindow::create(p.get(), hInstance, nShowCmd);
 	p->m_renderer = GLES2Renderer::create(p->m_window->getHWnd());
 
 	return p;
@@ -25,4 +27,14 @@ int Application::messagePump()
 		DispatchMessage(&msg);
 	}
 	return (int)msg.wParam;
+}
+
+void Application::paint()
+{
+	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glViewport(0, 0, m_renderer->getWidth(), m_renderer->getHeight());
+
+	m_renderer->present();
 }

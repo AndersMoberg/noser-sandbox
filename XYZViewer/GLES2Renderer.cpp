@@ -26,6 +26,11 @@ std::unique_ptr<GLES2Renderer> GLES2Renderer::create(HWND hWnd)
 {
 	std::unique_ptr<GLES2Renderer> p(new GLES2Renderer);
 
+	RECT clientRc;
+	GetClientRect(hWnd, &clientRc);
+	p->m_width = clientRc.right - clientRc.left;
+	p->m_height = clientRc.bottom - clientRc.top;
+
 	p->m_eglDisplay = eglGetDisplay(GetDC(hWnd));
 	if (p->m_eglDisplay == EGL_NO_DISPLAY) {
 		throw std::exception("Failed to get display for EGL");
@@ -67,4 +72,9 @@ std::unique_ptr<GLES2Renderer> GLES2Renderer::create(HWND hWnd)
 	}
 
 	return p;
+}
+
+void GLES2Renderer::present()
+{
+	eglSwapBuffers(m_eglDisplay, m_eglSurface);
 }
