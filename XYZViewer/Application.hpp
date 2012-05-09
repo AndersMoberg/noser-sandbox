@@ -7,6 +7,8 @@
 
 #include <vector>
 
+#include <GLES2/gl2.h>
+
 #include "MainWindow.hpp"
 #include "Geometry.hpp"
 #include "GLES2Renderer.hpp"
@@ -16,6 +18,7 @@ class Application
 
 public:
 
+	~Application();
 	static std::unique_ptr<Application> create(HINSTANCE hInstance, int nShowCmd);
 
 	int messagePump();
@@ -31,6 +34,16 @@ private:
 
 	typedef std::vector<Vector3f> Points;
 	Points m_points;
+
+	struct DrawProgram
+	{
+		DrawProgram();
+
+		GLuint program;
+		GLuint aposLoc;
+	};
+
+	DrawProgram m_drawProgram;
 
 };
 
