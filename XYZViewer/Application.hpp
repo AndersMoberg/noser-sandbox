@@ -5,7 +5,10 @@
 #ifndef _APPLICATION_HPP
 #define _APPLICATION_HPP
 
+#include <vector>
+
 #include "MainWindow.hpp"
+#include "Geometry.hpp"
 #include "GLES2Renderer.hpp"
 
 class Application
@@ -25,6 +28,9 @@ private:
 
 	std::unique_ptr<MainWindow> m_window;
 	std::unique_ptr<GLES2Renderer> m_renderer;
+
+	typedef std::vector<Vector3f> Points;
+	Points m_points;
 
 };
 

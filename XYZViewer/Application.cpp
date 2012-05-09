@@ -36,5 +36,9 @@ void Application::paint()
 
 	glViewport(0, 0, m_renderer->getWidth(), m_renderer->getHeight());
 
+	for (Points::const_iterator it = m_points.begin(); it != m_points.end(); ++it)
+	{
+	}
+
 	m_renderer->present();
 }
