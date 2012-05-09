@@ -4,10 +4,17 @@
 
 #include "Application.hpp"
 
-void Application::init(HINSTANCE hInstance, int nShowCmd)
+Application::Application()
+{ }
+
+std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowCmd)
 {
-	m_window = MainWindow::create(hInstance, nShowCmd);
-	m_renderer = GLES2Renderer::create(m_window->getHWnd());
+	std::unique_ptr<Application> p(new Application);
+
+	p->m_window = MainWindow::create(hInstance, nShowCmd);
+	p->m_renderer = GLES2Renderer::create(p->m_window->getHWnd());
+
+	return p;
 }
 
 int Application::messagePump()

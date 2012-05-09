@@ -13,10 +13,13 @@ class Application
 
 public:
 
-	void init(HINSTANCE hInstance, int nShowCmd);
+	static std::unique_ptr<Application> create(HINSTANCE hInstance, int nShowCmd);
+
 	int messagePump();
 
 private:
+
+	Application();
 
 	std::unique_ptr<MainWindow> m_window;
 	std::unique_ptr<GLES2Renderer> m_renderer;

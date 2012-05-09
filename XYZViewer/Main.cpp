@@ -23,7 +23,15 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	Application app;
-	app.init(hInstance, nShowCmd);
-	return app.messagePump();
+	try
+	{
+		std::unique_ptr<Application> app = Application::create(hInstance, nShowCmd);
+		return app->messagePump();
+	}
+	catch (const std::exception& e)
+	{
+		OutputDebugStringA(e.what());
+		OutputDebugStringA("\n");
+		return EXIT_FAILURE;
+	}
 }
