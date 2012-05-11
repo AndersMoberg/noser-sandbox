@@ -68,14 +68,43 @@ void Application::paint()
 
 	glViewport(0, 0, m_renderer->getWidth(), m_renderer->getHeight());
 
-	glUseProgram(m_drawProgram.program);
-
 	for (Points::const_iterator it = m_points.begin(); it != m_points.end(); ++it)
 	{
-		glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), &*it);
-		glEnableVertexAttribArray(m_drawProgram.aposLoc);
-		glDrawArrays(GL_POINTS, 0, 1);
+		drawSphere(*it, 1.0f / 128.0f, 64, 64);
 	}
 
 	m_renderer->present();
+}
+
+void Application::drawSphere(const Vector3f& center, float radius, int lats, int longs)
+{
+	std::vector<float> verts;
+
+	for (int lat = 0; lat < lats; ++lat)
+	{
+		float theta = lat * M_PIf / lats;
+		float sinTheta = sin(theta);
+		float cosTheta = cos(theta);
+
+		for (int lon = 0; lon < longs; ++lon)
+		{
+			float phi = lon * M_2PIf / longs;
+			float sinPhi = sin(phi);
+			float cosPhi = cos(phi);
+
+			float x = cosPhi * sinTheta;
+			float y = cosTheta;
+			float z = sinPhi * sinTheta;
+			verts.push_back(center.x + radius * x);
+			verts.push_back(center.y + radius * y);
+			verts.push_back(center.z + radius * z);
+		}
+	}
+	
+	glUseProgram(m_drawProgram.program);
+
+	glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), &verts[0]);
+	glEnableVertexAttribArray(m_drawProgram.aposLoc);
+
+	glDrawArrays(GL_POINTS, 0, lats * longs);
 }

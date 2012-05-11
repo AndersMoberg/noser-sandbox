@@ -29,6 +29,8 @@ private:
 
 	Application();
 
+	void drawSphere(const Vector3f& center, float radius, int lats, int longs);
+
 	std::unique_ptr<MainWindow> m_window;
 	std::unique_ptr<GLES2Renderer> m_renderer;
 
