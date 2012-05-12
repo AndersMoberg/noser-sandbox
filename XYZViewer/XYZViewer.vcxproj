@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GLES2Renderer.cpp" />
     <ClCompile Include="GLES2Utils.cpp" />
@@ -89,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp" />
+    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Geometry.hpp" />
     <ClInclude Include="GLES2Renderer.hpp" />
     <ClInclude Include="GLES2Utils.hpp" />

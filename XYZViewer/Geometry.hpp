@@ -32,6 +32,7 @@ struct Boxf
 	float bottom;
 	float far;
 
+	Boxf() { }
 	Boxf(float l, float t, float n, float r, float b, float f)
 		: left(l), top(t), near(n), right(r), bottom(b), far(f)
 	{ }
@@ -39,10 +40,17 @@ struct Boxf
 
 struct Matrix4x4f
 {
-	float _11, _12, _13, _14;
-	float _21, _22, _23, _24;
-	float _31, _32, _33, _34;
-	float _41, _42, _43, _44;
+	union
+	{
+		struct
+		{
+			float _11, _12, _13, _14;
+			float _21, _22, _23, _24;
+			float _31, _32, _33, _34;
+			float _41, _42, _43, _44;
+		};
+		float f[16];
+	};
 
 	Matrix4x4f() { }
 	Matrix4x4f(float m11, float m12, float m13, float m14,
@@ -55,9 +63,13 @@ struct Matrix4x4f
 		_41(m41), _42(m42), _43(m43), _44(m44)
 	{ }
 
+	Matrix4x4f operator*(const Matrix4x4f& rhs) const;
+
 	static const Matrix4x4f IDENTITY;
 
 	static Matrix4x4f boxLerp(const Boxf& from, const Boxf& to);
+	static Matrix4x4f rotateX(float angle);
+	static Matrix4x4f rotateY(float angle);
 };
 
 #endif

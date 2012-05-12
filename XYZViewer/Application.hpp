@@ -12,6 +12,7 @@
 #include "MainWindow.hpp"
 #include "Geometry.hpp"
 #include "GLES2Renderer.hpp"
+#include "Camera.hpp"
 
 class Application
 {
@@ -48,7 +49,7 @@ private:
 
 	DrawProgram m_drawProgram;
 
-	Matrix4x4f m_cameraMatrix;
+	std::unique_ptr<Camera> m_camera;
 
 };
 

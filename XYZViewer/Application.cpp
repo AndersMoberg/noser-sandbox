@@ -4,6 +4,10 @@
 
 #include "Application.hpp"
 
+#include <fstream>
+#include <sstream>
+#include <string>
+
 #include <GLES2/gl2.h>
 
 #include "GLES2Utils.hpp"
@@ -28,8 +32,24 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 	p->m_window = MainWindow::create(p.get(), hInstance, nShowCmd);
 	p->m_renderer = GLES2Renderer::create(p->m_window->getHWnd());
 
-	p->m_points.push_back(Vector3f(0.0f, 16.0f, 0.0f));
-	p->m_points.push_back(Vector3f(16.0f, 0.0f, 0.0f));
+	// read in an xyz file
+	std::ifstream ifs("bridge.xyz");
+	while (!ifs.eof())
+	{
+		std::string line;
+		std::getline(ifs, line);
+		if (!line.empty())
+		{
+			if (line[0] == '#') {
+				continue;
+			}
+
+			std::istringstream iss(line);
+			float x, y, z;
+			iss >> x >> y >> z;
+			p->m_points.push_back(Vector3f(x, y, z));
+		}
+	}
 
 	static const char DRAW_VERTEX_SHADER[] =
 		"attribute vec3 a_pos;\n"
@@ -50,6 +70,8 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 	p->m_drawProgram.aposLoc = glGetAttribLocation(p->m_drawProgram.program, "a_pos");
 	p->m_drawProgram.umatLoc = glGetUniformLocation(p->m_drawProgram.program, "u_mat");
 
+	p->m_camera = Camera::create();
+
 	return p;
 }
 
@@ -69,10 +91,21 @@ void Application::paint()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glViewport(0, 0, m_renderer->getWidth(), m_renderer->getHeight());
+	
+	glUseProgram(m_drawProgram.program);
+	
+	Matrix4x4f mat = m_camera->getWorldToClip(
+		m_renderer->getWidth(), m_renderer->getHeight());
+	glUniformMatrix4x4f(m_drawProgram.umatLoc, mat);
 
-	for (Points::const_iterator it = m_points.begin(); it != m_points.end(); ++it)
+	for (Points::const_iterator it = m_points.begin(); it < m_points.end(); it += 2)
 	{
-		drawSphere(*it, 16.0f, 64, 64);
+		Vector3f points[2] = { *it, *(it+1) };
+		glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), points);
+		glEnableVertexAttribArray(m_drawProgram.aposLoc);
+		glDrawArrays(GL_LINES, 0, 2);
+
+		//drawSphere(*it, 0.05f, 16, 16);
 	}
 
 	m_renderer->present();
@@ -108,13 +141,9 @@ void Application::drawSphere(const Vector3f& center, float radius, int lats, int
 	glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), &verts[0]);
 	glEnableVertexAttribArray(m_drawProgram.aposLoc);
 
-	Boxf from(-64.0f, 64.0f, 0.0f,
-		64.0f, -64.0f, 64.0f);
-	Boxf to(-1.0f, 1.0f, 0.0f,
-		1.0f, -1.0f, 1.0f);
-	m_cameraMatrix = Matrix4x4f::boxLerp(from, to);
-
-	glUniformMatrix4x4f(m_drawProgram.umatLoc, m_cameraMatrix);
+	Matrix4x4f mat = m_camera->getWorldToClip(
+		m_renderer->getWidth(), m_renderer->getHeight());
+	glUniformMatrix4x4f(m_drawProgram.umatLoc, mat);
 
 	glDrawArrays(GL_POINTS, 0, lats * longs);
 }
