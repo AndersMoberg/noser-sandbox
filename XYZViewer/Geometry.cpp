@@ -46,6 +46,15 @@ Matrix4x4f Matrix4x4f::boxLerp(const Boxf& from, const Boxf& to)
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
 
+Matrix4x4f Matrix4x4f::translate(const Vector3f& v)
+{
+	return Matrix4x4f(
+		1.0f, 0.0f, 0.0f, v.x,
+		0.0f, 1.0f, 0.0f, v.y,
+		0.0f, 0.0f, 1.0f, v.z,
+		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
 Matrix4x4f Matrix4x4f::rotateX(float angle)
 {
 	float c = cos(angle);

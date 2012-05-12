@@ -31,9 +31,11 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 
 	p->m_window = MainWindow::create(p.get(), hInstance, nShowCmd);
 	p->m_renderer = GLES2Renderer::create(p->m_window->getHWnd());
+	p->m_camera = Camera::create();
 
 	// read in an xyz file
 	std::ifstream ifs("bridge.xyz");
+	bool boundsInited = false;
 	while (!ifs.eof())
 	{
 		std::string line;
@@ -48,8 +50,29 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 			float x, y, z;
 			iss >> x >> y >> z;
 			p->m_points.push_back(Vector3f(x, y, z));
+			if (!boundsInited)
+			{
+				p->m_bounds.left = p->m_bounds.right = x;
+				p->m_bounds.top = p->m_bounds.bottom = y;
+				p->m_bounds.near = p->m_bounds.far = z;
+				boundsInited = true;
+			}
+			else
+			{
+				p->m_bounds.left = std::min(x, p->m_bounds.left);
+				p->m_bounds.top = std::max(y, p->m_bounds.top);
+				p->m_bounds.near = std::min(z, p->m_bounds.near);
+				p->m_bounds.right = std::max(x, p->m_bounds.right);
+				p->m_bounds.bottom = std::min(y, p->m_bounds.bottom);
+				p->m_bounds.far = std::max(z, p->m_bounds.far);
+			}
 		}
 	}
+
+	float zoom = (Vector3f(p->m_bounds.left, p->m_bounds.top, p->m_bounds.near) -
+		Vector3f(p->m_bounds.right, p->m_bounds.bottom, p->m_bounds.far)).length();
+	p->m_camera->setCenter(p->m_bounds.center());
+	p->m_camera->setZoom(zoom);
 
 	static const char DRAW_VERTEX_SHADER[] =
 		"attribute vec3 a_pos;\n"
@@ -69,8 +92,6 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 	p->m_drawProgram.program = loadGLSLProgram(DRAW_VERTEX_SHADER, DRAW_FRAGMENT_SHADER);
 	p->m_drawProgram.aposLoc = glGetAttribLocation(p->m_drawProgram.program, "a_pos");
 	p->m_drawProgram.umatLoc = glGetUniformLocation(p->m_drawProgram.program, "u_mat");
-
-	p->m_camera = Camera::create();
 
 	return p;
 }

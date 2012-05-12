@@ -78,3 +78,17 @@ void GLES2Renderer::present()
 {
 	eglSwapBuffers(m_eglDisplay, m_eglSurface);
 }
+
+unsigned int GLES2Renderer::getWidth() const
+{
+	EGLint result;
+	eglQuerySurface(m_eglDisplay, m_eglSurface, EGL_WIDTH, &result);
+	return result;
+}
+
+unsigned int GLES2Renderer::getHeight() const
+{
+	EGLint result;
+	eglQuerySurface(m_eglDisplay, m_eglSurface, EGL_HEIGHT, &result);
+	return result;
+}

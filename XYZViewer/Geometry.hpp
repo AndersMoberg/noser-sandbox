@@ -21,6 +21,12 @@ struct Vector3f
 	Vector3f(float _x, float _y, float _z)
 		: x(_x), y(_y), z(_z)
 	{ }
+
+	Vector3f operator-(const Vector3f& rhs) const { return Vector3f(x-rhs.x, y-rhs.y, z-rhs.z); }
+	Vector3f operator-() const { return Vector3f(-x, -y, -z); }
+
+	float lengthSquared() const { return x*x + y*y + z*z; }
+	float length() const { return sqrt(lengthSquared()); }
 };
 
 struct Boxf
@@ -36,8 +42,11 @@ struct Boxf
 	Boxf(float l, float t, float n, float r, float b, float f)
 		: left(l), top(t), near(n), right(r), bottom(b), far(f)
 	{ }
+
+	Vector3f center() const { return Vector3f((left+right)/2.0f, (top+bottom)/2.0f, (near+far)/2.0f); }
 };
 
+// Components are stored in row-major order. NOTE: GLES requires column-major!
 struct Matrix4x4f
 {
 	union
@@ -68,6 +77,7 @@ struct Matrix4x4f
 	static const Matrix4x4f IDENTITY;
 
 	static Matrix4x4f boxLerp(const Boxf& from, const Boxf& to);
+	static Matrix4x4f translate(const Vector3f& v);
 	static Matrix4x4f rotateX(float angle);
 	static Matrix4x4f rotateY(float angle);
 };

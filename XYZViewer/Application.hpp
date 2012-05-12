@@ -37,6 +37,7 @@ private:
 
 	typedef std::vector<Vector3f> Points;
 	Points m_points;
+	Boxf m_bounds;
 
 	struct DrawProgram
 	{

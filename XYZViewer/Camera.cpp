@@ -11,13 +11,24 @@ std::unique_ptr<Camera> Camera::create()
 {
 	std::unique_ptr<Camera> p(new Camera);
 
+	p->m_center = Vector3f(0.0f, 0.0f, 0.0f);
 	p->m_zoom = 0.25f;
-	p->m_near = -1.0f;
-	p->m_far = 1.0f;
-	p->m_xRotate = M_PIf / 2.0f;
-	p->m_yRotate = M_PIf / 4.0f;
+	p->m_near = -64.0f;
+	p->m_far = 64.0f;
+	p->m_xRotate = M_PIf/2.0f;
+	p->m_yRotate = 0.0f;
 
 	return p;
+}
+
+void Camera::setCenter(const Vector3f& center)
+{
+	m_center = center;
+}
+
+void Camera::setZoom(float zoom)
+{
+	m_zoom = zoom;
 }
 
 Matrix4x4f Camera::getWorldToClip(unsigned int width, unsigned int height) const
@@ -29,11 +40,11 @@ Matrix4x4f Camera::getWorldToClip(unsigned int width, unsigned int height) const
 		// visible on the Y axis.
 		float aspect = (float)width / height;
 		from = Boxf(
-			-m_zoom * aspect,
-			m_zoom,
+			-0.5f*m_zoom * aspect,
+			0.5f*m_zoom,
 			m_near,
-			m_zoom * aspect,
-			-m_zoom,
+			0.5f*m_zoom * aspect,
+			-0.5f*m_zoom,
 			m_far);
 	}
 	else
@@ -42,19 +53,20 @@ Matrix4x4f Camera::getWorldToClip(unsigned int width, unsigned int height) const
 		// visible on the X axis.
 		float aspect = (float)height / width;
 		from = Boxf(
-			-m_zoom,
-			m_zoom * aspect,
+			-0.5f*m_zoom,
+			0.5f*m_zoom * aspect,
 			m_near,
-			m_zoom,
-			-m_zoom * aspect,
+			0.5f*m_zoom,
+			-0.5f*m_zoom * aspect,
 			m_far);
 	}
 
 	Boxf to(-1.0f, 1.0f, 0.0f,
 		1.0f, -1.0f, 1.0f);
 
+	Matrix4x4f translate = Matrix4x4f::translate(-m_center);
 	Matrix4x4f xRotate = Matrix4x4f::rotateX(m_xRotate);
 	Matrix4x4f yRotate = Matrix4x4f::rotateY(m_yRotate);
 
-	return Matrix4x4f::boxLerp(from, to) * xRotate * yRotate;
+	return Matrix4x4f::boxLerp(from, to) * yRotate * xRotate * translate;
 }
