@@ -43,9 +43,12 @@ private:
 
 		GLuint program;
 		GLuint aposLoc;
+		GLuint umatLoc;
 	};
 
 	DrawProgram m_drawProgram;
+
+	Matrix4x4f m_cameraMatrix;
 
 };
 

@@ -82,3 +82,13 @@ GLuint loadGLSLProgram(const char* vShaderSrc, const char* fShaderSrc)
 
 	return program;
 }
+
+void glUniformMatrix4x4f(GLint location, const Matrix4x4f& mat)
+{
+	// GLES requires input in column-major order
+	float f[16] = { mat._11, mat._21, mat._31, mat._41,
+		mat._12, mat._22, mat._32, mat._42,
+		mat._13, mat._23, mat._33, mat._43,
+		mat._14, mat._24, mat._34, mat._44 };
+	glUniformMatrix4fv(location, 1, GL_FALSE, f);
+}

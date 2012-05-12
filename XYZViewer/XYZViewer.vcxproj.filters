@@ -21,6 +21,9 @@
     <ClCompile Include="GLES2Utils.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Geometry.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">

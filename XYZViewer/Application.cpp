@@ -28,14 +28,15 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 	p->m_window = MainWindow::create(p.get(), hInstance, nShowCmd);
 	p->m_renderer = GLES2Renderer::create(p->m_window->getHWnd());
 
-	p->m_points.push_back(Vector3f(0.0f, 0.5f, 0.0f));
-	p->m_points.push_back(Vector3f(0.5f, 0.0f, 0.0f));
+	p->m_points.push_back(Vector3f(0.0f, 16.0f, 0.0f));
+	p->m_points.push_back(Vector3f(16.0f, 0.0f, 0.0f));
 
 	static const char DRAW_VERTEX_SHADER[] =
 		"attribute vec3 a_pos;\n"
+		"uniform mat4 u_mat;\n"
 		"void main()\n"
 		"{\n"
-			"gl_Position = vec4(a_pos, 1);\n"
+			"gl_Position = u_mat * vec4(a_pos, 1);\n"
 		"}\n"
 		;
 	static const char DRAW_FRAGMENT_SHADER[] =
@@ -47,6 +48,7 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 		;
 	p->m_drawProgram.program = loadGLSLProgram(DRAW_VERTEX_SHADER, DRAW_FRAGMENT_SHADER);
 	p->m_drawProgram.aposLoc = glGetAttribLocation(p->m_drawProgram.program, "a_pos");
+	p->m_drawProgram.umatLoc = glGetUniformLocation(p->m_drawProgram.program, "u_mat");
 
 	return p;
 }
@@ -70,7 +72,7 @@ void Application::paint()
 
 	for (Points::const_iterator it = m_points.begin(); it != m_points.end(); ++it)
 	{
-		drawSphere(*it, 1.0f / 128.0f, 64, 64);
+		drawSphere(*it, 16.0f, 64, 64);
 	}
 
 	m_renderer->present();
@@ -105,6 +107,14 @@ void Application::drawSphere(const Vector3f& center, float radius, int lats, int
 
 	glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), &verts[0]);
 	glEnableVertexAttribArray(m_drawProgram.aposLoc);
+
+	Boxf from(-64.0f, 64.0f, 0.0f,
+		64.0f, -64.0f, 64.0f);
+	Boxf to(-1.0f, 1.0f, 0.0f,
+		1.0f, -1.0f, 1.0f);
+	m_cameraMatrix = Matrix4x4f::boxLerp(from, to);
+
+	glUniformMatrix4x4f(m_drawProgram.umatLoc, m_cameraMatrix);
 
 	glDrawArrays(GL_POINTS, 0, lats * longs);
 }

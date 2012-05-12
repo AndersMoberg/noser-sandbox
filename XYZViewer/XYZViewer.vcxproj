@@ -81,6 +81,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GLES2Renderer.cpp" />
     <ClCompile Include="GLES2Utils.cpp" />
     <ClCompile Include="Main.cpp" />
