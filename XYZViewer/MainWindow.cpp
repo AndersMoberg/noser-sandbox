@@ -69,7 +69,7 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 		MainWindow* self = (MainWindow*)pcs->lpCreateParams;
 		SetWindowLongPtr(hwnd, 0, (LONG_PTR)self);
 
-		result = self->OnWMCreate(hwnd);
+		result = self->onWMCreate(hwnd);
 	}
 	else
 	{
@@ -78,10 +78,13 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 		switch (uMsg)
 		{
 		case WM_DESTROY:
-			result = self->OnWMDestroy();
+			result = self->onWMDestroy();
 			break;
 		case WM_PAINT:
-			result = self->OnWMPaint();
+			result = self->onWMPaint();
+			break;
+		case WM_KEYDOWN:
+			result = self->onWMKeyDown(wParam);
 			break;
 		default:
 			result = DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -92,22 +95,43 @@ LRESULT CALLBACK MainWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 	return result;
 }
 
-LRESULT MainWindow::OnWMCreate(HWND hwnd)
+LRESULT MainWindow::onWMCreate(HWND hwnd)
 {
 	m_hWnd = hwnd;
 	return 0;
 }
 
-LRESULT MainWindow::OnWMDestroy()
+LRESULT MainWindow::onWMDestroy()
 {
 	PostQuitMessage(EXIT_SUCCESS);
 	m_hWnd = NULL;
 	return 0;
 }
 
-LRESULT MainWindow::OnWMPaint()
+LRESULT MainWindow::onWMPaint()
 {
 	m_app->paint();
 	ValidateRect(m_hWnd, NULL);
+	return 0;
+}
+
+LRESULT MainWindow::onWMKeyDown(WPARAM wParam)
+{
+	switch (wParam)
+	{
+	case VK_LEFT:
+		m_app->onLeft();
+		break;
+	case VK_RIGHT:
+		m_app->onRight();
+		break;
+	case VK_UP:
+		m_app->onUp();
+		break;
+	case VK_DOWN:
+		m_app->onDown();
+		break;
+	}
+
 	return 0;
 }

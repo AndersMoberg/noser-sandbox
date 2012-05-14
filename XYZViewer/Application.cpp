@@ -106,6 +106,30 @@ int Application::messagePump()
 	return (int)msg.wParam;
 }
 
+void Application::onLeft()
+{
+	m_camera->setYRotation(m_camera->getYRotation() - M_PIf/32.0f);
+	paint();
+}
+
+void Application::onRight()
+{
+	m_camera->setYRotation(m_camera->getYRotation() + M_PIf/32.0f);
+	paint();
+}
+
+void Application::onUp()
+{
+	m_camera->setXRotation(m_camera->getXRotation() - M_PIf/32.0f);
+	paint();
+}
+
+void Application::onDown()
+{
+	m_camera->setXRotation(m_camera->getXRotation() + M_PIf/32.0f);
+	paint();
+}
+
 void Application::paint()
 {
 	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
@@ -126,7 +150,7 @@ void Application::paint()
 		glEnableVertexAttribArray(m_drawProgram.aposLoc);
 		glDrawArrays(GL_LINES, 0, 2);
 
-		//drawSphere(*it, 0.05f, 16, 16);
+		drawSphere(*it, 0.0005f, 16, 16);
 	}
 
 	m_renderer->present();

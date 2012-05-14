@@ -24,6 +24,10 @@ public:
 
 	int messagePump();
 
+	void onLeft();
+	void onRight();
+	void onUp();
+	void onDown();
 	void paint();
 
 private:

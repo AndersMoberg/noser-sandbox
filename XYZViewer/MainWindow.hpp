@@ -28,9 +28,10 @@ private:
 	MainWindow();
 
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	LRESULT OnWMCreate(HWND hWnd);
-	LRESULT OnWMDestroy();
-	LRESULT OnWMPaint();
+	LRESULT onWMCreate(HWND hWnd);
+	LRESULT onWMDestroy();
+	LRESULT onWMPaint();
+	LRESULT onWMKeyDown(WPARAM wParam);
 
 	Application* m_app;
 
