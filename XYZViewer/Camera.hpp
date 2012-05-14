@@ -19,11 +19,8 @@ public:
 	void setCenter(const Vector3f& center);
 	void setZoom(float zoom);
 
-	float getXRotation() const;
-	void setXRotation(float xRotation);
-
-	float getYRotation() const;
-	void setYRotation(float yRotation);
+	void rotateAroundX(float angle);
+	void rotateAroundY(float angle);
 
 	Matrix4x4f getWorldToClip(unsigned int width, unsigned int height) const;
 
@@ -35,8 +32,7 @@ private:
 	float m_zoom;
 	float m_near;
 	float m_far;
-	float m_xRotation;
-	float m_yRotation;
+	Quaternionf m_rotation;
 
 };
 

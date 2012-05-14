@@ -15,8 +15,7 @@ std::unique_ptr<Camera> Camera::create()
 	p->m_zoom = 0.25f;
 	p->m_near = -64.0f;
 	p->m_far = 64.0f;
-	p->m_xRotation = 0.0f;
-	p->m_yRotation = 0.0f;
+	p->m_rotation = Quaternionf(0.0f, 0.0f, 0.0f, 1.0f);
 
 	return p;
 }
@@ -31,24 +30,18 @@ void Camera::setZoom(float zoom)
 	m_zoom = zoom;
 }
 
-float Camera::getXRotation() const
+void Camera::rotateAroundX(float angle)
 {
-	return m_xRotation;
+	Quaternionf q(sin(-angle/2.0f), 0.0f, 0.0f, cos(-angle/2.0f));
+	m_rotation = q * m_rotation;
+	m_rotation.normalize();
 }
 
-void Camera::setXRotation(float xRotation)
+void Camera::rotateAroundY(float angle)
 {
-	m_xRotation = xRotation;
-}
-
-float Camera::getYRotation() const
-{
-	return m_yRotation;
-}
-
-void Camera::setYRotation(float yRotation)
-{
-	m_yRotation = yRotation;
+	Quaternionf q(0.0f, sin(-angle/2.0f), 0.0f, cos(-angle/2.0f));
+	m_rotation = q * m_rotation;
+	m_rotation.normalize();
 }
 
 Matrix4x4f Camera::getWorldToClip(unsigned int width, unsigned int height) const
@@ -85,8 +78,6 @@ Matrix4x4f Camera::getWorldToClip(unsigned int width, unsigned int height) const
 		1.0f, -1.0f, 1.0f);
 
 	Matrix4x4f translate = Matrix4x4f::translate(-m_center);
-	Matrix4x4f xRotate = Matrix4x4f::rotateX(m_xRotation);
-	Matrix4x4f yRotate = Matrix4x4f::rotateY(m_yRotation);
 
-	return Matrix4x4f::boxLerp(from, to) * yRotate * xRotate * translate;
+	return Matrix4x4f::boxLerp(from, to) * m_rotation.getMatrix() * translate;
 }

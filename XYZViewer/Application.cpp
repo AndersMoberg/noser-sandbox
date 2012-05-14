@@ -67,7 +67,8 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 	// read in an xyz file
 	std::ifstream ifs("bridge.xyz");
 	bool boundsInited = false;
-	while (!ifs.eof())
+	std::string line;
+	while (ifs)
 	{
 		std::string line;
 		std::getline(ifs, line);
@@ -139,25 +140,29 @@ int Application::messagePump()
 
 void Application::onLeft()
 {
-	m_camera->setYRotation(m_camera->getYRotation() - M_PIf/32.0f);
+	//m_camera->setYRotation(m_camera->getYRotation() - M_PIf/32.0f);
+	m_camera->rotateAroundY(-M_PIf/32.0f);
 	paint();
 }
 
 void Application::onRight()
 {
-	m_camera->setYRotation(m_camera->getYRotation() + M_PIf/32.0f);
+	//m_camera->setYRotation(m_camera->getYRotation() + M_PIf/32.0f);
+	m_camera->rotateAroundY(M_PIf/32.0f);
 	paint();
 }
 
 void Application::onUp()
 {
-	m_camera->setXRotation(m_camera->getXRotation() - M_PIf/32.0f);
+	//m_camera->setXRotation(m_camera->getXRotation() - M_PIf/32.0f);
+	m_camera->rotateAroundX(-M_PIf/32.0f);
 	paint();
 }
 
 void Application::onDown()
 {
-	m_camera->setXRotation(m_camera->getXRotation() + M_PIf/32.0f);
+	//m_camera->setXRotation(m_camera->getXRotation() + M_PIf/32.0f);
+	m_camera->rotateAroundX(M_PIf/32.0f);
 	paint();
 }
 
@@ -169,10 +174,10 @@ void Application::paint()
 	glViewport(0, 0, m_renderer->getWidth(), m_renderer->getHeight());
 	
 	// Draw points
-	for (Points::const_iterator it = m_points.begin(); it < m_points.end(); ++it)
-	{
-		drawSphere(*it, 0.0005f);
-	}
+	//for (Points::const_iterator it = m_points.begin(); it < m_points.end(); ++it)
+	//{
+	//	drawSphere(*it, 0.0005f);
+	//}
 
 	// Draw lines
 	glUseProgram(m_drawProgram.program);

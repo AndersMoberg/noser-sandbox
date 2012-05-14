@@ -87,3 +87,50 @@ Matrix4x4f Matrix4x4f::rotateY(float angle)
 		  -s, 0.0f,    c, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f);
 }
+
+// Ref: <http://www.cprogramming.com/tutorial/3d/quaternions.html>
+Quaternionf Quaternionf::operator*(const Quaternionf& rhs) const
+{
+	return Quaternionf(
+		w*rhs.x + x*rhs.w + y*rhs.z - z*rhs.y,
+		w*rhs.y - x*rhs.z + y*rhs.w + z*rhs.x,
+		w*rhs.z + x*rhs.y - y*rhs.x + z*rhs.w,
+		w*rhs.w - x*rhs.x - y*rhs.y - z*rhs.z);
+}
+
+void Quaternionf::normalize()
+{
+	float l2 = x*x + y*y + z*z + w*w;
+	if (l2 != 1.0f)
+	{
+		float l = sqrt(l2);
+		x /= l;
+		y /= l;
+		z /= l;
+		w /= l;
+	}
+}
+
+// Ref: <http://www.cprogramming.com/tutorial/3d/quaternions.html>
+Matrix4x4f Quaternionf::getMatrix() const
+{
+	// Please make sure the quaternion is normalized first
+	return Matrix4x4f(
+		// row 1
+		1.0f - 2.0f*y*y - 2.0f*z*z,
+		2.0f*x*y - 2.0f*w*z,
+		2.0f*x*z + 2.0f*w*y,
+		0.0f,
+		// row 2
+		2.0f*x*y + 2.0f*w*z,
+		1.0f - 2.0f*x*x - 2.0f*z*z,
+		2.0f*y*z + 2.0f*w*x,
+		0.0f,
+		// row 3
+		2.0f*x*z - 2.0f*w*y,
+		2.0f*y*z - 2.0f*w*x,
+		1.0f - 2.0f*x*x - 2.0f*y*y,
+		0.0f,
+		// row 4
+		0.0f, 0.0f, 0.0f, 1.0f);
+}

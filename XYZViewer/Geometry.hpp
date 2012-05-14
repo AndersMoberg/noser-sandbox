@@ -85,4 +85,22 @@ struct Matrix4x4f
 	static Matrix4x4f rotateY(float angle);
 };
 
+struct Quaternionf
+{
+	float x;
+	float y;
+	float z;
+	float w;
+
+	Quaternionf() { }
+	Quaternionf(float _x, float _y, float _z, float _w)
+		: x(_x), y(_y), z(_z), w(_w)
+	{ }
+
+	Quaternionf operator*(const Quaternionf& rhs) const;
+
+	void normalize();
+	Matrix4x4f getMatrix() const;
+};
+
 #endif
