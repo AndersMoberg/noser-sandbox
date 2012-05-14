@@ -5,6 +5,8 @@
 #ifndef _GEOMETRY_HPP
 #define _GEOMETRY_HPP
 
+#include <cmath>
+
 #undef near
 #undef far
 
@@ -77,6 +79,7 @@ struct Matrix4x4f
 	static const Matrix4x4f IDENTITY;
 
 	static Matrix4x4f boxLerp(const Boxf& from, const Boxf& to);
+	static Matrix4x4f scale(const Vector3f& v);
 	static Matrix4x4f translate(const Vector3f& v);
 	static Matrix4x4f rotateX(float angle);
 	static Matrix4x4f rotateY(float angle);

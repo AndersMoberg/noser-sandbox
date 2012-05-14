@@ -13,6 +13,7 @@
 #include "GLES2Utils.hpp"
 
 Application::Application()
+	: m_unitSphereVerts(0)
 { }
 
 Application::DrawProgram::DrawProgram()
@@ -23,6 +24,9 @@ Application::~Application()
 {
 	glDeleteProgram(m_drawProgram.program);
 	m_drawProgram.program = 0;
+
+	glDeleteBuffers(1, &m_unitSphereVerts);
+	m_unitSphereVerts = 0;
 }
 
 std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowCmd)
@@ -31,6 +35,33 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 
 	p->m_window = MainWindow::create(p.get(), hInstance, nShowCmd);
 	p->m_renderer = GLES2Renderer::create(p->m_window->getHWnd());
+
+	glGenBuffers(1, &p->m_unitSphereVerts);
+	glBindBuffer(GL_ARRAY_BUFFER, p->m_unitSphereVerts);
+	std::vector<float> unitSphereVertData;
+	for (int lat = 0; lat < 64; ++lat)
+	{
+		float theta = lat * M_PIf / 64.0f;
+		float sinTheta = sin(theta);
+		float cosTheta = cos(theta);
+
+		for (int lon = 0; lon < 64; ++lon)
+		{
+			float phi = lon * M_2PIf / 64.0f;
+			float sinPhi = sin(phi);
+			float cosPhi = cos(phi);
+
+			float x = cosPhi * sinTheta;
+			float y = cosTheta;
+			float z = sinPhi * sinTheta;
+			unitSphereVertData.push_back(x);
+			unitSphereVertData.push_back(y);
+			unitSphereVertData.push_back(z);
+		}
+	}
+	glBufferData(GL_ARRAY_BUFFER, unitSphereVertData.size()*sizeof(float), &unitSphereVertData[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	p->m_camera = Camera::create();
 
 	// read in an xyz file
@@ -137,6 +168,13 @@ void Application::paint()
 
 	glViewport(0, 0, m_renderer->getWidth(), m_renderer->getHeight());
 	
+	// Draw points
+	for (Points::const_iterator it = m_points.begin(); it < m_points.end(); ++it)
+	{
+		drawSphere(*it, 0.0005f);
+	}
+
+	// Draw lines
 	glUseProgram(m_drawProgram.program);
 	
 	Matrix4x4f mat = m_camera->getWorldToClip(
@@ -149,46 +187,27 @@ void Application::paint()
 		glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), points);
 		glEnableVertexAttribArray(m_drawProgram.aposLoc);
 		glDrawArrays(GL_LINES, 0, 2);
-
-		drawSphere(*it, 0.0005f, 16, 16);
 	}
 
 	m_renderer->present();
 }
 
-void Application::drawSphere(const Vector3f& center, float radius, int lats, int longs)
+void Application::drawSphere(const Vector3f& center, float radius)
 {
-	std::vector<float> verts;
-
-	for (int lat = 0; lat < lats; ++lat)
-	{
-		float theta = lat * M_PIf / lats;
-		float sinTheta = sin(theta);
-		float cosTheta = cos(theta);
-
-		for (int lon = 0; lon < longs; ++lon)
-		{
-			float phi = lon * M_2PIf / longs;
-			float sinPhi = sin(phi);
-			float cosPhi = cos(phi);
-
-			float x = cosPhi * sinTheta;
-			float y = cosTheta;
-			float z = sinPhi * sinTheta;
-			verts.push_back(center.x + radius * x);
-			verts.push_back(center.y + radius * y);
-			verts.push_back(center.z + radius * z);
-		}
-	}
-	
 	glUseProgram(m_drawProgram.program);
 
-	glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), &verts[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_unitSphereVerts);
+
+	glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), 0);
 	glEnableVertexAttribArray(m_drawProgram.aposLoc);
 
 	Matrix4x4f mat = m_camera->getWorldToClip(
 		m_renderer->getWidth(), m_renderer->getHeight());
-	glUniformMatrix4x4f(m_drawProgram.umatLoc, mat);
+	Matrix4x4f scale = Matrix4x4f::scale(Vector3f(radius, radius, radius));
+	Matrix4x4f translate = Matrix4x4f::translate(center);
+	glUniformMatrix4x4f(m_drawProgram.umatLoc, mat * translate * scale);
 
-	glDrawArrays(GL_POINTS, 0, lats * longs);
+	glDrawArrays(GL_POINTS, 0, 64*64);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
