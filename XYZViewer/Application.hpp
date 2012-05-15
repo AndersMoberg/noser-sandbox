@@ -40,6 +40,7 @@ private:
 	std::unique_ptr<GLES2Renderer> m_renderer;
 
 	GLuint m_unitSphereVerts;
+	GLuint m_unitSphereIndices;
 
 	typedef std::vector<Vector3f> Points;
 	Points m_points;
@@ -50,8 +51,9 @@ private:
 		DrawProgram();
 
 		GLuint program;
-		GLuint aposLoc;
-		GLuint umatLoc;
+		GLint aposLoc;
+		GLint anrmLoc;
+		GLint umatLoc;
 	};
 
 	DrawProgram m_drawProgram;

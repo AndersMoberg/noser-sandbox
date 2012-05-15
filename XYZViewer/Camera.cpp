@@ -13,8 +13,8 @@ std::unique_ptr<Camera> Camera::create()
 
 	p->m_center = Vector3f(0.0f, 0.0f, 0.0f);
 	p->m_zoom = 0.25f;
-	p->m_near = -64.0f;
-	p->m_far = 64.0f;
+	p->m_near = -1.0f;
+	p->m_far = 1.0f;
 	p->m_rotation = Quaternionf(0.0f, 0.0f, 0.0f, 1.0f);
 
 	return p;

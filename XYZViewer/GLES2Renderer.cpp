@@ -46,6 +46,7 @@ std::unique_ptr<GLES2Renderer> GLES2Renderer::create(HWND hWnd)
 	}
 
 	static const EGLint chooseConfigAttribs[] = {
+		EGL_DEPTH_SIZE, 24,
 		EGL_NONE
 	};
 	EGLConfig eglConfig;
