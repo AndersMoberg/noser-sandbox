@@ -46,6 +46,9 @@ std::unique_ptr<GLES2Renderer> GLES2Renderer::create(HWND hWnd)
 	}
 
 	static const EGLint chooseConfigAttribs[] = {
+		EGL_RED_SIZE, 8,
+		EGL_GREEN_SIZE, 8,
+		EGL_BLUE_SIZE, 8,
 		EGL_DEPTH_SIZE, 24,
 		EGL_NONE
 	};
