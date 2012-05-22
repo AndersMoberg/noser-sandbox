@@ -35,12 +35,14 @@ private:
 	Application();
 
 	void drawSphere(const Vector3f& center, float radius);
+	void drawCylinder(const Vector3f& a, const Vector3f& b, float radius);
 
 	std::unique_ptr<MainWindow> m_window;
 	std::unique_ptr<GLES2Renderer> m_renderer;
 
 	GLuint m_unitSphereVerts;
 	GLuint m_unitSphereIndices;
+	GLuint m_unitCylinderVerts;
 
 	typedef std::vector<Vector3f> Points;
 	Points m_points;

@@ -26,6 +26,9 @@ Application::~Application()
 	glDeleteProgram(m_drawProgram.program);
 	m_drawProgram.program = 0;
 
+	glDeleteBuffers(1, &m_unitCylinderVerts);
+	m_unitCylinderVerts = 0;
+
 	glDeleteBuffers(1, &m_unitSphereIndices);
 	m_unitSphereIndices = 0;
 
@@ -35,6 +38,7 @@ Application::~Application()
 
 static const int NUM_LATITUDES = 64;
 static const int NUM_LONGITUDES = 64;
+static const int NUM_CYLINDER_DIVS = 64;
 
 struct Vertex
 {
@@ -95,6 +99,27 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 	}
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, unitSphereIndicesData.size()*sizeof(unsigned short), &unitSphereIndicesData[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glGenBuffers(1, &p->m_unitCylinderVerts);
+	glBindBuffer(GL_ARRAY_BUFFER, p->m_unitCylinderVerts);
+	std::vector<Vertex> unitCylinderVertData;
+	for (int i = 0; i < NUM_CYLINDER_DIVS; ++i)
+	{
+		float theta = i * M_2PIf / NUM_CYLINDER_DIVS;
+		float x = cos(theta);
+		float y = sin(theta);
+		Vertex va;
+		va.pos = Vector3f(x, y, 0.0f);
+		va.nrm = Vector3f(x, y, 0.0f);
+		Vertex vb;
+		vb.pos = Vector3f(x, y, 1.0f);
+		vb.nrm = Vector3f(x, y, 0.0f);
+
+		unitCylinderVertData.push_back(va);
+		unitCylinderVertData.push_back(vb);
+	}
+	glBufferData(GL_ARRAY_BUFFER, unitCylinderVertData.size()*sizeof(Vertex), &unitCylinderVertData[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	p->m_camera = Camera::create();
 
@@ -211,9 +236,15 @@ void Application::paint()
 	glEnable(GL_DEPTH_TEST);
 
 	// Draw points
-	for (Points::const_iterator it = m_points.begin(); it < m_points.end(); ++it)
+	for (Points::const_iterator it = m_points.begin(); it != m_points.end(); ++it)
 	{
 		drawSphere(*it, 0.005f);
+	}
+
+	// Draw lines
+	for (Points::const_iterator it = m_points.begin(); it < m_points.end(); it += 2)
+	{
+		drawCylinder(*it, *(it+1), 0.002f);
 	}
 
 	//// Draw lines
@@ -255,5 +286,26 @@ void Application::drawSphere(const Vector3f& center, float radius)
 	glDrawElements(GL_TRIANGLES, 6*NUM_LATITUDES*NUM_LONGITUDES, GL_UNSIGNED_SHORT, 0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Application::drawCylinder(const Vector3f& a, const Vector3f& b, float radius)
+{
+	glUseProgram(m_drawProgram.program);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m_unitCylinderVerts);
+	
+	glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glEnableVertexAttribArray(m_drawProgram.aposLoc);
+	glVertexAttribPointer(m_drawProgram.anrmLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
+	glEnableVertexAttribArray(m_drawProgram.anrmLoc);
+	
+	Matrix4x4f mat = m_camera->getWorldToClip(
+		m_renderer->getWidth(), m_renderer->getHeight());
+	Matrix4x4f scale = Matrix4x4f::scale(Vector3f(radius, radius, (b-a).length()));
+	glUniformMatrix4x4f(m_drawProgram.umatLoc, mat * scale);
+
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 2*NUM_CYLINDER_DIVS);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
