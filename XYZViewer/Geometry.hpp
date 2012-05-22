@@ -24,12 +24,46 @@ struct Vector3f
 		: x(_x), y(_y), z(_z)
 	{ }
 
+	Vector3f operator+(const Vector3f& rhs) const { return Vector3f(x+rhs.x, y+rhs.y, z+rhs.z); }
 	Vector3f operator-(const Vector3f& rhs) const { return Vector3f(x-rhs.x, y-rhs.y, z-rhs.z); }
 	Vector3f operator-() const { return Vector3f(-x, -y, -z); }
+	Vector3f operator/(float rhs) const { return Vector3f(x/rhs, y/rhs, z/rhs); }
 
 	float lengthSquared() const { return x*x + y*y + z*z; }
 	float length() const { return sqrt(lengthSquared()); }
+
+	void normalize()
+	{
+		float l = length();
+		x /= l;
+		y /= l;
+		z /= l;
+	}
+
+	Vector3f arbitraryPerpendicular() const
+	{
+		if (abs(x) < abs(y) && abs(x) < abs(z)) { // x is lowest magnitude
+			return cross(*this, Vector3f(1.0f, 0.0f, 0.0f));
+		} else if (abs(y) < abs(x) && abs(y) < abs(z)) { // y is lowest magnitude
+			return cross(*this, Vector3f(0.0f, 1.0f, 0.0f));
+		} else { // z is lowest magnitude
+			return cross(*this, Vector3f(0.0f, 0.0f, 1.0f));
+		}
+	}
+
+	static Vector3f cross(const Vector3f& a, const Vector3f& b)
+	{
+		return Vector3f(
+			a.y*b.z - b.y*a.z,
+			a.x*b.z - b.x*a.z,
+			a.x*b.y - b.x*a.y
+			);
+	}
 };
+
+inline Vector3f operator*(float lhs, const Vector3f& rhs) {
+	return Vector3f(lhs*rhs.x, lhs*rhs.y, lhs*rhs.z);
+}
 
 struct Boxf
 {

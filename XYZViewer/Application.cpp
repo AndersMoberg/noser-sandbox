@@ -238,13 +238,13 @@ void Application::paint()
 	// Draw points
 	for (Points::const_iterator it = m_points.begin(); it != m_points.end(); ++it)
 	{
-		drawSphere(*it, 0.005f);
+		drawSphere(*it, 0.001f);
 	}
 
 	// Draw lines
 	for (Points::const_iterator it = m_points.begin(); it < m_points.end(); it += 2)
 	{
-		drawCylinder(*it, *(it+1), 0.002f);
+		drawCylinder(*it, *(it+1), 0.0005f);
 	}
 
 	//// Draw lines
@@ -293,19 +293,46 @@ void Application::drawCylinder(const Vector3f& a, const Vector3f& b, float radiu
 {
 	glUseProgram(m_drawProgram.program);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_unitCylinderVerts);
+	Vector3f perp1 = (b-a).arbitraryPerpendicular();
+	perp1.normalize();
+	Vector3f perp2 = Vector3f::cross(perp1, b-a);
+	perp2.normalize();
 	
-	glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	std::vector<Vertex> unitCylinderVertData;
+	for (int i = 0; i < NUM_CYLINDER_DIVS; ++i)
+	{
+		float theta = i * M_2PIf / NUM_CYLINDER_DIVS;
+		float x = cos(theta);
+		float y = sin(theta);
+		Vertex va;
+		va.pos = a + radius*x*perp1 + radius*y*perp2;
+		va.nrm = Vector3f(x, y, 0.0f);
+		Vertex vb;
+		vb.pos = b + radius*x*perp1 + radius*y*perp2;
+		vb.nrm = Vector3f(x, y, 0.0f);
+
+		unitCylinderVertData.push_back(va);
+		unitCylinderVertData.push_back(vb);
+	}
+	glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), &unitCylinderVertData[0].pos);
 	glEnableVertexAttribArray(m_drawProgram.aposLoc);
-	glVertexAttribPointer(m_drawProgram.anrmLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
+	glVertexAttribPointer(m_drawProgram.anrmLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), &unitCylinderVertData[0].nrm);
 	glEnableVertexAttribArray(m_drawProgram.anrmLoc);
-	
+
+	// TODO: Switch to vertex buffer method when math has been worked out
+	//glBindBuffer(GL_ARRAY_BUFFER, m_unitCylinderVerts);
+	//
+	//glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	//glEnableVertexAttribArray(m_drawProgram.aposLoc);
+	//glVertexAttribPointer(m_drawProgram.anrmLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
+	//glEnableVertexAttribArray(m_drawProgram.anrmLoc);
+	//
+
 	Matrix4x4f mat = m_camera->getWorldToClip(
 		m_renderer->getWidth(), m_renderer->getHeight());
-	Matrix4x4f scale = Matrix4x4f::scale(Vector3f(radius, radius, (b-a).length()));
-	glUniformMatrix4x4f(m_drawProgram.umatLoc, mat * scale);
+	glUniformMatrix4x4f(m_drawProgram.umatLoc, mat);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 2*NUM_CYLINDER_DIVS);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
