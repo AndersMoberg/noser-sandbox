@@ -173,7 +173,8 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 		"void main()\n"
 		"{\n"
 			"gl_Position = u_mat * vec4(a_pos, 1);\n"
-			"v_color = vec4(a_nrm, 1);\n"
+			"float d = dot(a_nrm, normalize(vec3(-1, 1, -1)));\n"
+			"v_color = vec4(d, d, d, 1);\n"
 		"}\n"
 		;
 	static const char DRAW_FRAGMENT_SHADER[] =
@@ -238,13 +239,13 @@ void Application::paint()
 	// Draw points
 	for (Points::const_iterator it = m_points.begin(); it != m_points.end(); ++it)
 	{
-		drawSphere(*it, 0.001f);
+		drawSphere(*it, 0.002f);
 	}
 
 	// Draw lines
 	for (Points::const_iterator it = m_points.begin(); it < m_points.end(); it += 2)
 	{
-		drawCylinder(*it, *(it+1), 0.0005f);
+		drawCylinder(*it, *(it+1), 0.001f);
 	}
 
 	//// Draw lines
