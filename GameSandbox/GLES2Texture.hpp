@@ -14,13 +14,14 @@ class GLES2Texture
 
 public:
 	
-	GLES2Texture();
 	~GLES2Texture();
-	void init();
+	static std::unique_ptr<GLES2Texture> create();
 
 	GLuint get();
 
 private:
+
+	GLES2Texture();
 
 	GLuint m_texture;
 

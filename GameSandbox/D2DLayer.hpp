@@ -35,7 +35,7 @@ private:
 
 	ComPtr<ID2D1Factory> m_d2dFactory;
 
-	GLES2Texture m_glTexture;
+	std::unique_ptr<GLES2Texture> m_glTexture;
 
 	ComPtr<IWICBitmap> m_wicBitmap;
 	ComPtr<ID2D1RenderTarget> m_d2dTarget;

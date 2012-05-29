@@ -21,7 +21,7 @@ void D2DLayer::init(GLES2Renderer* renderer)
 	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
 		m_d2dFactory.Receive()));
 
-	m_glTexture.init();
+	m_glTexture = GLES2Texture::create();
 
 	recreateTarget();
 }
@@ -62,14 +62,14 @@ void D2DLayer::transferToGLTexture()
 
 	D2D1_SIZE_U size = m_d2dTarget->GetPixelSize();
 
-	glBindTexture(GL_TEXTURE_2D, m_glTexture.get());
+	glBindTexture(GL_TEXTURE_2D, m_glTexture->get());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, size.width, size.height, 0,
 		GL_BGRA_EXT, GL_UNSIGNED_BYTE, data);
 }
 
 GLES2Texture* D2DLayer::getGLTexture()
 {
-	return &m_glTexture;
+	return m_glTexture.get();
 }
 
 ID2D1RenderTarget* D2DLayer::getD2DTarget()

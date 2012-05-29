@@ -195,10 +195,10 @@ void GLES2Renderer::init(HWND hWnd)
 	SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
 }
 
-void GLES2Renderer::createTextureFromFile(
-	const std::wstring& path, GLES2Texture& result)
+std::unique_ptr<GLES2Texture> GLES2Renderer::createTextureFromFile(
+	const std::wstring& path)
 {
-	result.init();
+	std::unique_ptr<GLES2Texture> result = GLES2Texture::create();
 
 	ComPtr<IWICImagingFactory> wicFactory;
 	CHECK_HR(CoCreateInstance(CLSID_WICImagingFactory, NULL,
@@ -228,8 +228,10 @@ void GLES2Renderer::createTextureFromFile(
 	std::vector<BYTE> data(4*width*height);
 	CHECK_HR(formatConverter->CopyPixels(NULL, 4*width, 4*width*height, &data[0]));
 
-	glBindTexture(GL_TEXTURE_2D, result.get());
+	glBindTexture(GL_TEXTURE_2D, result->get());
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_BGRA_EXT, width, height, 0, GL_BGRA_EXT, GL_UNSIGNED_BYTE, &data[0]);
+
+	return result;
 }
 
 void GLES2Renderer::SetTexturedQuadMatrix(const Matrix3x2f& mat)

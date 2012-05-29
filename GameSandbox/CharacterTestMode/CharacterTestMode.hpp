@@ -9,6 +9,7 @@
 
 #include "Game.hpp"
 #include "GLES2Renderer.hpp"
+#include "WorldRenderer.hpp"
 
 namespace CharacterTestMode
 {
@@ -33,16 +34,18 @@ private:
 
 	Camera m_camera;
 
-	GLES2Texture m_bgTexture;
+	std::unique_ptr<GLES2Texture> m_bgTexture;
 
 	Vector2f m_characterPos;
 	float m_characterSpeed;
 	Rectf m_characterRect;
-	GLES2Texture m_characterTexture;
+	std::unique_ptr<GLES2Texture> m_characterTexture;
 
 	class MyGameObject;
 
 	std::unique_ptr<MyGameObject> m_object;
+
+	std::unique_ptr<WorldRenderer> m_worldRenderer;
 
 };
 

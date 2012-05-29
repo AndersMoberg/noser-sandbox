@@ -69,6 +69,12 @@
     <ClCompile Include="CharacterTestMode\RevealingText.cpp">
       <Filter>Source\CharacterTestMode</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterTestMode\WorldObject.cpp">
+      <Filter>Source\CharacterTestMode</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterTestMode\WorldRenderer.cpp">
+      <Filter>Source\CharacterTestMode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -120,6 +126,12 @@
       <Filter>Source\CharacterTestMode</Filter>
     </ClInclude>
     <ClInclude Include="CharacterTestMode\RevealingText.hpp">
+      <Filter>Source\CharacterTestMode</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterTestMode\WorldRenderer.hpp">
+      <Filter>Source\CharacterTestMode</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterTestMode\WorldObject.hpp">
       <Filter>Source\CharacterTestMode</Filter>
     </ClInclude>
   </ItemGroup>

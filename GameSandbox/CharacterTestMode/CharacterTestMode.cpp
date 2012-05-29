@@ -181,13 +181,15 @@ std::unique_ptr<CharacterTestMode> CharacterTestMode::create(Game* game)
 
 	p->m_renderer.init(p->m_game->GetHWnd());
 
-	p->m_renderer.createTextureFromFile(
-		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg", p->m_bgTexture);
+	p->m_bgTexture = p->m_renderer.createTextureFromFile(
+		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
 
-	p->m_renderer.createTextureFromFile(
-		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg", p->m_characterTexture);
+	p->m_characterTexture = p->m_renderer.createTextureFromFile(
+		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg");
 
 	p->m_object.reset(new MyGameObject(&p->m_renderer));
+
+	p->m_worldRenderer = WorldRenderer::create(&p->m_renderer);
 
 	return p;
 }
@@ -235,7 +237,7 @@ void CharacterTestMode::Render()
 	
 	// Draw background image
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_bgTexture.get());
+	glBindTexture(GL_TEXTURE_2D, m_bgTexture->get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -248,7 +250,7 @@ void CharacterTestMode::Render()
 
 	// Draw character image
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_characterTexture.get());
+	glBindTexture(GL_TEXTURE_2D, m_characterTexture->get());
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -260,6 +262,9 @@ void CharacterTestMode::Render()
 	m_renderer.DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
 
 	m_object->Render();
+
+	m_renderer.SetTexturedQuadMatrix(worldToClip);
+	m_worldRenderer->render();
 
 	m_renderer.Present();
 }

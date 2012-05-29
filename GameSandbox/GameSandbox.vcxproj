@@ -91,6 +91,8 @@
     <ClCompile Include="CharacterTestMode\CharacterTestMode.cpp" />
     <ClCompile Include="CharacterTestMode\DropShadow.cpp" />
     <ClCompile Include="CharacterTestMode\RevealingText.cpp" />
+    <ClCompile Include="CharacterTestMode\WorldObject.cpp" />
+    <ClCompile Include="CharacterTestMode\WorldRenderer.cpp" />
     <ClCompile Include="D2DLayer.cpp" />
     <ClCompile Include="D2DRenderer.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -111,6 +113,8 @@
     <ClInclude Include="CharacterTestMode\CharacterTestMode.hpp" />
     <ClInclude Include="CharacterTestMode\DropShadow.hpp" />
     <ClInclude Include="CharacterTestMode\RevealingText.hpp" />
+    <ClInclude Include="CharacterTestMode\WorldObject.hpp" />
+    <ClInclude Include="CharacterTestMode\WorldRenderer.hpp" />
     <ClInclude Include="D2DLayer.hpp" />
     <ClInclude Include="D2DRenderer.hpp" />
     <ClInclude Include="Game.hpp" />
