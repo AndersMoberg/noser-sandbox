@@ -36,9 +36,9 @@ Application::~Application()
 	m_unitSphereVerts = 0;
 }
 
-static const int NUM_LATITUDES = 64;
-static const int NUM_LONGITUDES = 64;
-static const int NUM_CYLINDER_DIVS = 64;
+static const int NUM_LATITUDES = 32;
+static const int NUM_LONGITUDES = 32;
+static const int NUM_CYLINDER_DIVS = 32;
 
 struct Vertex
 {
@@ -58,13 +58,13 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 	std::vector<Vertex> unitSphereVertData;
 	for (int lat = 0; lat < NUM_LATITUDES; ++lat)
 	{
-		float theta = lat * M_PIf / NUM_LATITUDES;
+		float theta = lat * M_PIf / (NUM_LATITUDES-1);
 		float sinTheta = sin(theta);
 		float cosTheta = cos(theta);
 
 		for (int lon = 0; lon < NUM_LONGITUDES; ++lon)
 		{
-			float phi = lon * M_2PIf / NUM_LONGITUDES;
+			float phi = lon * M_2PIf / (NUM_LONGITUDES-1);
 			float sinPhi = sin(phi);
 			float cosPhi = cos(phi);
 
@@ -105,7 +105,7 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 	std::vector<Vertex> unitCylinderVertData;
 	for (int i = 0; i < NUM_CYLINDER_DIVS; ++i)
 	{
-		float theta = i * M_2PIf / NUM_CYLINDER_DIVS;
+		float theta = i * M_2PIf / (NUM_CYLINDER_DIVS-1);
 		float x = cos(theta);
 		float y = sin(theta);
 		Vertex va;
@@ -173,7 +173,8 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 		"void main()\n"
 		"{\n"
 			"gl_Position = u_mat * vec4(a_pos, 1);\n"
-			"float d = dot(a_nrm, normalize(vec3(-1, 1, -1)));\n"
+			"vec4 normal = u_mat * vec4(a_nrm, 0);\n"
+			"float d = dot(normalize(normal.xyz), normalize(vec3(-1, 1, -1)));\n"
 			"v_color = vec4(d, d, d, 1);\n"
 		"}\n"
 		;
@@ -229,7 +230,7 @@ void Application::onDown()
 
 void Application::paint()
 {
-	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
+	glClearColor(0.8f, 0.2f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glViewport(0, 0, m_renderer->getWidth(), m_renderer->getHeight());
@@ -247,21 +248,6 @@ void Application::paint()
 	{
 		drawCylinder(*it, *(it+1), 0.001f);
 	}
-
-	//// Draw lines
-	//glUseProgram(m_drawProgram.program);
-	//
-	//Matrix4x4f mat = m_camera->getWorldToClip(
-	//	m_renderer->getWidth(), m_renderer->getHeight());
-	//glUniformMatrix4x4f(m_drawProgram.umatLoc, mat);
-
-	//for (Points::const_iterator it = m_points.begin(); it < m_points.end(); it += 2)
-	//{
-	//	Vector3f points[2] = { *it, *(it+1) };
-	//	glVertexAttribPointer(m_drawProgram.aposLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), points);
-	//	glEnableVertexAttribArray(m_drawProgram.aposLoc);
-	//	glDrawArrays(GL_LINES, 0, 2);
-	//}
 
 	m_renderer->present();
 }
@@ -302,15 +288,15 @@ void Application::drawCylinder(const Vector3f& a, const Vector3f& b, float radiu
 	std::vector<Vertex> unitCylinderVertData;
 	for (int i = 0; i < NUM_CYLINDER_DIVS; ++i)
 	{
-		float theta = i * M_2PIf / NUM_CYLINDER_DIVS;
+		float theta = i * M_2PIf / (NUM_CYLINDER_DIVS-1);
 		float x = cos(theta);
 		float y = sin(theta);
 		Vertex va;
 		va.pos = a + radius*x*perp1 + radius*y*perp2;
-		va.nrm = Vector3f(x, y, 0.0f);
+		va.nrm = x*perp1 + y*perp2;
 		Vertex vb;
 		vb.pos = b + radius*x*perp1 + radius*y*perp2;
-		vb.nrm = Vector3f(x, y, 0.0f);
+		vb.nrm = x*perp1 + y*perp2;
 
 		unitCylinderVertData.push_back(va);
 		unitCylinderVertData.push_back(vb);

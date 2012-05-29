@@ -42,9 +42,9 @@ struct Vector3f
 
 	Vector3f arbitraryPerpendicular() const
 	{
-		if (abs(x) < abs(y) && abs(x) < abs(z)) { // x is lowest magnitude
+		if (abs(x) <= abs(y) && abs(x) <= abs(z)) { // x is lowest magnitude
 			return cross(*this, Vector3f(1.0f, 0.0f, 0.0f));
-		} else if (abs(y) < abs(x) && abs(y) < abs(z)) { // y is lowest magnitude
+		} else if (abs(y) <= abs(x) && abs(y) <= abs(z)) { // y is lowest magnitude
 			return cross(*this, Vector3f(0.0f, 1.0f, 0.0f));
 		} else { // z is lowest magnitude
 			return cross(*this, Vector3f(0.0f, 0.0f, 1.0f));

@@ -124,11 +124,11 @@ Matrix4x4f Quaternionf::getMatrix() const
 		// row 2
 		2.0f*x*y + 2.0f*w*z,
 		1.0f - 2.0f*x*x - 2.0f*z*z,
-		2.0f*y*z + 2.0f*w*x,
+		2.0f*y*z - 2.0f*w*x,
 		0.0f,
 		// row 3
 		2.0f*x*z - 2.0f*w*y,
-		2.0f*y*z - 2.0f*w*x,
+		2.0f*y*z + 2.0f*w*x,
 		1.0f - 2.0f*x*x - 2.0f*y*y,
 		0.0f,
 		// row 4
