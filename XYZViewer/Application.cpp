@@ -173,8 +173,9 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 		"void main()\n"
 		"{\n"
 			"gl_Position = u_mat * vec4(a_pos, 1);\n"
-			"vec4 normal = u_mat * vec4(a_nrm, 0);\n"
-			"float d = dot(normalize(normal.xyz), normalize(vec3(-1, 1, -1)));\n"
+			"vec3 normal = normalize(vec3(u_mat * vec4(a_nrm, 0)));\n"
+			"vec3 lightDir = normalize(vec3(0, 1, -1));\n"
+			"float d = dot(normal, lightDir);\n"
 			"v_color = vec4(d, d, d, 1);\n"
 		"}\n"
 		;
