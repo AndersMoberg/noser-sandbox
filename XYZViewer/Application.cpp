@@ -123,46 +123,12 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 
 	p->m_camera = Camera::create();
 
-	// read in an xyz file
-	std::ifstream ifs("bridge.xyz");
-	bool boundsInited = false;
-	std::string line;
-	while (ifs)
-	{
-		std::string line;
-		std::getline(ifs, line);
-		if (!line.empty())
-		{
-			if (line[0] == '#') {
-				continue;
-			}
+	p->m_model = Model::loadFromFile(L"bridge.xyz");
 
-			std::istringstream iss(line);
-			float x, y, z;
-			iss >> x >> y >> z;
-			p->m_points.push_back(Vector3f(x, y, z));
-			if (!boundsInited)
-			{
-				p->m_bounds.left = p->m_bounds.right = x;
-				p->m_bounds.top = p->m_bounds.bottom = y;
-				p->m_bounds.near = p->m_bounds.far = z;
-				boundsInited = true;
-			}
-			else
-			{
-				p->m_bounds.left = std::min(x, p->m_bounds.left);
-				p->m_bounds.top = std::max(y, p->m_bounds.top);
-				p->m_bounds.near = std::min(z, p->m_bounds.near);
-				p->m_bounds.right = std::max(x, p->m_bounds.right);
-				p->m_bounds.bottom = std::min(y, p->m_bounds.bottom);
-				p->m_bounds.far = std::max(z, p->m_bounds.far);
-			}
-		}
-	}
-
-	float zoom = (Vector3f(p->m_bounds.left, p->m_bounds.top, p->m_bounds.near) -
-		Vector3f(p->m_bounds.right, p->m_bounds.bottom, p->m_bounds.far)).length();
-	p->m_camera->setCenter(p->m_bounds.center());
+	const Boxf& bounds = p->m_model->getBounds();
+	float zoom = (Vector3f(bounds.left, bounds.top, bounds.near) -
+		Vector3f(bounds.right, bounds.bottom, bounds.far)).length();
+	p->m_camera->setCenter(bounds.center());
 	p->m_camera->setZoom(zoom);
 
 	static const char DRAW_VERTEX_SHADER[] =
@@ -239,15 +205,17 @@ void Application::paint()
 	glEnable(GL_DEPTH_TEST);
 
 	// Draw points
-	for (Points::const_iterator it = m_points.begin(); it != m_points.end(); ++it)
+	const Model::Points& points = m_model->getPoints();
+	for (Model::Points::const_iterator it = points.begin(); it != points.end(); ++it)
 	{
 		drawSphere(*it, 0.002f);
 	}
 
 	// Draw lines
-	for (Points::const_iterator it = m_points.begin(); it < m_points.end(); it += 2)
+	const Model::Lines& lines = m_model->getLines();
+	for (Model::Lines::const_iterator it = lines.begin(); it != lines.end(); ++it)
 	{
-		drawCylinder(*it, *(it+1), 0.001f);
+		drawCylinder(points[it->first], points[it->second], 0.001f);
 	}
 
 	m_renderer->present();

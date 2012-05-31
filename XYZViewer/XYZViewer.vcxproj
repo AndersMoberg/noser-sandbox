@@ -87,6 +87,7 @@
     <ClCompile Include="GLES2Utils.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="Model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp" />
@@ -95,6 +96,7 @@
     <ClInclude Include="GLES2Renderer.hpp" />
     <ClInclude Include="GLES2Utils.hpp" />
     <ClInclude Include="MainWindow.hpp" />
+    <ClInclude Include="Model.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,6 +13,7 @@
 #include "Geometry.hpp"
 #include "GLES2Renderer.hpp"
 #include "Camera.hpp"
+#include "Model.hpp"
 
 class Application
 {
@@ -44,9 +45,7 @@ private:
 	GLuint m_unitSphereIndices;
 	GLuint m_unitCylinderVerts;
 
-	typedef std::vector<Vector3f> Points;
-	Points m_points;
-	Boxf m_bounds;
+	std::unique_ptr<Model> m_model;
 
 	struct DrawProgram
 	{
