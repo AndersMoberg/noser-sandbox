@@ -18,12 +18,17 @@ public:
 
 	void render();
 
+	typedef std::list<WorldObject::Ptr> ObjectList;
+	typedef ObjectList::const_iterator ObjectHandle;
+
+	ObjectHandle addObject(const std::wstring& path, const Rectf& rect);
+	void setObjectPos(ObjectHandle obj, const Vector2f& pos);
+
 private:
 
 	WorldRenderer();
 
-	typedef std::list<std::unique_ptr<WorldObject> > ObjectList;
-
+	GLES2Renderer* m_renderer;
 	ObjectList m_objects;
 
 };

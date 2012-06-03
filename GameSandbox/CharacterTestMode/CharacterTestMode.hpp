@@ -38,8 +38,7 @@ private:
 
 	Vector2f m_characterPos;
 	float m_characterSpeed;
-	Rectf m_characterRect;
-	std::unique_ptr<GLES2Texture> m_characterTexture;
+	WorldRenderer::ObjectHandle m_characterObject;
 
 	class MyGameObject;
 

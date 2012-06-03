@@ -169,8 +169,7 @@ private:
 
 CharacterTestMode::CharacterTestMode()
 	: m_characterPos(0.0f, 0.0f),
-	m_characterSpeed(6.0f),
-	m_characterRect(-2.0f, 2.0f, 2.0f, -2.0f)
+	m_characterSpeed(6.0f)
 { }
 
 std::unique_ptr<CharacterTestMode> CharacterTestMode::create(Game* game)
@@ -184,12 +183,11 @@ std::unique_ptr<CharacterTestMode> CharacterTestMode::create(Game* game)
 	p->m_bgTexture = p->m_renderer.createTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
 
-	p->m_characterTexture = p->m_renderer.createTextureFromFile(
-		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Jellyfish.jpg");
-
 	p->m_object.reset(new MyGameObject(&p->m_renderer));
 
 	p->m_worldRenderer = WorldRenderer::create(&p->m_renderer);
+
+	p->m_characterObject = p->m_worldRenderer->addObject(L"TestObject.png", Rectf(-2.0f, 2.0f, 2.0f, -2.0f));
 
 	return p;
 }
@@ -248,22 +246,10 @@ void CharacterTestMode::Render()
 
 	m_renderer.DrawTexturedQuad(Rectf(-16.0f, 16.0f, 16.0f, -16.0f));
 
-	// Draw character image
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_characterTexture->get());
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// Premultiplied alpha blending
-	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	glBlendEquation(GL_FUNC_ADD);
-	glEnable(GL_BLEND);
-
-	m_renderer.DrawTexturedQuad(m_characterRect.Offset(m_characterPos));
-
 	m_object->Render();
 
 	m_renderer.SetTexturedQuadMatrix(worldToClip);
+	m_worldRenderer->setObjectPos(m_characterObject, m_characterPos);
 	m_worldRenderer->render();
 
 	m_renderer.Present();

@@ -5,12 +5,13 @@
 #include "WorldObject.hpp"
 
 WorldObject::WorldObject()
+	: m_pos(0.0f, 0.0f)
 { }
 
-std::unique_ptr<WorldObject> WorldObject::create(
+WorldObject::Ptr WorldObject::create(
 	GLES2Renderer* renderer, const std::wstring& path, const Rectf& rect)
 {
-	std::unique_ptr<WorldObject> p(new WorldObject);
+	WorldObject::Ptr p(new WorldObject);
 
 	p->m_renderer = renderer;
 	p->m_texture = renderer->createTextureFromFile(path);
@@ -31,5 +32,10 @@ void WorldObject::render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer->DrawTexturedQuad(m_rect);
+	m_renderer->DrawTexturedQuad(m_rect.Offset(m_pos));
+}
+
+void WorldObject::setPosition(const Vector2f& pos)
+{
+	m_pos = pos;
 }

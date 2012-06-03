@@ -17,11 +17,16 @@ class WorldObject
 
 public:
 
-	static std::unique_ptr<WorldObject> create(
+	typedef std::shared_ptr<WorldObject> Ptr;
+
+	static Ptr create(
 		GLES2Renderer* renderer, const std::wstring& path,
 		const Rectf& rect);
 
 	void render();
+
+	void setPosition(const Vector2f& pos);
+	const Vector2f& getPosition() const { return m_pos; }
 
 private:
 
@@ -30,6 +35,7 @@ private:
 	GLES2Renderer* m_renderer;
 	std::unique_ptr<GLES2Texture> m_texture;
 	Rectf m_rect;
+	Vector2f m_pos;
 
 };
 
