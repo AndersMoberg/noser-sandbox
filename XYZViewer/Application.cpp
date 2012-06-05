@@ -123,7 +123,7 @@ std::unique_ptr<Application> Application::create(HINSTANCE hInstance, int nShowC
 
 	p->m_camera = Camera::create();
 
-	p->m_model = Model::loadFromFile(L"bridge.xyz");
+	p->m_model = Model::loadFromFile(L"helix.xyz");
 
 	const Boxf& bounds = p->m_model->getBounds();
 	float zoom = (Vector3f(bounds.left, bounds.top, bounds.near) -
@@ -208,14 +208,14 @@ void Application::paint()
 	const Model::Points& points = m_model->getPoints();
 	for (Model::Points::const_iterator it = points.begin(); it != points.end(); ++it)
 	{
-		drawSphere(*it, 0.002f);
+		drawSphere(*it, 0.02f);
 	}
 
 	// Draw lines
 	const Model::Lines& lines = m_model->getLines();
 	for (Model::Lines::const_iterator it = lines.begin(); it != lines.end(); ++it)
 	{
-		drawCylinder(points[it->first], points[it->second], 0.001f);
+		drawCylinder(points[it->first], points[it->second], 0.01f);
 	}
 
 	m_renderer->present();
