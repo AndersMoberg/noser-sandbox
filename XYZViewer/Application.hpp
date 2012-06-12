@@ -21,7 +21,7 @@ class Application
 public:
 
 	~Application();
-	static std::unique_ptr<Application> create(HINSTANCE hInstance, int nShowCmd);
+	static std::unique_ptr<Application> create(HINSTANCE hInstance, LPCTSTR lpCmdLine, int nShowCmd);
 
 	int messagePump();
 

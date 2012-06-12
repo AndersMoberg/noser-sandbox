@@ -25,7 +25,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	try
 	{
-		std::unique_ptr<Application> app = Application::create(hInstance, nShowCmd);
+		std::unique_ptr<Application> app = Application::create(hInstance, lpCmdLine, nShowCmd);
 		return app->messagePump();
 	}
 	catch (const std::exception& e)

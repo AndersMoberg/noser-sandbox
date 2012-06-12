@@ -25,6 +25,11 @@ void Camera::setCenter(const Vector3f& center)
 	m_center = center;
 }
 
+float Camera::getZoom() const
+{
+	return m_zoom;
+}
+
 void Camera::setZoom(float zoom)
 {
 	m_zoom = zoom;

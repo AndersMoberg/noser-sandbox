@@ -17,6 +17,7 @@ public:
 	static std::unique_ptr<Camera> create();
 
 	void setCenter(const Vector3f& center);
+	float getZoom() const;
 	void setZoom(float zoom);
 
 	void rotateAroundX(float angle);
