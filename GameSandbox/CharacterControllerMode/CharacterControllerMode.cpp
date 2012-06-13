@@ -264,7 +264,18 @@ void CharacterControllerMode::Render()
 	d2dTarget->DrawLine(m_playerCharacter->pos,
 		m_playerCharacter->pos + m_actualVel,
 		blackBrush, m_playerCharacter->radius/8.0f);
+
 	d2dTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+
+	// Draw contacts
+
+	ContactList contacts;
+	m_world.getCircleContacts(m_playerCharacter->pos, m_playerCharacter->radius, contacts);
+	for (ContactList::const_iterator it = contacts.begin(); it != contacts.end(); ++it)
+	{
+		Vector2f pos = worldToViewport.transform(it->pos);
+		d2dTarget->FillEllipse(D2D1::Ellipse(pos, 8.0f, 8.0f), blackBrush);
+	}
 
 	d2dTarget->EndDraw();
 	// TODO: Handle D2DERR_RECREATETARGET

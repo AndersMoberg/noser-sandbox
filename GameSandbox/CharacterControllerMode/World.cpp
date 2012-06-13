@@ -29,4 +29,44 @@ World::World()
 	m_walls.push_back(wall);
 }
 
+void World::getCircleContacts(const Vector2f& center, float radius,
+	ContactList& contacts)
+{
+	Contact c;
+
+	for (WallList::const_iterator it = m_walls.begin(); it != m_walls.end(); ++it)
+	{
+		bool pastS = Vector2f::Dot(it->end - it->start, center - it->start) > 0.0f;
+		bool pastE = Vector2f::Dot(it->start - it->end, center - it->end) > 0.0f;
+		if (pastS && pastE)
+		{
+			// center is near some point between the ends
+			Vector2f projected = it->start + Vector2f::Projection((center-it->start), (it->end-it->start));
+			if ((center - projected).LengthSquared() <= radius*radius)
+			{
+				c.pos = projected;
+				contacts.push_back(c);
+			}
+		}
+		else if (pastS)
+		{
+			// center is near wall end
+			if ((center - it->end).LengthSquared() <= radius*radius)
+			{
+				c.pos = it->end;
+				contacts.push_back(c);
+			}
+		}
+		else if (pastE)
+		{
+			// center is near wall start
+			if ((center - it->start).LengthSquared() <= radius*radius)
+			{
+				c.pos = it->start;
+				contacts.push_back(c);
+			}
+		}
+	}
+}
+
 }

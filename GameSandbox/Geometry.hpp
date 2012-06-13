@@ -124,6 +124,13 @@ struct Matrix3x2f
 
 	operator D2D1_MATRIX_3X2_F() const { return D2D1::Matrix3x2F(_11, _12, _21, _22, _31, _32); }
 
+	Vector2f transform(const Vector2f& v) const
+	{
+		return Vector2f(
+			_11 * v.x + _12 * v.y + _31,
+			_21 * v.x + _22 * v.y + _32);
+	}
+
 	static Matrix3x2f Scale(const Vector2f& scale, const Vector2f& center = Vector2f(0.0f, 0.0f))
 	{
 		return Matrix3x2f(
