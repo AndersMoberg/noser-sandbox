@@ -194,7 +194,7 @@ void CharacterControllerMode::Tick(const GameInput& input)
 
 					float c = Vector2f::Dot((m_playerCharacter->pos - it1->pos), (m_playerCharacter->pos - it2->pos)) * k
 						+ Vector2f::Dot(intendedVel, (m_playerCharacter->pos - it2->pos));
-					if (c < 0.0f)
+					if (c < -0.001f)
 					{
 						constrained = true;
 						break;
