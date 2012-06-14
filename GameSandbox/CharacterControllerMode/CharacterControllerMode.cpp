@@ -156,47 +156,100 @@ void CharacterControllerMode::Tick(const GameInput& input)
 
 		Vector2f actualVel = intendedVel;
 
-		Collisions collisions = CheckCharacterCollisions(*m_playerCharacter, actualVel);
-		if (collisions.size() == 1)
+		ContactList contacts;
+		m_world.getCircleContacts(m_playerCharacter->pos, m_playerCharacter->radius, contacts);
+
+		// First, see if all constraints are met
+		bool constrained = false;
+		for (ContactList::const_iterator it = contacts.begin(); it != contacts.end(); ++it)
 		{
-			const Wall* wall = collisions.back();
-			actualVel = CorrectVelAgainstWall(wall->start, wall->end,
-				m_playerCharacter->pos, actualVel);
-		}
-		else if (collisions.size() >= 2)
-		{
-			const Wall* wall1 = collisions.front();
-			const Wall* wall2 = collisions.back();
-			// Find wall1 correction, test against wall2, then vice-versa
-			Vector2f wall1Correct = CorrectVelAgainstWall(wall1->start, wall1->end,
-				m_playerCharacter->pos, actualVel);
-			Vector2f wall2Correct = CorrectVelAgainstWall(wall2->start, wall2->end,
-				m_playerCharacter->pos, actualVel);
-			if (!TestWallVelConstraint(wall2->start, wall2->end, m_playerCharacter->pos,
-				wall1Correct))
+			// Cn' = V dot (X - Pn)
+			float c = Vector2f::Dot(intendedVel, m_playerCharacter->pos - it->pos);
+			if (c < 0.0f)
 			{
-				actualVel = wall1Correct;
-			}
-			else if (!TestWallVelConstraint(wall1->start, wall1->end, m_playerCharacter->pos,
-				wall2Correct))
-			{
-				actualVel = wall2Correct;
-			}
-			else if (wall1Correct == wall2Correct)
-			{
-				// FIXME: Comparison is sensitive to tiny floating-point errors
-				actualVel = wall1Correct;
-			}
-			else
-			{
-				actualVel = Vector2f(0.0f, 0.0f);
+				constrained = true;
+				break;
 			}
 		}
-		else if (collisions.size() > 2)
+
+		// Then, go through contacts and try correcting each one
+		if (constrained)
 		{
-			// TODO: Generalize the algorithm above for more than 2 constraints
 			actualVel = Vector2f(0.0f, 0.0f);
+			for (ContactList::const_iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1)
+			{
+				// kn = -(V dot (X - Pn)) / ((X - Pn) dot (X - Pn))
+				float k = -Vector2f::Dot(intendedVel, m_playerCharacter->pos - it1->pos) /
+					(m_playerCharacter->pos - it1->pos).LengthSquared();
+				if (k < 0.0f) {
+					continue;
+				}
+
+				constrained = false;
+				for (ContactList::const_iterator it2 = contacts.begin(); it2 != contacts.end(); ++it2)
+				{
+					if (it2 == it1) {
+						continue;
+					}
+
+					float c = Vector2f::Dot((m_playerCharacter->pos - it1->pos), (m_playerCharacter->pos - it2->pos)) * k
+						+ Vector2f::Dot(intendedVel, (m_playerCharacter->pos - it2->pos));
+					if (c < 0.0f)
+					{
+						constrained = true;
+						break;
+					}
+				}
+
+				if (!constrained)
+				{
+					actualVel = intendedVel + k * (m_playerCharacter->pos - it1->pos);
+					break;
+				}
+			}
 		}
+
+		//Collisions collisions = CheckCharacterCollisions(*m_playerCharacter, actualVel);
+		//if (collisions.size() == 1)
+		//{
+		//	const Wall* wall = collisions.back();
+		//	actualVel = CorrectVelAgainstWall(wall->start, wall->end,
+		//		m_playerCharacter->pos, actualVel);
+		//}
+		//else if (collisions.size() >= 2)
+		//{
+		//	const Wall* wall1 = collisions.front();
+		//	const Wall* wall2 = collisions.back();
+		//	// Find wall1 correction, test against wall2, then vice-versa
+		//	Vector2f wall1Correct = CorrectVelAgainstWall(wall1->start, wall1->end,
+		//		m_playerCharacter->pos, actualVel);
+		//	Vector2f wall2Correct = CorrectVelAgainstWall(wall2->start, wall2->end,
+		//		m_playerCharacter->pos, actualVel);
+		//	if (!TestWallVelConstraint(wall2->start, wall2->end, m_playerCharacter->pos,
+		//		wall1Correct))
+		//	{
+		//		actualVel = wall1Correct;
+		//	}
+		//	else if (!TestWallVelConstraint(wall1->start, wall1->end, m_playerCharacter->pos,
+		//		wall2Correct))
+		//	{
+		//		actualVel = wall2Correct;
+		//	}
+		//	else if (wall1Correct == wall2Correct)
+		//	{
+		//		// FIXME: Comparison is sensitive to tiny floating-point errors
+		//		actualVel = wall1Correct;
+		//	}
+		//	else
+		//	{
+		//		actualVel = Vector2f(0.0f, 0.0f);
+		//	}
+		//}
+		//else if (collisions.size() > 2)
+		//{
+		//	// TODO: Generalize the algorithm above for more than 2 constraints
+		//	actualVel = Vector2f(0.0f, 0.0f);
+		//}
 
 		m_playerCharacter->pos += actualVel / (float)Game::TICKS_PER_SEC;
 		m_intendedVel = intendedVel;
