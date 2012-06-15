@@ -4,6 +4,8 @@
 
 #include "CharacterControllerMode.hpp"
 
+#include <vector>
+
 #include "MainMenuMode/MainMenuMode.hpp"
 #include "World.hpp"
 
@@ -159,55 +161,90 @@ void CharacterControllerMode::Tick(const GameInput& input)
 		ContactList contacts;
 		m_world.getCircleContacts(m_playerCharacter->pos, m_playerCharacter->radius, contacts);
 
-		// First, see if all constraints are met
-		bool constrained = false;
-		for (ContactList::const_iterator it = contacts.begin(); it != contacts.end(); ++it)
+		// Experimental projected Gauss-Seidel solution to the problem
+		static const int NUM_ITERS = 16;
+		std::vector<float> k(contacts.size(), 0.0f);
+		for (int iter = 0; iter < NUM_ITERS; ++iter)
 		{
-			// Cn' = V dot (X - Pn)
-			float c = Vector2f::Dot(intendedVel, m_playerCharacter->pos - it->pos);
-			if (c < 0.0f)
+			int ki = 0;
+			for (ContactList::const_iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1, ++ki)
 			{
-				constrained = true;
-				break;
-			}
-		}
-
-		// Then, go through contacts and try correcting each one
-		if (constrained)
-		{
-			actualVel = Vector2f(0.0f, 0.0f);
-			for (ContactList::const_iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1)
-			{
-				// kn = -(V dot (X - Pn)) / ((X - Pn) dot (X - Pn))
-				float k = -Vector2f::Dot(intendedVel, m_playerCharacter->pos - it1->pos) /
-					(m_playerCharacter->pos - it1->pos).LengthSquared();
-				if (k < 0.0f) {
-					continue;
-				}
-
-				constrained = false;
-				for (ContactList::const_iterator it2 = contacts.begin(); it2 != contacts.end(); ++it2)
+				float sum = 0.0f;
+				int kj = 0;
+				for (ContactList::const_iterator it2 = contacts.begin(); it2 != contacts.end(); ++it2, ++kj)
 				{
-					if (it2 == it1) {
-						continue;
-					}
-
-					float c = Vector2f::Dot((m_playerCharacter->pos - it1->pos), (m_playerCharacter->pos - it2->pos)) * k
-						+ Vector2f::Dot(intendedVel, (m_playerCharacter->pos - it2->pos));
-					if (c < -0.001f)
+					if (it2 != it1)
 					{
-						constrained = true;
-						break;
+						float aij = Vector2f::Dot((m_playerCharacter->pos - it2->pos), (m_playerCharacter->pos - it1->pos));
+						sum += aij * k[kj];
 					}
 				}
-
-				if (!constrained)
-				{
-					actualVel = intendedVel + k * (m_playerCharacter->pos - it1->pos);
-					break;
+				// FIXME: My math on paper said that there should NOT be a negation here. But
+				// it only works WITH the negation! why?
+				float bi = -Vector2f::Dot(intendedVel, (m_playerCharacter->pos - it1->pos));
+				float aii = (m_playerCharacter->pos - it1->pos).LengthSquared();
+				k[ki] = (bi - sum) / aii;
+				if (k[ki] < 0.0f) {
+					k[ki] = 0.0f;
 				}
 			}
 		}
+
+		int kn = 0;
+		for (ContactList::const_iterator it = contacts.begin(); it !=contacts.end(); ++it, ++kn)
+		{
+			actualVel += k[kn] * (m_playerCharacter->pos - it->pos);
+		}
+
+		//// First, see if all constraints are met
+		//bool constrained = false;
+		//for (ContactList::const_iterator it = contacts.begin(); it != contacts.end(); ++it)
+		//{
+		//	// Cn' = V dot (X - Pn)
+		//	float c = Vector2f::Dot(intendedVel, m_playerCharacter->pos - it->pos);
+		//	if (c < 0.0f)
+		//	{
+		//		constrained = true;
+		//		break;
+		//	}
+		//}
+
+		//// Then, go through contacts and try correcting each one
+		//if (constrained)
+		//{
+		//	actualVel = Vector2f(0.0f, 0.0f);
+		//	for (ContactList::const_iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1)
+		//	{
+		//		// kn = -(V dot (X - Pn)) / ((X - Pn) dot (X - Pn))
+		//		float k = -Vector2f::Dot(intendedVel, m_playerCharacter->pos - it1->pos) /
+		//			(m_playerCharacter->pos - it1->pos).LengthSquared();
+		//		if (k < 0.0f) {
+		//			continue;
+		//		}
+
+		//		constrained = false;
+		//		for (ContactList::const_iterator it2 = contacts.begin(); it2 != contacts.end(); ++it2)
+		//		{
+		//			if (it2 == it1) {
+		//				continue;
+		//			}
+
+		//			float c = Vector2f::Dot((m_playerCharacter->pos - it1->pos), (m_playerCharacter->pos - it2->pos)) * k
+		//				+ Vector2f::Dot(intendedVel, (m_playerCharacter->pos - it2->pos));
+		//			if (c < -0.001f)
+		//			{
+		//				constrained = true;
+		//				break;
+		//			}
+		//		}
+
+		//		if (!constrained)
+		//		{
+		//			actualVel = intendedVel + k * (m_playerCharacter->pos - it1->pos);
+		//			break;
+		//		}
+		//	}
+		//}
 
 		//Collisions collisions = CheckCharacterCollisions(*m_playerCharacter, actualVel);
 		//if (collisions.size() == 1)
