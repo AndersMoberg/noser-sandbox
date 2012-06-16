@@ -10,7 +10,7 @@
 #include "MainMenuMode/MainMenuMode.hpp"
 #include "CharacterControllerMode/CharacterControllerMode.hpp"
 
-const unsigned int Game::TICKS_PER_SEC = 3600;
+const unsigned int Game::TICKS_PER_SEC = 60;
 
 void Game::init(HWND hWnd)
 {

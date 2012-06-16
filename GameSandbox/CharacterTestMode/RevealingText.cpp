@@ -17,7 +17,7 @@ void RevealingText::init(IDWriteFactory* dwriteFactory,
 	m_layoutBox = layoutBox;
 
 	m_progress = 0;
-	m_ticksPerChar = 60;
+	m_ticksPerChar = 1;
 	m_charCurTick = 0;
 
 	CHECK_HR(dwriteFactory->CreateTextLayout(

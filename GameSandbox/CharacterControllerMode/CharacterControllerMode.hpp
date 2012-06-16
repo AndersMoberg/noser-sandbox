@@ -7,6 +7,8 @@
 
 #include <memory>
 
+#include <Box2D/Box2D.h>
+
 #include "D2DRenderer.hpp"
 #include "Game.hpp"
 #include "World.hpp"
@@ -38,10 +40,6 @@ private:
 
 	typedef std::list<CharacterPtr> CharacterList;
 
-	typedef std::list<const Wall*> Collisions;
-	Collisions CheckCharacterCollisions(
-		const Character& character, const Vector2f& vel);
-
 	Game* m_game;
 	D2DRenderer m_renderer;
 
@@ -55,6 +53,9 @@ private:
 
 	CharacterPtr m_playerCharacter;
 	CharacterPtr m_npcCharacter;
+
+	std::shared_ptr<b2World> m_b2World;
+	b2Body* m_b2Character;
 
 };
 

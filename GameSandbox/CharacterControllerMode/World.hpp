@@ -19,13 +19,6 @@ struct Wall
 	Vector2f end;
 };
 
-struct Contact
-{
-	Vector2f pos;
-};
-
-typedef std::list<Contact> ContactList;
-
 class World
 {
 
@@ -36,9 +29,6 @@ public:
 	typedef std::list<Wall> WallList;
 
 	const WallList& GetWalls() const { return m_walls; }
-
-	void getCircleContacts(const Vector2f& center, float radius,
-		ContactList& contacts);
 
 private:
 

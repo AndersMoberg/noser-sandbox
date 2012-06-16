@@ -35,105 +35,42 @@ std::unique_ptr<CharacterControllerMode> CharacterControllerMode::create(Game* g
 	p->m_npcCharacter->radius = 1.0f;
 	p->m_characters.push_back(p->m_npcCharacter);
 
-	return p;
-}
+	p->m_b2World.reset(new b2World(b2Vec2(0.0f, 0.0f)));
 
-// ws: wall start; we: wall end; p: character position; pRadius: character radius
-static bool TestWallPosConstraint(const Vector2f& ws, const Vector2f& we,
-	const Vector2f& p, float pRadius)
-{
-	// Test position constraint of circular character against line segment wall
+	// Import World into b2World
 
-	bool pastS = Vector2f::Dot(we - ws, p - ws) > 0.0f;
-	bool pastE = Vector2f::Dot(ws - we, p - we) > 0.0f;
-	if (pastS && pastE) {
-		// character is not near either end
-		return DistancePointLineSquared(p, ws, we) <= pRadius*pRadius;
-	} else if (pastS) {
-		// character is near we
-		return (p - we).LengthSquared() <= pRadius*pRadius;
-	} else if (pastE) {
-		// character is near ws
-		return (p - ws).LengthSquared() <= pRadius*pRadius;
-	} else {
-		return false;
-	}
-}
-
-// ws: wall start; we: wall end; p: character position; v: character velocity
-static bool TestWallVelConstraint(const Vector2f& ws, const Vector2f& we,
-	const Vector2f& p, const Vector2f& v)
-{
-	// Test velocity constraint of circular character against line segment wall
-	// (assuming character is already position-constrained)
-
-	bool pastS = Vector2f::Dot(we - ws, p - ws) > 0.0f;
-	bool pastE = Vector2f::Dot(ws - we, p - we) > 0.0f;
-	if (pastS && pastE) {
-		// character is not near either end
-		Vector2f wallPerp = (we - ws).Perpendicular();
-		Vector2f wallSToP = p - ws;
-		// NOTE: I did all this math on paper at one point, but I should review
-		// soon.
-		return Vector2f::Dot(wallPerp, wallSToP) * Vector2f::Dot(wallPerp, v) <= 0.0f;
-	} else if (pastS) {
-		// character is near we
-		return Vector2f::Dot(v, p - we) <= 0.0f;
-	} else if (pastE) {
-		// character is near ws
-		return Vector2f::Dot(v, p - ws) <= 0.0f;
-	} else {
-		return false;
-	}
-}
-
-// ws: wall start; we: wall end; p: character position; v: character velocity
-static Vector2f CorrectVelAgainstWall(const Vector2f& ws, const Vector2f& we,
-	const Vector2f& p, const Vector2f& v)
-{
-	// If character is constrained in position and velocity against a wall,
-	// calculate a new velocity that satisfies the constraint
-	// i.e. "push" the character against the wall but don't let it through.
-
-	bool pastS = Vector2f::Dot(we - ws, p - ws) > 0.0f;
-	bool pastE = Vector2f::Dot(ws - we, p - we) > 0.0f;
-	if (pastS && pastE) {
-		// character is not near either end
-		return Vector2f::Projection(v, we - ws);
-	} else if (pastS) {
-		// character is near we
-		return Vector2f::Projection(v, (p - we).Perpendicular());
-	} else if (pastE) {
-		// character is near ws
-		return Vector2f::Projection(v, (p - ws).Perpendicular());
-	} else {
-		return v;
-	}
-}
-	
-typedef std::list<const Wall*> Collisions;
-Collisions CharacterControllerMode::CheckCharacterCollisions(
-	const Character& character, const Vector2f& vel)
-{
-	Collisions result;
-
-	const World::WallList& walls = m_world.GetWalls();
+	World::WallList walls = p->m_world.GetWalls();
 	for (World::WallList::const_iterator it = walls.begin(); it != walls.end(); ++it)
 	{
-		bool posConstrained = TestWallPosConstraint(it->start, it->end,
-			character.pos, character.radius);
-		if (posConstrained)
-		{
-			bool velConstrained = TestWallVelConstraint(it->start, it->end,
-				character.pos, vel);
-			if (velConstrained)
-			{
-				result.push_back(&*it);
-			}
-		}
+		b2BodyDef bd;
+		b2Body* wall = p->m_b2World->CreateBody(&bd);
+
+		b2EdgeShape shape;
+		shape.Set(b2Vec2(it->start.x, it->start.y), b2Vec2(it->end.x, it->end.y));
+
+		b2FixtureDef fd;
+		fd.shape = &shape;
+		fd.friction = 0.0f;
+		wall->CreateFixture(&fd);
 	}
 
-	return result;
+	{
+		b2BodyDef bd;
+		bd.type = b2_dynamicBody;
+		bd.fixedRotation = true;
+		bd.position = b2Vec2(p->m_playerCharacter->pos.x, p->m_playerCharacter->pos.y);
+		p->m_b2Character = p->m_b2World->CreateBody(&bd);
+
+		b2CircleShape shape;
+		shape.m_radius = p->m_playerCharacter->radius;
+
+		b2FixtureDef fd;
+		fd.shape = &shape;
+		fd.friction = 0.0f;
+		p->m_b2Character->CreateFixture(&fd);
+	}
+
+	return p;
 }
 
 class MainMenuModeSwitcher : public GameModeSwitcher
@@ -158,139 +95,15 @@ void CharacterControllerMode::Tick(const GameInput& input)
 
 		Vector2f actualVel = intendedVel;
 
-		ContactList contacts;
-		m_world.getCircleContacts(m_playerCharacter->pos, m_playerCharacter->radius, contacts);
+		m_b2Character->SetLinearVelocity(b2Vec2(intendedVel.x, intendedVel.y));
 
-		// Experimental projected Gauss-Seidel solution to the problem
-		static const int NUM_ITERS = 16;
-		std::vector<float> k(contacts.size(), 0.0f);
-		for (int iter = 0; iter < NUM_ITERS; ++iter)
-		{
-			int ki = 0;
-			for (ContactList::const_iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1, ++ki)
-			{
-				float sum = 0.0f;
-				int kj = 0;
-				for (ContactList::const_iterator it2 = contacts.begin(); it2 != contacts.end(); ++it2, ++kj)
-				{
-					if (it2 != it1)
-					{
-						float aij = Vector2f::Dot((m_playerCharacter->pos - it2->pos), (m_playerCharacter->pos - it1->pos));
-						sum += aij * k[kj];
-					}
-				}
-				// FIXME: My math on paper said that there should NOT be a negation here. But
-				// it only works WITH the negation! why?
-				float bi = -Vector2f::Dot(intendedVel, (m_playerCharacter->pos - it1->pos));
-				float aii = (m_playerCharacter->pos - it1->pos).LengthSquared();
-				k[ki] = (bi - sum) / aii;
-				if (k[ki] < 0.0f) {
-					k[ki] = 0.0f;
-				}
-			}
-		}
+		m_b2World->Step(1.0f / Game::TICKS_PER_SEC, 8, 3);
 
-		int kn = 0;
-		for (ContactList::const_iterator it = contacts.begin(); it !=contacts.end(); ++it, ++kn)
-		{
-			actualVel += k[kn] * (m_playerCharacter->pos - it->pos);
-		}
-
-		//// First, see if all constraints are met
-		//bool constrained = false;
-		//for (ContactList::const_iterator it = contacts.begin(); it != contacts.end(); ++it)
-		//{
-		//	// Cn' = V dot (X - Pn)
-		//	float c = Vector2f::Dot(intendedVel, m_playerCharacter->pos - it->pos);
-		//	if (c < 0.0f)
-		//	{
-		//		constrained = true;
-		//		break;
-		//	}
-		//}
-
-		//// Then, go through contacts and try correcting each one
-		//if (constrained)
-		//{
-		//	actualVel = Vector2f(0.0f, 0.0f);
-		//	for (ContactList::const_iterator it1 = contacts.begin(); it1 != contacts.end(); ++it1)
-		//	{
-		//		// kn = -(V dot (X - Pn)) / ((X - Pn) dot (X - Pn))
-		//		float k = -Vector2f::Dot(intendedVel, m_playerCharacter->pos - it1->pos) /
-		//			(m_playerCharacter->pos - it1->pos).LengthSquared();
-		//		if (k < 0.0f) {
-		//			continue;
-		//		}
-
-		//		constrained = false;
-		//		for (ContactList::const_iterator it2 = contacts.begin(); it2 != contacts.end(); ++it2)
-		//		{
-		//			if (it2 == it1) {
-		//				continue;
-		//			}
-
-		//			float c = Vector2f::Dot((m_playerCharacter->pos - it1->pos), (m_playerCharacter->pos - it2->pos)) * k
-		//				+ Vector2f::Dot(intendedVel, (m_playerCharacter->pos - it2->pos));
-		//			if (c < -0.001f)
-		//			{
-		//				constrained = true;
-		//				break;
-		//			}
-		//		}
-
-		//		if (!constrained)
-		//		{
-		//			actualVel = intendedVel + k * (m_playerCharacter->pos - it1->pos);
-		//			break;
-		//		}
-		//	}
-		//}
-
-		//Collisions collisions = CheckCharacterCollisions(*m_playerCharacter, actualVel);
-		//if (collisions.size() == 1)
-		//{
-		//	const Wall* wall = collisions.back();
-		//	actualVel = CorrectVelAgainstWall(wall->start, wall->end,
-		//		m_playerCharacter->pos, actualVel);
-		//}
-		//else if (collisions.size() >= 2)
-		//{
-		//	const Wall* wall1 = collisions.front();
-		//	const Wall* wall2 = collisions.back();
-		//	// Find wall1 correction, test against wall2, then vice-versa
-		//	Vector2f wall1Correct = CorrectVelAgainstWall(wall1->start, wall1->end,
-		//		m_playerCharacter->pos, actualVel);
-		//	Vector2f wall2Correct = CorrectVelAgainstWall(wall2->start, wall2->end,
-		//		m_playerCharacter->pos, actualVel);
-		//	if (!TestWallVelConstraint(wall2->start, wall2->end, m_playerCharacter->pos,
-		//		wall1Correct))
-		//	{
-		//		actualVel = wall1Correct;
-		//	}
-		//	else if (!TestWallVelConstraint(wall1->start, wall1->end, m_playerCharacter->pos,
-		//		wall2Correct))
-		//	{
-		//		actualVel = wall2Correct;
-		//	}
-		//	else if (wall1Correct == wall2Correct)
-		//	{
-		//		// FIXME: Comparison is sensitive to tiny floating-point errors
-		//		actualVel = wall1Correct;
-		//	}
-		//	else
-		//	{
-		//		actualVel = Vector2f(0.0f, 0.0f);
-		//	}
-		//}
-		//else if (collisions.size() > 2)
-		//{
-		//	// TODO: Generalize the algorithm above for more than 2 constraints
-		//	actualVel = Vector2f(0.0f, 0.0f);
-		//}
-
-		m_playerCharacter->pos += actualVel / (float)Game::TICKS_PER_SEC;
+		b2Vec2 charPos = m_b2Character->GetPosition();
+		m_playerCharacter->pos = Vector2f(charPos.x, charPos.y);
 		m_intendedVel = intendedVel;
-		m_actualVel = actualVel;
+		b2Vec2 charVel = m_b2Character->GetLinearVelocity();
+		m_actualVel = Vector2f(charVel.x, charVel.y);
 	}
 }
 
@@ -356,16 +169,6 @@ void CharacterControllerMode::Render()
 		blackBrush, m_playerCharacter->radius/8.0f);
 
 	d2dTarget->SetTransform(D2D1::Matrix3x2F::Identity());
-
-	// Draw contacts
-
-	ContactList contacts;
-	m_world.getCircleContacts(m_playerCharacter->pos, m_playerCharacter->radius, contacts);
-	for (ContactList::const_iterator it = contacts.begin(); it != contacts.end(); ++it)
-	{
-		Vector2f pos = worldToViewport.transform(it->pos);
-		d2dTarget->FillEllipse(D2D1::Ellipse(pos, 8.0f, 8.0f), blackBrush);
-	}
 
 	d2dTarget->EndDraw();
 	// TODO: Handle D2DERR_RECREATETARGET
