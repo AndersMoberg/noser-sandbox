@@ -95,15 +95,13 @@ void CharacterControllerMode::Tick(const GameInput& input)
 
 		Vector2f actualVel = intendedVel;
 
-		m_b2Character->SetLinearVelocity(b2Vec2(intendedVel.x, intendedVel.y));
+		m_b2Character->SetLinearVelocity(intendedVel);
 
 		m_b2World->Step(1.0f / Game::TICKS_PER_SEC, 8, 3);
 
-		b2Vec2 charPos = m_b2Character->GetPosition();
-		m_playerCharacter->pos = Vector2f(charPos.x, charPos.y);
+		m_playerCharacter->pos = m_b2Character->GetPosition();
 		m_intendedVel = intendedVel;
-		b2Vec2 charVel = m_b2Character->GetLinearVelocity();
-		m_actualVel = Vector2f(charVel.x, charVel.y);
+		m_actualVel = m_b2Character->GetLinearVelocity();
 	}
 }
 

@@ -9,6 +9,8 @@
 
 #include <d2d1.h>
 
+#include <Box2D/Box2D.h>
+
 static const float M_PIf = 3.14159265358979323846f;
 
 inline float DegToRad(float deg) {
@@ -22,6 +24,7 @@ struct Vector2f
 
 	Vector2f() { }
 	Vector2f(float _x, float _y) : x(_x), y(_y) { }
+	Vector2f(const b2Vec2& v) : x(v.x), y(v.y) { }
 
 	Vector2f operator+(const Vector2f& rhs) const { return Vector2f(x + rhs.x, y + rhs.y); }
 	Vector2f operator-(const Vector2f& rhs) const { return Vector2f(x - rhs.x, y - rhs.y); }
@@ -42,6 +45,7 @@ struct Vector2f
 	}
 
 	operator D2D1_POINT_2F() const { return D2D1::Point2F(x, y); }
+	operator b2Vec2() const { return b2Vec2(x, y); }
 
 	float LengthSquared() const { return x * x + y * y; }
 	float length() const { return sqrt(LengthSquared()); }
