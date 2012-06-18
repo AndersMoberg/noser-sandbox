@@ -55,6 +55,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;.\External\ANGLE\include;.\External\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)\%(RelativeDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)\%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -73,6 +75,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;.\External\ANGLE\include;.\External\Box2D;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)\%(RelativeDir)</AssemblerListingLocation>
+      <ObjectFileName>$(IntDir)\%(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -87,6 +91,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CharacterControllerMode\CharacterControllerMode.cpp" />
+    <ClCompile Include="CharacterControllerMode\RevealingText.cpp" />
     <ClCompile Include="CharacterControllerMode\World.cpp" />
     <ClCompile Include="CharacterTestMode\CharacterTestMode.cpp" />
     <ClCompile Include="CharacterTestMode\DropShadow.cpp" />
@@ -109,6 +114,7 @@
     <ClInclude Include="Application.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="CharacterControllerMode\CharacterControllerMode.hpp" />
+    <ClInclude Include="CharacterControllerMode\RevealingText.hpp" />
     <ClInclude Include="CharacterControllerMode\World.hpp" />
     <ClInclude Include="CharacterTestMode\CharacterTestMode.hpp" />
     <ClInclude Include="CharacterTestMode\DropShadow.hpp" />

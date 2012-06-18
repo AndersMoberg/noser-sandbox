@@ -75,6 +75,9 @@
     <ClCompile Include="CharacterTestMode\WorldRenderer.cpp">
       <Filter>Source\CharacterTestMode</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterControllerMode\RevealingText.cpp">
+      <Filter>Source\CharacterControllerMode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -133,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="CharacterTestMode\WorldObject.hpp">
       <Filter>Source\CharacterTestMode</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterControllerMode\RevealingText.hpp">
+      <Filter>Source\CharacterControllerMode</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

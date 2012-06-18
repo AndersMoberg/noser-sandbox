@@ -12,6 +12,7 @@
 #include "D2DRenderer.hpp"
 #include "Game.hpp"
 #include "World.hpp"
+#include "RevealingText.hpp"
 
 namespace CharacterControllerMode
 {
@@ -29,6 +30,9 @@ public:
 private:
 
 	CharacterControllerMode();
+
+	void startRevealingText(const std::wstring& str);
+	void clearRevealingText();
 	
 	struct Character
 	{
@@ -56,6 +60,13 @@ private:
 
 	std::shared_ptr<b2World> m_b2World;
 	b2Body* m_b2Character;
+	b2Body* m_b2Npc;
+
+	bool m_wasTouching;
+
+	ComPtr<IDWriteFactory> m_dwriteFactory;
+	ComPtr<IDWriteTextFormat> m_textFormat;
+	RevealingText::Ptr m_revealingText;
 
 };
 

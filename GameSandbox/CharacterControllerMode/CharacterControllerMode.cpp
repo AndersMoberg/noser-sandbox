@@ -25,6 +25,13 @@ std::unique_ptr<CharacterControllerMode> CharacterControllerMode::create(Game* g
 
 	p->m_renderer.init(p->m_game->GetHWnd());
 		
+	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
+		__uuidof(IDWriteFactory), (IUnknown**)p->m_dwriteFactory.Receive()));
+
+	CHECK_HR(p->m_dwriteFactory->CreateTextFormat(L"Trebuchet MS", NULL,
+		DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL, 36.0f, L"en-US", p->m_textFormat.Receive()));
+
 	p->m_playerCharacter = CharacterPtr(new Character);
 	p->m_playerCharacter->pos = Vector2f(0.0f, 3.0f);
 	p->m_playerCharacter->radius = 1.0f;
@@ -58,7 +65,7 @@ std::unique_ptr<CharacterControllerMode> CharacterControllerMode::create(Game* g
 		b2BodyDef bd;
 		bd.type = b2_dynamicBody;
 		bd.fixedRotation = true;
-		bd.position = b2Vec2(p->m_playerCharacter->pos.x, p->m_playerCharacter->pos.y);
+		bd.position = p->m_playerCharacter->pos;
 		p->m_b2Character = p->m_b2World->CreateBody(&bd);
 
 		b2CircleShape shape;
@@ -69,6 +76,22 @@ std::unique_ptr<CharacterControllerMode> CharacterControllerMode::create(Game* g
 		fd.friction = 0.0f;
 		p->m_b2Character->CreateFixture(&fd);
 	}
+
+	{
+		b2BodyDef bd;
+		bd.position = p->m_npcCharacter->pos;
+		p->m_b2Npc = p->m_b2World->CreateBody(&bd);
+
+		b2CircleShape shape;
+		shape.m_radius = p->m_npcCharacter->radius;
+
+		b2FixtureDef fd;
+		fd.shape = &shape;
+		fd.friction = 0.0f;
+		p->m_b2Npc->CreateFixture(&fd);
+	}
+
+	p->m_wasTouching = false;
 
 	return p;
 }
@@ -99,9 +122,30 @@ void CharacterControllerMode::Tick(const GameInput& input)
 
 		m_b2World->Step(1.0f / Game::TICKS_PER_SEC, 8, 3);
 
+		for (b2ContactEdge* ce = m_b2Npc->GetContactList(); ce != NULL; ce = ce->next)
+		{
+			b2Contact* c = ce->contact;
+			if (c->IsTouching())
+			{
+				if (!m_wasTouching)
+				{
+					startRevealingText(L"You are now touching an NPC.");
+					m_wasTouching = true;
+				}
+			}
+			else
+			{
+				clearRevealingText();
+				m_wasTouching = false;
+			}
+		}
+
 		m_playerCharacter->pos = m_b2Character->GetPosition();
 		m_intendedVel = intendedVel;
 		m_actualVel = m_b2Character->GetLinearVelocity();
+		if (m_revealingText) {
+			m_revealingText->Tick();
+		}
 	}
 }
 
@@ -168,8 +212,25 @@ void CharacterControllerMode::Render()
 
 	d2dTarget->SetTransform(D2D1::Matrix3x2F::Identity());
 
+	if (m_revealingText) {
+		m_revealingText->Render(d2dTarget);
+	}
+
 	d2dTarget->EndDraw();
 	// TODO: Handle D2DERR_RECREATETARGET
+}
+
+void CharacterControllerMode::startRevealingText(const std::wstring& str)
+{
+	Rectf layoutBox(0.0f, 0.0f, m_renderer.GetD2DTarget()->GetSize().width,
+		m_renderer.GetD2DTarget()->GetSize().height);
+	m_revealingText = RevealingText::create(m_dwriteFactory, m_textFormat,
+		str, layoutBox);
+}
+
+void CharacterControllerMode::clearRevealingText()
+{
+	m_revealingText.reset();
 }
 
 }
