@@ -30,6 +30,8 @@ public:
 	bool Tick(); // Returns true if rendering changed (needs re-rendering)
 	void Render(ID2D1RenderTarget* d2dTarget);
 
+	void finish();
+
 private:
 
 	std::wstring m_text;

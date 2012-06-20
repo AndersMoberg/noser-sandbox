@@ -69,4 +69,15 @@ void RevealingText::Render(ID2D1RenderTarget* d2dTarget)
 	}
 }
 
+void RevealingText::finish()
+{
+	m_progress = m_text.size();
+
+	DWRITE_TEXT_RANGE fullRange = { 0, m_text.size() };
+	m_textLayout->SetDrawingEffect(NULL, fullRange);
+
+	DWRITE_TEXT_RANGE hideRange = { m_progress, m_text.size() - m_progress };
+	m_textLayout->SetDrawingEffect(DoNothingObject::Create(), hideRange);
+}
+
 }

@@ -24,6 +24,8 @@ std::unique_ptr<CharacterControllerMode> CharacterControllerMode::create(Game* g
 	p->m_game = game;
 
 	p->m_renderer.init(p->m_game->GetHWnd());
+
+	p->m_state = STATE_WALKING;
 		
 	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
 		__uuidof(IDWriteFactory), (IUnknown**)p->m_dwriteFactory.Receive()));
@@ -112,40 +114,79 @@ void CharacterControllerMode::Tick(const GameInput& input)
 	}
 	else
 	{
-		static const float CHAR_SPEED = 8.0f; // world units per second
-
-		Vector2f intendedVel = CHAR_SPEED * input.move;
-
-		Vector2f actualVel = intendedVel;
-
-		m_b2Character->SetLinearVelocity(intendedVel);
-
-		m_b2World->Step(1.0f / Game::TICKS_PER_SEC, 8, 3);
-
-		for (b2ContactEdge* ce = m_b2Npc->GetContactList(); ce != NULL; ce = ce->next)
+		switch (m_state)
 		{
-			b2Contact* c = ce->contact;
-			if (c->IsTouching())
-			{
-				if (!m_wasTouching)
-				{
-					startRevealingText(L"You are now touching an NPC.");
-					m_wasTouching = true;
-				}
-			}
-			else
-			{
-				clearRevealingText();
-				m_wasTouching = false;
-			}
+		case STATE_WALKING:
+			tickWalking(input);
+			break;
+		case STATE_TALKING:
+			tickTalking(input);
+			break;
 		}
 
-		m_playerCharacter->pos = m_b2Character->GetPosition();
-		m_intendedVel = intendedVel;
-		m_actualVel = m_b2Character->GetLinearVelocity();
 		if (m_revealingText) {
 			m_revealingText->Tick();
 		}
+	}
+}
+
+void CharacterControllerMode::tickWalking(const GameInput& input)
+{
+	static const float CHAR_SPEED = 8.0f; // world units per second
+
+	Vector2f intendedVel = CHAR_SPEED * input.move;
+
+	Vector2f actualVel = intendedVel;
+
+	m_b2Character->SetLinearVelocity(intendedVel);
+
+	m_b2World->Step(1.0f / Game::TICKS_PER_SEC, 8, 3);
+
+	bool switchToTalking = false;
+	for (b2ContactEdge* ce = m_b2Npc->GetContactList(); ce != NULL; ce = ce->next)
+	{
+		b2Contact* c = ce->contact;
+		if (c->IsTouching())
+		{
+			if (!m_wasTouching)
+			{
+				startRevealingText(L"You are now touching an NPC.");
+				m_wasTouching = true;
+			}
+			if (input.enter)
+			{
+				switchToTalking = true;
+			}
+		}
+		else
+		{
+			clearRevealingText();
+			m_wasTouching = false;
+		}
+	}
+
+	m_playerCharacter->pos = m_b2Character->GetPosition();
+	m_intendedVel = intendedVel;
+	m_actualVel = m_b2Character->GetLinearVelocity();
+
+	if (switchToTalking)
+	{
+		enterTalking();
+	}
+}
+
+void CharacterControllerMode::enterTalking()
+{
+	m_state = STATE_TALKING;
+	clearRevealingText();
+	startRevealingText(L"Hello, this is some dialogue.\nYes or no?");
+}
+
+void CharacterControllerMode::tickTalking(const GameInput& input)
+{
+	if (input.enter)
+	{
+		m_revealingText->finish();
 	}
 }
 

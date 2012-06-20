@@ -31,6 +31,10 @@ private:
 
 	CharacterControllerMode();
 
+	void tickWalking(const GameInput& input);
+	void enterTalking();
+	void tickTalking(const GameInput& input);
+
 	void startRevealingText(const std::wstring& str);
 	void clearRevealingText();
 	
@@ -49,6 +53,13 @@ private:
 
 	Camera m_camera;
 	World m_world;
+
+	enum State
+	{
+		STATE_WALKING,
+		STATE_TALKING
+	};
+	State m_state;
 
 	Vector2f m_intendedVel;
 	Vector2f m_actualVel;
