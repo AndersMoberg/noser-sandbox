@@ -34,6 +34,19 @@ private:
 	CharacterControllerMode();
 
 	void tickWalking(const GameInput& input);
+
+	static const std::wstring TALK_SCRIPT[];
+	int m_talkScriptPtr;
+	enum TalkState
+	{
+		TALKSTATE_RUNNING,
+		TALKSTATE_SAYING,
+		TALKSTATE_SLEEPING
+	};
+	TalkState m_talkState;
+	int m_talkSleepCount;
+
+	void interpretTalkScript();
 	void enterTalking();
 	void tickTalking(const GameInput& input);
 

@@ -31,6 +31,7 @@ public:
 	void Render(ID2D1RenderTarget* d2dTarget);
 
 	void finish();
+	bool isFinished() const;
 
 private:
 

@@ -4,6 +4,8 @@
 
 #include "CharacterControllerMode.hpp"
 
+#include <sstream>
+#include <string>
 #include <vector>
 
 #include "MainMenuMode/MainMenuMode.hpp"
@@ -175,18 +177,82 @@ void CharacterControllerMode::tickWalking(const GameInput& input)
 	}
 }
 
+const std::wstring CharacterControllerMode::TALK_SCRIPT[] =
+{
+	L"Say", L"Hello, I'm just a silly NPC.",
+	L"Sleep", L"2000",
+	L"Say", L"How do you do?",
+	L"Sleep", L"2000",
+	L"Say", L"Goodbye.",
+	L"Sleep", L"2000",
+	L""
+};
+
+void CharacterControllerMode::interpretTalkScript()
+{
+	assert(m_talkState == TALKSTATE_RUNNING);
+
+	bool done = false;
+	while (!done)
+	{
+		const std::wstring& cmd = TALK_SCRIPT[m_talkScriptPtr];
+		if (cmd == L"Say")
+		{
+			const std::wstring& dlg = TALK_SCRIPT[m_talkScriptPtr+1];
+			startRevealingText(dlg);
+			m_talkScriptPtr += 2;
+			done = true;
+		}
+		else if (cmd == L"Sleep")
+		{
+			const std::wstring& msStr = TALK_SCRIPT[m_talkScriptPtr+1];
+			std::wistringstream iss(msStr);
+			int ms;
+			iss >> ms;
+			m_talkState = TALKSTATE_SLEEPING;
+			m_talkSleepCount = ms * Game::TICKS_PER_SEC / 1000;
+			m_talkScriptPtr += 2;
+			done = true;
+		}
+		else if (cmd.empty())
+		{
+			clearRevealingText();
+			m_state = STATE_WALKING;
+			done = true;
+		}
+	}
+}
+
 void CharacterControllerMode::enterTalking()
 {
 	m_state = STATE_TALKING;
-	clearRevealingText();
-	startRevealingText(L"Hello, this is some dialogue.\nYes or no?");
+	m_talkState = TALKSTATE_RUNNING;
+	m_talkScriptPtr = 0;
+	interpretTalkScript();
 }
 
 void CharacterControllerMode::tickTalking(const GameInput& input)
 {
-	if (input.enter)
+	switch (m_talkState)
 	{
-		m_revealingText->finish();
+	case TALKSTATE_RUNNING:
+		interpretTalkScript();
+		break;
+	case TALKSTATE_SAYING:
+		if (m_revealingText->isFinished())
+		{
+			m_talkState = TALKSTATE_RUNNING;
+			interpretTalkScript();
+		}
+		break;
+	case TALKSTATE_SLEEPING:
+		--m_talkSleepCount;
+		if (m_talkSleepCount <= 0)
+		{
+			m_talkState = TALKSTATE_RUNNING;
+			interpretTalkScript();
+		}
+		break;
 	}
 }
 

@@ -80,4 +80,9 @@ void RevealingText::finish()
 	m_textLayout->SetDrawingEffect(DoNothingObject::Create(), hideRange);
 }
 
+bool RevealingText::isFinished() const
+{
+	return m_progress >= m_text.size();
+}
+
 }
