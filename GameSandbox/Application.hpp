@@ -18,13 +18,16 @@ class Application
 
 public:
 	
-	Application();
+	typedef std::shared_ptr<Application> Ptr;
+
 	~Application();
-	void init(HINSTANCE hInstance, int nShowCmd);
+	static Ptr create(HINSTANCE hInstance, int nShowCmd);
 
 	int MessagePump();
 
 private:
+
+	Application();
 
 	bool m_coInited;
 	MainWindow m_window;

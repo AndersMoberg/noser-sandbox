@@ -22,7 +22,9 @@ class CharacterControllerMode : public GameMode
 
 public:
 
-	static std::unique_ptr<CharacterControllerMode> create(Game* game);
+	typedef std::shared_ptr<CharacterControllerMode> Ptr;
+
+	static Ptr create(Game* game);
 
 	void Tick(const GameInput& input);
 	void Render();
@@ -49,7 +51,7 @@ private:
 	typedef std::list<CharacterPtr> CharacterList;
 
 	Game* m_game;
-	D2DRenderer m_renderer;
+	D2DRenderer::Ptr m_renderer;
 
 	Camera m_camera;
 	World m_world;

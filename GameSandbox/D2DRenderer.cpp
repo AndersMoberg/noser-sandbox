@@ -4,10 +4,15 @@
 
 #include "D2DRenderer.hpp"
 
-void D2DRenderer::init(HWND hWnd)
+D2DRenderer::D2DRenderer()
+{ }
+
+D2DRenderer::Ptr D2DRenderer::create(HWND hWnd)
 {
+	Ptr p(new D2DRenderer);
+
 	CHECK_HR(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED,
-		m_d2dFactory.Receive()));
+		p->m_d2dFactory.Receive()));
 
 	D2D1_RENDER_TARGET_PROPERTIES rtp = D2D1::RenderTargetProperties();
 	rtp.dpiX = 96.0f;
@@ -18,5 +23,7 @@ void D2DRenderer::init(HWND hWnd)
 	D2D1_HWND_RENDER_TARGET_PROPERTIES hwrtp = D2D1::HwndRenderTargetProperties(
 		hWnd, D2D1::SizeU(rc.right - rc.left, rc.bottom - rc.top));
 
-	CHECK_HR(m_d2dFactory->CreateHwndRenderTarget(&rtp, &hwrtp, m_d2dTarget.Receive()));
+	CHECK_HR(p->m_d2dFactory->CreateHwndRenderTarget(&rtp, &hwrtp, p->m_d2dTarget.Receive()));
+
+	return p;
 }

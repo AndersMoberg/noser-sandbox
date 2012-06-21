@@ -11,9 +11,6 @@
 
 #include "OutlinedTextRenderer.hpp"
 
-D2DLayer::D2DLayer()
-{ }
-
 void D2DLayer::init(GLES2Renderer* renderer)
 {
 	m_renderer = renderer;

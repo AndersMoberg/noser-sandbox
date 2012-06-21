@@ -41,7 +41,7 @@ void Game::Render()
 	m_mode->Render();
 }
 
-void Game::SwitchMode(GameModeSwitcher* nextMode)
+void Game::SwitchMode(GameModeSwitcher::Ptr nextMode)
 {
-	m_nextMode.reset(nextMode);
+	m_nextMode = nextMode;
 }

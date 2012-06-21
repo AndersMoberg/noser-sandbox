@@ -19,7 +19,6 @@ class D2DLayer
 
 public:
 	
-	D2DLayer();
 	void init(GLES2Renderer* renderer);
 
 	void recreateTarget();

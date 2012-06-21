@@ -30,9 +30,8 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
 	try
 	{
-		Application app;
-		app.init(hInstance, nShowCmd);
-		exitCode = app.MessagePump();
+		Application::Ptr app = Application::create(hInstance, nShowCmd);
+		exitCode = app->MessagePump();
 	}
 	catch (const std::exception& e)
 	{

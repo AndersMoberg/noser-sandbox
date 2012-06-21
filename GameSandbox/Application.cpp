@@ -24,14 +24,18 @@ Application::~Application()
 	timeEndPeriod(1);
 }
 
-void Application::init(HINSTANCE hInstance, int nShowCmd)
+Application::Ptr Application::create(HINSTANCE hInstance, int nShowCmd)
 {
+	Ptr p(new Application);
+
 	timeBeginPeriod(1);
 
 	CHECK_HR(CoInitialize(NULL));
-	m_coInited = true;
+	p->m_coInited = true;
 
-	m_window.init(hInstance, nShowCmd);
+	p->m_window.init(hInstance, nShowCmd);
+
+	return p;
 }
 
 int Application::MessagePump()

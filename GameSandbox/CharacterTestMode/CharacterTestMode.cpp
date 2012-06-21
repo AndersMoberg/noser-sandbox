@@ -172,9 +172,9 @@ CharacterTestMode::CharacterTestMode()
 	m_characterSpeed(6.0f)
 { }
 
-std::unique_ptr<CharacterTestMode> CharacterTestMode::create(Game* game)
+CharacterTestMode::Ptr CharacterTestMode::create(Game* game)
 {
-	std::unique_ptr<CharacterTestMode> p(new CharacterTestMode);
+	Ptr p(new CharacterTestMode);
 
 	p->m_game = game;
 
@@ -195,7 +195,7 @@ std::unique_ptr<CharacterTestMode> CharacterTestMode::create(Game* game)
 class MainMenuModeSwitcher : public GameModeSwitcher
 {
 public:
-	std::unique_ptr<GameMode> createMode(Game* game) {
+	GameMode::Ptr createMode(Game* game) {
 		return MainMenuMode::MainMenuMode::create(game);
 	}
 };
@@ -204,7 +204,7 @@ void CharacterTestMode::Tick(const GameInput& input)
 {
 	if (input.esc)
 	{
-		m_game->SwitchMode(new MainMenuModeSwitcher);
+		m_game->SwitchMode(GameModeSwitcher::Ptr(new MainMenuModeSwitcher));
 	}
 	else
 	{

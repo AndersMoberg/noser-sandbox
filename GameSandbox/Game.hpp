@@ -19,6 +19,7 @@ struct GameInput
 class GameMode
 {
 public:
+	typedef std::shared_ptr<GameMode> Ptr;
 	virtual ~GameMode() { }
 	virtual void Tick(const GameInput& input) = 0;
 	virtual void Render() = 0;
@@ -29,7 +30,9 @@ class Game;
 class GameModeSwitcher
 {
 public:
-	virtual std::unique_ptr<GameMode> createMode(Game* game) = 0;
+	typedef std::shared_ptr<GameModeSwitcher> Ptr;
+	virtual ~GameModeSwitcher() { }
+	virtual GameMode::Ptr createMode(Game* game) = 0;
 };
 
 class Game
@@ -45,7 +48,7 @@ public:
 	void Resize();
 	void Render();
 
-	void SwitchMode(GameModeSwitcher* nextMode);
+	void SwitchMode(GameModeSwitcher::Ptr nextMode);
 
 	HWND GetHWnd() { return m_hWnd; }
 
@@ -53,9 +56,9 @@ private:
 
 	HWND m_hWnd;
 
-	std::unique_ptr<GameMode> m_mode;
+	GameMode::Ptr m_mode;
 
-	std::unique_ptr<GameModeSwitcher> m_nextMode;
+	GameModeSwitcher::Ptr m_nextMode;
 
 };
 

@@ -20,13 +20,13 @@ MainMenuMode::MainMenuMode()
 	m_downTriggered(false)
 { }
 
-std::unique_ptr<MainMenuMode> MainMenuMode::create(Game* game)
+MainMenuMode::Ptr MainMenuMode::create(Game* game)
 {
-	std::unique_ptr<MainMenuMode> p(new MainMenuMode);
+	MainMenuMode::Ptr p(new MainMenuMode);
 
 	p->m_game = game;
 
-	p->m_renderer.init(p->m_game->GetHWnd());
+	p->m_renderer = D2DRenderer::create(p->m_game->GetHWnd());
 	
 	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
 		__uuidof(IDWriteFactory), (IUnknown**)p->m_dwriteFactory.Receive()));
@@ -45,7 +45,7 @@ std::unique_ptr<MainMenuMode> MainMenuMode::create(Game* game)
 class CharacterControllerModeSwitcher : public GameModeSwitcher
 {
 public:
-	virtual std::unique_ptr<GameMode> createMode(Game* game) {
+	virtual GameMode::Ptr createMode(Game* game) {
 		return CharacterControllerMode::CharacterControllerMode::create(game);
 	}
 };
@@ -53,7 +53,7 @@ public:
 class CharacterTestModeSwitcher : public GameModeSwitcher
 {
 public:
-	virtual std::unique_ptr<GameMode> createMode(Game* game) {
+	virtual GameMode::Ptr createMode(Game* game) {
 		return CharacterTestMode::CharacterTestMode::create(game);
 	}
 };
@@ -65,10 +65,10 @@ void MainMenuMode::Tick(const GameInput& input)
 		switch (m_selection)
 		{
 		case 0: // Character Controller
-			m_game->SwitchMode(new CharacterControllerModeSwitcher);
+			m_game->SwitchMode(GameModeSwitcher::Ptr(new CharacterControllerModeSwitcher));
 			break;
 		case 1: // Character Test
-			m_game->SwitchMode(new CharacterTestModeSwitcher);
+			m_game->SwitchMode(GameModeSwitcher::Ptr(new CharacterTestModeSwitcher));
 			break;
 		}
 	}
@@ -107,7 +107,7 @@ void MainMenuMode::Tick(const GameInput& input)
 
 void MainMenuMode::Render()
 {
-	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer.GetD2DTarget();
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer->GetD2DTarget();
 
 	d2dTarget->BeginDraw();
 
@@ -148,7 +148,7 @@ void MainMenuMode::Render()
 
 void MainMenuMode::AddOption(const std::wstring& label)
 {
-	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer.GetD2DTarget();
+	ComPtr<ID2D1RenderTarget> d2dTarget = m_renderer->GetD2DTarget();
 	D2D1_SIZE_U targetSize = d2dTarget->GetPixelSize();
 
 	Option newOption;

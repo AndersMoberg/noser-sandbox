@@ -21,7 +21,9 @@ class MainMenuMode : public GameMode
 
 public:
 
-	static std::unique_ptr<MainMenuMode> create(Game* game);
+	typedef std::shared_ptr<MainMenuMode> Ptr;
+
+	static Ptr create(Game* game);
 
 	void Tick(const GameInput& input);
 	void Render();
@@ -32,7 +34,7 @@ private:
 
 	Game* m_game;
 
-	D2DRenderer m_renderer;
+	D2DRenderer::Ptr m_renderer;
 
 	ComPtr<IDWriteFactory> m_dwriteFactory;
 	ComPtr<IDWriteTextFormat> m_textFormat;

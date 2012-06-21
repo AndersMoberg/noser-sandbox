@@ -19,7 +19,9 @@ class CharacterTestMode : public GameMode
 
 public:
 
-	static std::unique_ptr<CharacterTestMode> create(Game* game);
+	typedef std::shared_ptr<CharacterTestMode> Ptr;
+
+	static Ptr create(Game* game);
 
 	virtual void Tick(const GameInput& input);
 	virtual void Render();
