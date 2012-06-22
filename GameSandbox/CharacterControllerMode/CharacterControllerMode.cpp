@@ -270,6 +270,10 @@ void CharacterControllerMode::tickTalking(const GameInput& input)
 			m_talkState = TALKSTATE_RUNNING;
 			interpretTalkScript();
 		}
+		else
+		{
+			m_buttons->tick(input);
+		}
 		break;
 	}
 }

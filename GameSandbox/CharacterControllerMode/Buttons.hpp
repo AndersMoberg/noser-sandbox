@@ -34,6 +34,8 @@ private:
 	Buttons();
 
 	ComPtr<IDWriteTextFormat> m_textFormat;
+	int m_selection;
+	bool m_inputTrigger;
 
 	struct Choice
 	{
