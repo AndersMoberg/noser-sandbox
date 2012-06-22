@@ -7,6 +7,8 @@
 
 #include <list>
 
+#include <DWrite.h>
+
 #include "Game.hpp"
 #include "WindowsUtils.hpp"
 
@@ -20,7 +22,7 @@ public:
 
 	typedef std::shared_ptr<Buttons> Ptr;
 
-	static Ptr create();
+	static Ptr create(ComPtr<IDWriteTextFormat> textFormat);
 
 	void addChoice(const std::wstring& text);
 
@@ -30,6 +32,8 @@ public:
 private:
 
 	Buttons();
+
+	ComPtr<IDWriteTextFormat> m_textFormat;
 
 	struct Choice
 	{

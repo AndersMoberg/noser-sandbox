@@ -200,6 +200,7 @@ void CharacterControllerMode::interpretTalkScript()
 		{
 			const std::wstring& dlg = TALK_SCRIPT[m_talkScriptPtr+1];
 			startRevealingText(dlg);
+			m_talkState = TALKSTATE_SAYING;
 			m_talkScriptPtr += 2;
 			done = true;
 		}
@@ -216,7 +217,7 @@ void CharacterControllerMode::interpretTalkScript()
 		}
 		else if (cmd == L"YesNoChoice")
 		{
-			m_buttons = Buttons::create();
+			m_buttons = Buttons::create(m_textFormat);
 			m_buttons->addChoice(L"Yes");
 			m_buttons->addChoice(L"No");
 			m_talkState = TALKSTATE_WAITING;
@@ -225,6 +226,7 @@ void CharacterControllerMode::interpretTalkScript()
 		}
 		else if (cmd.empty())
 		{
+			m_buttons.reset();
 			clearRevealingText();
 			m_state = STATE_WALKING;
 			done = true;
