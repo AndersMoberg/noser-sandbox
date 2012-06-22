@@ -9,6 +9,7 @@
 
 #include <Box2D/Box2D.h>
 
+#include "Buttons.hpp"
 #include "D2DRenderer.hpp"
 #include "Game.hpp"
 #include "World.hpp"
@@ -41,10 +42,13 @@ private:
 	{
 		TALKSTATE_RUNNING,
 		TALKSTATE_SAYING,
-		TALKSTATE_SLEEPING
+		TALKSTATE_SLEEPING,
+		TALKSTATE_WAITING
 	};
 	TalkState m_talkState;
 	int m_talkSleepCount;
+
+	Buttons::Ptr m_buttons;
 
 	void interpretTalkScript();
 	void enterTalking();

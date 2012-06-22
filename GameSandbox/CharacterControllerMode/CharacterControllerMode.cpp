@@ -183,8 +183,8 @@ const std::wstring CharacterControllerMode::TALK_SCRIPT[] =
 	L"Sleep", L"2000",
 	L"Say", L"How do you do?",
 	L"Sleep", L"2000",
-	L"Say", L"Goodbye.",
-	L"Sleep", L"2000",
+	L"Say", L"Make a choice, yes or no.",
+	L"YesNoChoice",
 	L""
 };
 
@@ -212,6 +212,15 @@ void CharacterControllerMode::interpretTalkScript()
 			m_talkState = TALKSTATE_SLEEPING;
 			m_talkSleepCount = ms * Game::TICKS_PER_SEC / 1000;
 			m_talkScriptPtr += 2;
+			done = true;
+		}
+		else if (cmd == L"YesNoChoice")
+		{
+			m_buttons = Buttons::create();
+			m_buttons->addChoice(L"Yes");
+			m_buttons->addChoice(L"No");
+			m_talkState = TALKSTATE_WAITING;
+			++m_talkScriptPtr;
 			done = true;
 		}
 		else if (cmd.empty())
@@ -248,6 +257,13 @@ void CharacterControllerMode::tickTalking(const GameInput& input)
 	case TALKSTATE_SLEEPING:
 		--m_talkSleepCount;
 		if (m_talkSleepCount <= 0)
+		{
+			m_talkState = TALKSTATE_RUNNING;
+			interpretTalkScript();
+		}
+		break;
+	case TALKSTATE_WAITING:
+		if (input.enter)
 		{
 			m_talkState = TALKSTATE_RUNNING;
 			interpretTalkScript();
@@ -321,6 +337,10 @@ void CharacterControllerMode::Render()
 
 	if (m_revealingText) {
 		m_revealingText->Render(d2dTarget);
+	}
+
+	if (m_buttons) {
+		m_buttons->render(d2dTarget);
 	}
 
 	d2dTarget->EndDraw();

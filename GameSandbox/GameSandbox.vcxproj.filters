@@ -78,6 +78,9 @@
     <ClCompile Include="CharacterControllerMode\RevealingText.cpp">
       <Filter>Source\CharacterControllerMode</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterControllerMode\Buttons.cpp">
+      <Filter>Source\CharacterControllerMode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -138,6 +141,9 @@
       <Filter>Source\CharacterTestMode</Filter>
     </ClInclude>
     <ClInclude Include="CharacterControllerMode\RevealingText.hpp">
+      <Filter>Source\CharacterControllerMode</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterControllerMode\Buttons.hpp">
       <Filter>Source\CharacterControllerMode</Filter>
     </ClInclude>
   </ItemGroup>
