@@ -49,7 +49,7 @@ private:
 	long long m_curTime;
 	long long m_frequency;
 
-	std::unique_ptr<Game> m_game;
+	Game::Ptr m_game;
 
 	// User input processing
 	int m_leftToRightKeys; // -1: left; 0: none; 1: right

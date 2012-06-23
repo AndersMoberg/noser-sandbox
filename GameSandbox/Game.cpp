@@ -12,11 +12,18 @@
 
 const unsigned int Game::TICKS_PER_SEC = 120;
 
-void Game::init(HWND hWnd)
-{
-	m_hWnd = hWnd;
+Game::Game()
+{ }
 
-	m_mode = MainMenuMode::MainMenuMode::create(this);
+Game::Ptr Game::create(HWND hWnd)
+{
+	Ptr p(new Game);
+
+	p->m_hWnd = hWnd;
+
+	p->m_mode = MainMenuMode::MainMenuMode::create(p);
+
+	return p;
 }
 
 void Game::Tick(const GameInput& input)
@@ -26,7 +33,7 @@ void Game::Tick(const GameInput& input)
 	if (m_nextMode)
 	{
 		m_mode.reset();
-		m_mode = m_nextMode->createMode(this);
+		m_mode = m_nextMode->createMode(shared_from_this());
 		m_nextMode.reset();
 	}
 }

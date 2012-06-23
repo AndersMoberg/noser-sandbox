@@ -19,13 +19,13 @@ CharacterControllerMode::CharacterControllerMode()
 	m_actualVel(0.0f, 0.0f)
 { }
 
-CharacterControllerMode::Ptr CharacterControllerMode::create(Game* game)
+CharacterControllerMode::Ptr CharacterControllerMode::create(Game::Ptr game)
 {
 	Ptr p(new CharacterControllerMode);
 
 	p->m_game = game;
 
-	p->m_renderer = D2DRenderer::create(p->m_game->GetHWnd());
+	p->m_renderer = D2DRenderer::create(game->GetHWnd());
 
 	p->m_state = STATE_WALKING;
 		
@@ -103,19 +103,27 @@ CharacterControllerMode::Ptr CharacterControllerMode::create(Game* game)
 class MainMenuModeSwitcher : public GameModeSwitcher
 {
 public:
-	GameMode::Ptr createMode(Game* game) {
+	GameMode::Ptr createMode(Game::Ptr game) {
 		return MainMenuMode::MainMenuMode::create(game);
 	}
 };
 
 void CharacterControllerMode::Tick(const GameInput& input)
 {
+	Game::Ptr game = m_game.lock();
+	assert(game);
+
 	if (input.esc)
 	{
-		m_game->SwitchMode(GameModeSwitcher::Ptr(new MainMenuModeSwitcher));
+		game->SwitchMode(GameModeSwitcher::Ptr(new MainMenuModeSwitcher));
 	}
 	else
 	{
+		if (m_revealingText && input.enter)
+		{
+			m_revealingText->finish();
+		}
+
 		switch (m_state)
 		{
 		case STATE_WALKING:

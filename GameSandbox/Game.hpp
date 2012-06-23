@@ -32,17 +32,20 @@ class GameModeSwitcher
 public:
 	typedef std::shared_ptr<GameModeSwitcher> Ptr;
 	virtual ~GameModeSwitcher() { }
-	virtual GameMode::Ptr createMode(Game* game) = 0;
+	virtual GameMode::Ptr createMode(std::shared_ptr<Game> game) = 0;
 };
 
-class Game
+class Game : public std::enable_shared_from_this<Game>
 {
 
 public:
 
 	static const unsigned int TICKS_PER_SEC;
+
+	typedef std::shared_ptr<Game> Ptr;
+	typedef std::weak_ptr<Game> WeakPtr;
 	
-	void init(HWND hWnd);
+	static Ptr create(HWND hWnd);
 
 	void Tick(const GameInput& input);
 	void Resize();
@@ -53,6 +56,8 @@ public:
 	HWND GetHWnd() { return m_hWnd; }
 
 private:
+
+	Game();
 
 	HWND m_hWnd;
 

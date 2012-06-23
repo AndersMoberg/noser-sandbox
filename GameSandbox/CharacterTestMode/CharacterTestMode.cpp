@@ -172,13 +172,13 @@ CharacterTestMode::CharacterTestMode()
 	m_characterSpeed(6.0f)
 { }
 
-CharacterTestMode::Ptr CharacterTestMode::create(Game* game)
+CharacterTestMode::Ptr CharacterTestMode::create(Game::Ptr game)
 {
 	Ptr p(new CharacterTestMode);
 
 	p->m_game = game;
 
-	p->m_renderer.init(p->m_game->GetHWnd());
+	p->m_renderer.init(game->GetHWnd());
 
 	p->m_bgTexture = p->m_renderer.createTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
@@ -195,16 +195,19 @@ CharacterTestMode::Ptr CharacterTestMode::create(Game* game)
 class MainMenuModeSwitcher : public GameModeSwitcher
 {
 public:
-	GameMode::Ptr createMode(Game* game) {
+	GameMode::Ptr createMode(Game::Ptr game) {
 		return MainMenuMode::MainMenuMode::create(game);
 	}
 };
 
 void CharacterTestMode::Tick(const GameInput& input)
 {
+	Game::Ptr game = m_game.lock();
+	assert(game);
+
 	if (input.esc)
 	{
-		m_game->SwitchMode(GameModeSwitcher::Ptr(new MainMenuModeSwitcher));
+		game->SwitchMode(GameModeSwitcher::Ptr(new MainMenuModeSwitcher));
 	}
 	else
 	{

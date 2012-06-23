@@ -20,13 +20,13 @@ MainMenuMode::MainMenuMode()
 	m_downTriggered(false)
 { }
 
-MainMenuMode::Ptr MainMenuMode::create(Game* game)
+MainMenuMode::Ptr MainMenuMode::create(Game::Ptr game)
 {
 	MainMenuMode::Ptr p(new MainMenuMode);
 
 	p->m_game = game;
 
-	p->m_renderer = D2DRenderer::create(p->m_game->GetHWnd());
+	p->m_renderer = D2DRenderer::create(game->GetHWnd());
 	
 	CHECK_HR(DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
 		__uuidof(IDWriteFactory), (IUnknown**)p->m_dwriteFactory.Receive()));
@@ -45,7 +45,7 @@ MainMenuMode::Ptr MainMenuMode::create(Game* game)
 class CharacterControllerModeSwitcher : public GameModeSwitcher
 {
 public:
-	virtual GameMode::Ptr createMode(Game* game) {
+	virtual GameMode::Ptr createMode(Game::Ptr game) {
 		return CharacterControllerMode::CharacterControllerMode::create(game);
 	}
 };
@@ -53,22 +53,25 @@ public:
 class CharacterTestModeSwitcher : public GameModeSwitcher
 {
 public:
-	virtual GameMode::Ptr createMode(Game* game) {
+	virtual GameMode::Ptr createMode(Game::Ptr game) {
 		return CharacterTestMode::CharacterTestMode::create(game);
 	}
 };
 
 void MainMenuMode::Tick(const GameInput& input)
 {
+	Game::Ptr game = m_game.lock();
+	assert(game);
+
 	if (input.enter)
 	{
 		switch (m_selection)
 		{
 		case 0: // Character Controller
-			m_game->SwitchMode(GameModeSwitcher::Ptr(new CharacterControllerModeSwitcher));
+			game->SwitchMode(GameModeSwitcher::Ptr(new CharacterControllerModeSwitcher));
 			break;
 		case 1: // Character Test
-			m_game->SwitchMode(GameModeSwitcher::Ptr(new CharacterTestModeSwitcher));
+			game->SwitchMode(GameModeSwitcher::Ptr(new CharacterTestModeSwitcher));
 			break;
 		}
 	}

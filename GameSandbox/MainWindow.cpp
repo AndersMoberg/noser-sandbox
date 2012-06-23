@@ -148,8 +148,7 @@ LRESULT MainWindow::OnWMCreate(HWND hWnd)
 {
 	m_hWnd = hWnd;
 
-	m_game.reset(new Game);
-	m_game->init(m_hWnd);
+	m_game = Game::create(hWnd);
 
 	return 0;
 }

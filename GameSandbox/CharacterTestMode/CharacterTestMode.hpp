@@ -21,7 +21,7 @@ public:
 
 	typedef std::shared_ptr<CharacterTestMode> Ptr;
 
-	static Ptr create(Game* game);
+	static Ptr create(Game::Ptr game);
 
 	virtual void Tick(const GameInput& input);
 	virtual void Render();
@@ -30,7 +30,7 @@ private:
 
 	CharacterTestMode();
 
-	Game* m_game;
+	Game::WeakPtr m_game;
 
 	GLES2Renderer m_renderer;
 

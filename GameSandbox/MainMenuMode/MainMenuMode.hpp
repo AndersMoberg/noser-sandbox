@@ -23,7 +23,7 @@ public:
 
 	typedef std::shared_ptr<MainMenuMode> Ptr;
 
-	static Ptr create(Game* game);
+	static Ptr create(Game::Ptr game);
 
 	void Tick(const GameInput& input);
 	void Render();
@@ -32,7 +32,7 @@ private:
 
 	MainMenuMode();
 
-	Game* m_game;
+	Game::WeakPtr m_game;
 
 	D2DRenderer::Ptr m_renderer;
 

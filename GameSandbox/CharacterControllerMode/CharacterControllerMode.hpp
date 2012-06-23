@@ -25,7 +25,7 @@ public:
 
 	typedef std::shared_ptr<CharacterControllerMode> Ptr;
 
-	static Ptr create(Game* game);
+	static Ptr create(Game::Ptr game);
 
 	void Tick(const GameInput& input);
 	void Render();
@@ -67,7 +67,7 @@ private:
 
 	typedef std::list<CharacterPtr> CharacterList;
 
-	Game* m_game;
+	Game::WeakPtr m_game;
 	D2DRenderer::Ptr m_renderer;
 
 	Camera m_camera;
