@@ -113,13 +113,13 @@ void CharacterControllerMode::Tick(const GameInput& input)
 	Game::Ptr game = m_game.lock();
 	assert(game);
 
-	if (input.esc)
+	if (input.escTrigger)
 	{
 		game->SwitchMode(GameModeSwitcher::Ptr(new MainMenuModeSwitcher));
 	}
 	else
 	{
-		if (m_revealingText && input.enter)
+		if (m_revealingText && input.enterTrigger)
 		{
 			m_revealingText->finish();
 		}
@@ -163,7 +163,7 @@ void CharacterControllerMode::tickWalking(const GameInput& input)
 				startRevealingText(L"You are now touching an NPC.");
 				m_wasTouching = true;
 			}
-			if (input.enter)
+			if (input.enterTrigger)
 			{
 				switchToTalking = true;
 			}

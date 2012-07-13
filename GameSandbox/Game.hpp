@@ -13,7 +13,9 @@ struct GameInput
 {
 	Vector2f move;
 	bool enter;
+	bool enterTrigger;
 	bool esc;
+	bool escTrigger;
 };
 
 class GameMode

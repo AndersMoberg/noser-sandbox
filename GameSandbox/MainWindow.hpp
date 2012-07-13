@@ -52,6 +52,8 @@ private:
 	Game::Ptr m_game;
 
 	// User input processing
+	bool m_prevEsc;
+	bool m_prevEnter;
 	int m_leftToRightKeys; // -1: left; 0: none; 1: right
 	int m_downToUpKeys; // -1: down; 0: none; 1: up
 

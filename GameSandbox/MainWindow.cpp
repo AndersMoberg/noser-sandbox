@@ -229,18 +229,20 @@ void MainWindow::Update()
 
 	long long tickTime = m_frequency / (long long)Game::TICKS_PER_SEC;
 
-	GameInput input;
-	input.move = move;
-	input.enter = !!(GetKeyState(VK_RETURN) & 0x8000);
-	input.esc = !!(GetKeyState(VK_ESCAPE) & 0x8000);
-
 	long long t;
 	for (t = m_curTime; t < liCurTime.QuadPart; t += tickTime)
 	{
+		GameInput input;
+		input.move = move;
+		input.enterTrigger = !m_prevEnter && !!(GetKeyState(VK_RETURN) & 0x8000);
+		input.enter = !!(GetKeyState(VK_RETURN) & 0x8000);
+		input.escTrigger = !m_prevEsc && !!(GetKeyState(VK_ESCAPE) & 0x8000);
+		input.esc = !!(GetKeyState(VK_ESCAPE) & 0x8000);
+
 		m_game->Tick(input);
 
-		input.enter = false;
-		input.esc = false;
+		m_prevEnter = input.enter;
+		m_prevEsc = input.esc;
 	}
 
 	m_curTime = t;
