@@ -13,6 +13,9 @@
     <Filter Include="Source\CharacterControllerMode">
       <UniqueIdentifier>{b8eebd9e-bfb6-47e7-9a13-c87276b839c7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\StatesMode">
+      <UniqueIdentifier>{242def9c-bd1f-4e67-b7c4-7c44ca4a4a09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -81,6 +84,9 @@
     <ClCompile Include="CharacterControllerMode\Buttons.cpp">
       <Filter>Source\CharacterControllerMode</Filter>
     </ClCompile>
+    <ClCompile Include="StatesMode\StatesMode.cpp">
+      <Filter>Source\StatesMode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp">
@@ -145,6 +151,9 @@
     </ClInclude>
     <ClInclude Include="CharacterControllerMode\Buttons.hpp">
       <Filter>Source\CharacterControllerMode</Filter>
+    </ClInclude>
+    <ClInclude Include="StatesMode\StatesMode.hpp">
+      <Filter>Source\StatesMode</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

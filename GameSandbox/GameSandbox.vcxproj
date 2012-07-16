@@ -109,6 +109,7 @@
     <ClCompile Include="MainMenuMode\MainMenuMode.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="OutlinedTextRenderer.cpp" />
+    <ClCompile Include="StatesMode\StatesMode.cpp" />
     <ClCompile Include="WindowsUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +133,7 @@
     <ClInclude Include="MainMenuMode\MainMenuMode.hpp" />
     <ClInclude Include="MainWindow.hpp" />
     <ClInclude Include="OutlinedTextRenderer.hpp" />
+    <ClInclude Include="StatesMode\StatesMode.hpp" />
     <ClInclude Include="WindowsUtils.hpp" />
   </ItemGroup>
   <ItemGroup>

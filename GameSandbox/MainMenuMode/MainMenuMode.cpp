@@ -8,6 +8,7 @@
 
 #include "CharacterControllerMode/CharacterControllerMode.hpp"
 #include "CharacterTestMode/CharacterTestMode.hpp"
+#include "StatesMode/StatesMode.hpp"
 #include "OutlinedTextRenderer.hpp"
 #include "WindowsUtils.hpp"
 
@@ -37,6 +38,7 @@ MainMenuMode::Ptr MainMenuMode::create(Game::Ptr game)
 
 	p->AddOption(L"Character Controller");
 	p->AddOption(L"Character Test");
+	p->AddOption(L"States Test");
 	p->AddOption(L"Exit");
 
 	return p;
@@ -58,6 +60,14 @@ public:
 	}
 };
 
+class StatesModeSwitcher : public GameModeSwitcher
+{
+public:
+	virtual GameMode::Ptr createMode(Game::Ptr game) {
+		return StatesMode::StatesMode::create(game);
+	}
+};
+
 void MainMenuMode::Tick(const GameInput& input)
 {
 	Game::Ptr game = m_game.lock();
@@ -72,6 +82,9 @@ void MainMenuMode::Tick(const GameInput& input)
 			break;
 		case 1: // Character Test
 			game->SwitchMode(GameModeSwitcher::Ptr(new CharacterTestModeSwitcher));
+			break;
+		case 2: // States Test
+			game->SwitchMode(GameModeSwitcher::Ptr(new StatesModeSwitcher));
 			break;
 		}
 	}
