@@ -100,22 +100,14 @@ CharacterControllerMode::Ptr CharacterControllerMode::create(Game::Ptr game)
 	return p;
 }
 
-class MainMenuModeSwitcher : public GameModeSwitcher
-{
-public:
-	GameMode::Ptr createMode(Game::Ptr game) {
-		return MainMenuMode::MainMenuMode::create(game);
-	}
-};
-
-void CharacterControllerMode::Tick(const GameInput& input)
+GameMode::Ptr CharacterControllerMode::Tick(const GameInput& input)
 {
 	Game::Ptr game = m_game.lock();
 	assert(game);
 
 	if (input.escTrigger)
 	{
-		game->SwitchMode(GameModeSwitcher::Ptr(new MainMenuModeSwitcher));
+		return MainMenuMode::MainMenuMode::create(game);
 	}
 	else
 	{
@@ -137,6 +129,8 @@ void CharacterControllerMode::Tick(const GameInput& input)
 		if (m_revealingText) {
 			m_revealingText->Tick();
 		}
+
+		return shared_from_this();
 	}
 }
 

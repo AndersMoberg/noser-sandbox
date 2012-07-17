@@ -21,7 +21,7 @@ public:
 	virtual void render(D2DRenderer::Ptr renderer) = 0;
 };
 
-class StatesMode : public GameMode
+class StatesMode : public GameMode, public std::enable_shared_from_this<StatesMode>
 {
 
 public:
@@ -30,7 +30,7 @@ public:
 
 	static Ptr create(Game::Ptr game);
 
-	void Tick(const GameInput& input);
+	GameMode::Ptr Tick(const GameInput& input);
 	void Render();
 
 private:

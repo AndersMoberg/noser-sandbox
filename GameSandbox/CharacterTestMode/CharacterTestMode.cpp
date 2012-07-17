@@ -192,22 +192,14 @@ CharacterTestMode::Ptr CharacterTestMode::create(Game::Ptr game)
 	return p;
 }
 
-class MainMenuModeSwitcher : public GameModeSwitcher
-{
-public:
-	GameMode::Ptr createMode(Game::Ptr game) {
-		return MainMenuMode::MainMenuMode::create(game);
-	}
-};
-
-void CharacterTestMode::Tick(const GameInput& input)
+GameMode::Ptr CharacterTestMode::Tick(const GameInput& input)
 {
 	Game::Ptr game = m_game.lock();
 	assert(game);
 
 	if (input.esc)
 	{
-		game->SwitchMode(GameModeSwitcher::Ptr(new MainMenuModeSwitcher));
+		return MainMenuMode::MainMenuMode::create(game);
 	}
 	else
 	{
@@ -215,6 +207,8 @@ void CharacterTestMode::Tick(const GameInput& input)
 		m_characterPos += velocity / (float)Game::TICKS_PER_SEC;
 
 		m_object->Tick();
+
+		return shared_from_this();
 	}
 }
 

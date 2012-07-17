@@ -82,22 +82,16 @@ StatesMode::Ptr StatesMode::create(Game::Ptr game)
 	return p;
 }
 
-class MainMenuModeSwitcher : public GameModeSwitcher
-{
-public:
-	GameMode::Ptr createMode(Game::Ptr game) {
-		return MainMenuMode::MainMenuMode::create(game);
-	}
-};
-
-void StatesMode::Tick(const GameInput& input)
+GameMode::Ptr StatesMode::Tick(const GameInput& input)
 {
 	Game::Ptr game = m_game.lock();
 	assert(game);
 
 	m_curState = m_curState->getNextState(input);
 	if (!m_curState) {
-		game->SwitchMode(GameModeSwitcher::Ptr(new MainMenuModeSwitcher));
+		return MainMenuMode::MainMenuMode::create(game);
+	} else {
+		return shared_from_this();
 	}
 }
 

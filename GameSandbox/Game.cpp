@@ -28,14 +28,7 @@ Game::Ptr Game::create(HWND hWnd)
 
 void Game::Tick(const GameInput& input)
 {
-	m_mode->Tick(input);
-
-	if (m_nextMode)
-	{
-		m_mode.reset();
-		m_mode = m_nextMode->createMode(shared_from_this());
-		m_nextMode.reset();
-	}
+	m_mode = m_mode->Tick(input);
 }
 
 void Game::Resize()
@@ -46,9 +39,4 @@ void Game::Resize()
 void Game::Render()
 {
 	m_mode->Render();
-}
-
-void Game::SwitchMode(GameModeSwitcher::Ptr nextMode)
-{
-	m_nextMode = nextMode;
 }

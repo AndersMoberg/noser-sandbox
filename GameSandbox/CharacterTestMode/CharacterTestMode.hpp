@@ -14,7 +14,7 @@
 namespace CharacterTestMode
 {
 
-class CharacterTestMode : public GameMode
+class CharacterTestMode : public GameMode, public std::enable_shared_from_this<CharacterTestMode>
 {
 
 public:
@@ -23,7 +23,7 @@ public:
 
 	static Ptr create(Game::Ptr game);
 
-	virtual void Tick(const GameInput& input);
+	virtual GameMode::Ptr Tick(const GameInput& input);
 	virtual void Render();
 	
 private:

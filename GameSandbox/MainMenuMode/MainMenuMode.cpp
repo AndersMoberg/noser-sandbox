@@ -44,31 +44,7 @@ MainMenuMode::Ptr MainMenuMode::create(Game::Ptr game)
 	return p;
 }
 
-class CharacterControllerModeSwitcher : public GameModeSwitcher
-{
-public:
-	virtual GameMode::Ptr createMode(Game::Ptr game) {
-		return CharacterControllerMode::CharacterControllerMode::create(game);
-	}
-};
-
-class CharacterTestModeSwitcher : public GameModeSwitcher
-{
-public:
-	virtual GameMode::Ptr createMode(Game::Ptr game) {
-		return CharacterTestMode::CharacterTestMode::create(game);
-	}
-};
-
-class StatesModeSwitcher : public GameModeSwitcher
-{
-public:
-	virtual GameMode::Ptr createMode(Game::Ptr game) {
-		return StatesMode::StatesMode::create(game);
-	}
-};
-
-void MainMenuMode::Tick(const GameInput& input)
+GameMode::Ptr MainMenuMode::Tick(const GameInput& input)
 {
 	Game::Ptr game = m_game.lock();
 	assert(game);
@@ -78,14 +54,11 @@ void MainMenuMode::Tick(const GameInput& input)
 		switch (m_selection)
 		{
 		case 0: // Character Controller
-			game->SwitchMode(GameModeSwitcher::Ptr(new CharacterControllerModeSwitcher));
-			break;
+			return CharacterControllerMode::CharacterControllerMode::create(game);
 		case 1: // Character Test
-			game->SwitchMode(GameModeSwitcher::Ptr(new CharacterTestModeSwitcher));
-			break;
+			return CharacterTestMode::CharacterTestMode::create(game);
 		case 2: // States Test
-			game->SwitchMode(GameModeSwitcher::Ptr(new StatesModeSwitcher));
-			break;
+			return StatesMode::StatesMode::create(game);
 		}
 	}
 	else if (input.move.y > 0.5f)
@@ -119,6 +92,8 @@ void MainMenuMode::Tick(const GameInput& input)
 		m_upTriggered = false;
 		m_downTriggered = false;
 	}
+
+	return shared_from_this();
 }
 
 void MainMenuMode::Render()
