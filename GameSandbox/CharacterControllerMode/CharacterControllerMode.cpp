@@ -107,6 +107,7 @@ GameMode::Ptr CharacterControllerMode::Tick(const GameInput& input)
 
 	if (input.escTrigger)
 	{
+		m_renderer.reset();
 		return MainMenuMode::MainMenuMode::create(game);
 	}
 	else

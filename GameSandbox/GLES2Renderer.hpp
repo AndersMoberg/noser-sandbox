@@ -18,10 +18,11 @@ class GLES2Renderer
 {
 
 public:
+
+	typedef std::shared_ptr<GLES2Renderer> Ptr;
 	
-	GLES2Renderer();
 	~GLES2Renderer();
-	void init(HWND hWnd);
+	static Ptr create(HWND hWnd);
 	
 	std::unique_ptr<GLES2Texture> createTextureFromFile(const std::wstring& path);
 
@@ -35,6 +36,8 @@ public:
 	unsigned int GetHeight() const { return m_height; }
 
 private:
+	
+	GLES2Renderer();
 
 	HWND m_hWnd;
 

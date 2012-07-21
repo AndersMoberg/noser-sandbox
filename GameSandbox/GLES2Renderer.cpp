@@ -110,21 +110,23 @@ GLES2Renderer::~GLES2Renderer()
 	m_eglDisplay = 0;
 }
 
-void GLES2Renderer::init(HWND hWnd)
+GLES2Renderer::Ptr GLES2Renderer::create(HWND hWnd)
 {
-	m_hWnd = hWnd;
+	Ptr p(new GLES2Renderer);
 
-	m_eglDisplay = eglGetDisplay(GetDC(hWnd));
-	if (m_eglDisplay == EGL_NO_DISPLAY) {
+	p->m_hWnd = hWnd;
+
+	p->m_eglDisplay = eglGetDisplay(GetDC(hWnd));
+	if (p->m_eglDisplay == EGL_NO_DISPLAY) {
 		throw std::exception("Failed to get display for EGL");
 	}
 
-	if (eglInitialize(m_eglDisplay, NULL, NULL) != EGL_TRUE) {
+	if (eglInitialize(p->m_eglDisplay, NULL, NULL) != EGL_TRUE) {
 		throw std::exception("Failed to initialize EGL");
 	}
 	
 	EGLint numConfigs;
-	if (eglGetConfigs(m_eglDisplay, NULL, 0, &numConfigs) != EGL_TRUE) {
+	if (eglGetConfigs(p->m_eglDisplay, NULL, 0, &numConfigs) != EGL_TRUE) {
 		throw std::exception("Failed to get number of EGL configurations");
 	}
 
@@ -132,12 +134,12 @@ void GLES2Renderer::init(HWND hWnd)
 		EGL_NONE
 	};
 	EGLConfig eglConfig;
-	if (eglChooseConfig(m_eglDisplay, chooseConfigAttribs, &eglConfig, 1, &numConfigs) != EGL_TRUE) {
+	if (eglChooseConfig(p->m_eglDisplay, chooseConfigAttribs, &eglConfig, 1, &numConfigs) != EGL_TRUE) {
 		throw std::exception("Failed to choose an EGL configuration");
 	}
 
-	m_eglSurface = eglCreateWindowSurface(m_eglDisplay, eglConfig, hWnd, NULL);
-	if (m_eglSurface == EGL_NO_SURFACE) {
+	p->m_eglSurface = eglCreateWindowSurface(p->m_eglDisplay, eglConfig, hWnd, NULL);
+	if (p->m_eglSurface == EGL_NO_SURFACE) {
 		throw std::exception("Failed to create EGL window surface");
 	}
 
@@ -145,19 +147,19 @@ void GLES2Renderer::init(HWND hWnd)
 		EGL_CONTEXT_CLIENT_VERSION, 2,
 		EGL_NONE
 	};
-	m_eglContext = eglCreateContext(m_eglDisplay, eglConfig, EGL_NO_CONTEXT, createContextAttribs);
-	if (m_eglContext == EGL_NO_CONTEXT) {
+	p->m_eglContext = eglCreateContext(p->m_eglDisplay, eglConfig, EGL_NO_CONTEXT, createContextAttribs);
+	if (p->m_eglContext == EGL_NO_CONTEXT) {
 		throw std::exception("Failed to create EGL context");
 	}
 
-	if (eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext) != EGL_TRUE) {
+	if (eglMakeCurrent(p->m_eglDisplay, p->m_eglSurface, p->m_eglSurface, p->m_eglContext) != EGL_TRUE) {
 		throw std::exception("Failed to make EGL context current");
 	}
 
 	RECT clientRc;
 	GetClientRect(hWnd, &clientRc);
-	m_width = clientRc.right - clientRc.left;
-	m_height = clientRc.bottom - clientRc.top;
+	p->m_width = clientRc.right - clientRc.left;
+	p->m_height = clientRc.bottom - clientRc.top;
 
 	static const char TEXTURED_QUAD_VERTEX_SHADER[] =
 		"attribute vec2 a_pos;\n"
@@ -180,19 +182,21 @@ void GLES2Renderer::init(HWND hWnd)
 			"gl_FragColor = texture2D(u_sampler, v_tex);\n"
 		"}\n"
 		;
-	m_texturedQuadProgram.program = LoadGLSLProgram(TEXTURED_QUAD_VERTEX_SHADER,
+	p->m_texturedQuadProgram.program = LoadGLSLProgram(TEXTURED_QUAD_VERTEX_SHADER,
 		TEXTURED_QUAD_FRAGMENT_SHADER);
-	m_texturedQuadProgram.aposLoc = glGetAttribLocation(
-		m_texturedQuadProgram.program, "a_pos");
-	m_texturedQuadProgram.atexLoc = glGetAttribLocation(
-		m_texturedQuadProgram.program, "a_tex");
-	m_texturedQuadProgram.umatLoc = glGetUniformLocation(
-		m_texturedQuadProgram.program, "u_mat");
-	m_texturedQuadProgram.uaddLoc = glGetUniformLocation(
-		m_texturedQuadProgram.program, "u_add");
-	m_texturedQuadProgram.usamplerLoc = glGetUniformLocation(
-		m_texturedQuadProgram.program, "u_sampler");
-	SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
+	p->m_texturedQuadProgram.aposLoc = glGetAttribLocation(
+		p->m_texturedQuadProgram.program, "a_pos");
+	p->m_texturedQuadProgram.atexLoc = glGetAttribLocation(
+		p->m_texturedQuadProgram.program, "a_tex");
+	p->m_texturedQuadProgram.umatLoc = glGetUniformLocation(
+		p->m_texturedQuadProgram.program, "u_mat");
+	p->m_texturedQuadProgram.uaddLoc = glGetUniformLocation(
+		p->m_texturedQuadProgram.program, "u_add");
+	p->m_texturedQuadProgram.usamplerLoc = glGetUniformLocation(
+		p->m_texturedQuadProgram.program, "u_sampler");
+	p->SetTexturedQuadMatrix(Matrix3x2f::IDENTITY);
+
+	return p;
 }
 
 std::unique_ptr<GLES2Texture> GLES2Renderer::createTextureFromFile(

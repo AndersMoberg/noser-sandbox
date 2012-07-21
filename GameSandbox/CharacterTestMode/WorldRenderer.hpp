@@ -14,7 +14,7 @@ class WorldRenderer
 
 public:
 
-	static std::unique_ptr<WorldRenderer> create(GLES2Renderer* renderer);
+	static std::unique_ptr<WorldRenderer> create(GLES2Renderer::Ptr renderer);
 
 	void render();
 
@@ -28,7 +28,7 @@ private:
 
 	WorldRenderer();
 
-	GLES2Renderer* m_renderer;
+	GLES2Renderer::Ptr m_renderer;
 	ObjectList m_objects;
 
 };

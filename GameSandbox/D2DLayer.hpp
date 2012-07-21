@@ -19,7 +19,7 @@ class D2DLayer
 
 public:
 	
-	void init(GLES2Renderer* renderer);
+	void init(GLES2Renderer::Ptr renderer);
 
 	void recreateTarget();
 
@@ -30,7 +30,7 @@ public:
 
 private:
 
-	GLES2Renderer* m_renderer;
+	GLES2Renderer::Ptr m_renderer;
 
 	ComPtr<ID2D1Factory> m_d2dFactory;
 

@@ -54,10 +54,13 @@ GameMode::Ptr MainMenuMode::Tick(const GameInput& input)
 		switch (m_selection)
 		{
 		case 0: // Character Controller
+			m_renderer.reset();
 			return CharacterControllerMode::CharacterControllerMode::create(game);
 		case 1: // Character Test
+			m_renderer.reset();
 			return CharacterTestMode::CharacterTestMode::create(game);
 		case 2: // States Test
+			m_renderer.reset();
 			return StatesMode::StatesMode::create(game);
 		}
 	}

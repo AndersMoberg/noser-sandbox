@@ -32,7 +32,7 @@ private:
 
 	Game::WeakPtr m_game;
 
-	GLES2Renderer m_renderer;
+	GLES2Renderer::Ptr m_renderer;
 
 	Camera m_camera;
 

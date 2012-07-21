@@ -20,7 +20,7 @@ public:
 	typedef std::shared_ptr<WorldObject> Ptr;
 
 	static Ptr create(
-		GLES2Renderer* renderer, const std::wstring& path,
+		GLES2Renderer::Ptr renderer, const std::wstring& path,
 		const Rectf& rect);
 
 	void render();
@@ -32,7 +32,7 @@ private:
 
 	WorldObject();
 
-	GLES2Renderer* m_renderer;
+	GLES2Renderer::Ptr m_renderer;
 	std::unique_ptr<GLES2Texture> m_texture;
 	Rectf m_rect;
 	Vector2f m_pos;

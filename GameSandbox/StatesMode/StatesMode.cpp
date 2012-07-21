@@ -88,7 +88,8 @@ GameMode::Ptr StatesMode::Tick(const GameInput& input)
 	assert(game);
 
 	m_curState = m_curState->getNextState(input);
-	if (!m_curState) {
+	if (!m_curState || input.escTrigger) {
+		m_renderer.reset();
 		return MainMenuMode::MainMenuMode::create(game);
 	} else {
 		return shared_from_this();

@@ -7,7 +7,7 @@
 WorldRenderer::WorldRenderer()
 { }
 
-std::unique_ptr<WorldRenderer> WorldRenderer::create(GLES2Renderer* renderer)
+std::unique_ptr<WorldRenderer> WorldRenderer::create(GLES2Renderer::Ptr renderer)
 {
 	std::unique_ptr<WorldRenderer> p(new WorldRenderer);
 

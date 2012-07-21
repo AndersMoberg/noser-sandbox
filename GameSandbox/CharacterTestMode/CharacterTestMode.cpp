@@ -21,7 +21,7 @@ namespace CharacterTestMode
 class CharacterTestMode::MyGameObject
 {
 public:
-	MyGameObject(GLES2Renderer* renderer)
+	MyGameObject(GLES2Renderer::Ptr renderer)
 		: m_renderer(renderer),
 		m_wait(0),
 		m_bottles(99),
@@ -154,7 +154,7 @@ public:
 		}
 	}
 private:
-	GLES2Renderer* m_renderer;
+	GLES2Renderer::Ptr m_renderer;
 	D2DLayer m_d2dLayer;
 	DropShadowCommon m_dropShadowCommon;
 	DropShadow m_dropShadow;
@@ -178,14 +178,14 @@ CharacterTestMode::Ptr CharacterTestMode::create(Game::Ptr game)
 
 	p->m_game = game;
 
-	p->m_renderer.init(game->GetHWnd());
+	p->m_renderer = GLES2Renderer::create(game->GetHWnd());
 
-	p->m_bgTexture = p->m_renderer.createTextureFromFile(
+	p->m_bgTexture = p->m_renderer->createTextureFromFile(
 		L"C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
 
-	p->m_object.reset(new MyGameObject(&p->m_renderer));
+	p->m_object.reset(new MyGameObject(p->m_renderer));
 
-	p->m_worldRenderer = WorldRenderer::create(&p->m_renderer);
+	p->m_worldRenderer = WorldRenderer::create(p->m_renderer);
 
 	p->m_characterObject = p->m_worldRenderer->addObject(L"TestObject.png", Rectf(-2.0f, 2.0f, 2.0f, -2.0f));
 
@@ -199,6 +199,7 @@ GameMode::Ptr CharacterTestMode::Tick(const GameInput& input)
 
 	if (input.esc)
 	{
+		m_renderer.reset();
 		return MainMenuMode::MainMenuMode::create(game);
 	}
 	else
@@ -214,8 +215,8 @@ GameMode::Ptr CharacterTestMode::Tick(const GameInput& input)
 
 void CharacterTestMode::Render()
 {
-	unsigned int width = m_renderer.GetWidth();
-	unsigned int height = m_renderer.GetHeight();
+	unsigned int width = m_renderer->GetWidth();
+	unsigned int height = m_renderer->GetHeight();
 
 	glViewport(0, 0, width, height);
 
@@ -228,7 +229,7 @@ void CharacterTestMode::Render()
 		Rectf(-1.0f, 1.0f, 1.0f, -1.0f));
 	Matrix3x2f worldToClip = worldToViewport * viewportToClip;
 
-	m_renderer.SetTexturedQuadMatrix(worldToClip);
+	m_renderer->SetTexturedQuadMatrix(worldToClip);
 	
 	// Draw background image
 	glActiveTexture(GL_TEXTURE0);
@@ -241,15 +242,15 @@ void CharacterTestMode::Render()
 	glBlendEquation(GL_FUNC_ADD);
 	glEnable(GL_BLEND);
 
-	m_renderer.DrawTexturedQuad(Rectf(-16.0f, 16.0f, 16.0f, -16.0f));
+	m_renderer->DrawTexturedQuad(Rectf(-16.0f, 16.0f, 16.0f, -16.0f));
 
 	m_object->Render();
 
-	m_renderer.SetTexturedQuadMatrix(worldToClip);
+	m_renderer->SetTexturedQuadMatrix(worldToClip);
 	m_worldRenderer->setObjectPos(m_characterObject, m_characterPos);
 	m_worldRenderer->render();
 
-	m_renderer.Present();
+	m_renderer->Present();
 }
 
 }

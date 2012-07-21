@@ -9,7 +9,7 @@ WorldObject::WorldObject()
 { }
 
 WorldObject::Ptr WorldObject::create(
-	GLES2Renderer* renderer, const std::wstring& path, const Rectf& rect)
+	GLES2Renderer::Ptr renderer, const std::wstring& path, const Rectf& rect)
 {
 	WorldObject::Ptr p(new WorldObject);
 
